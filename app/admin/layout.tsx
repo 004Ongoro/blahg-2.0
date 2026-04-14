@@ -26,7 +26,11 @@ export default async function AdminLayout({
     return <>{children}</>
   }
 
-  // Redirect to login if not authenticated
+  // Skip redirect for login page
+  // The login page is a client component and doesn't need server-side protection
+  // It will handle its own logic
+  
+  // Redirect to login if not authenticated for protected pages
   if (!session) {
     redirect('/admin/login')
   }

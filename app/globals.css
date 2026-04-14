@@ -1,0 +1,338 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Neo-brutalist design system */
+:root {
+  --background: #fffef5;
+  --foreground: #0a0a0a;
+  --card: #fffef5;
+  --card-foreground: #0a0a0a;
+  --popover: #fffef5;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #fffef5;
+  --secondary: #f5f5dc;
+  --secondary-foreground: #0a0a0a;
+  --muted: #e8e8d0;
+  --muted-foreground: #525252;
+  --accent: #ff6b35;
+  --accent-foreground: #0a0a0a;
+  --destructive: #dc2626;
+  --destructive-foreground: #fffef5;
+  --border: #0a0a0a;
+  --input: #0a0a0a;
+  --ring: #0a0a0a;
+  --radius: 0;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fffef5;
+  --card: #1a1a1a;
+  --card-foreground: #fffef5;
+  --popover: #1a1a1a;
+  --popover-foreground: #fffef5;
+  --primary: #fffef5;
+  --primary-foreground: #0a0a0a;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #fffef5;
+  --muted: #2a2a2a;
+  --muted-foreground: #a0a0a0;
+  --accent: #ff6b35;
+  --accent-foreground: #0a0a0a;
+  --destructive: #dc2626;
+  --destructive-foreground: #fffef5;
+  --border: #fffef5;
+  --input: #fffef5;
+  --ring: #fffef5;
+}
+
+@theme inline {
+  --font-sans: 'JetBrains Mono', 'Geist Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-mono;
+  }
+}
+
+/* Neo-brutalist utilities */
+.brutal-border {
+  border: 3px solid var(--foreground);
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+.brutal-shadow-sm {
+  box-shadow: 2px 2px 0 var(--foreground);
+}
+
+.brutal-shadow-lg {
+  box-shadow: 6px 6px 0 var(--foreground);
+}
+
+.brutal-btn {
+  border: 3px solid var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--foreground);
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--foreground);
+}
+
+/* Markdown styles */
+.prose-brutal {
+  @apply text-foreground;
+}
+
+.prose-brutal h1,
+.prose-brutal h2,
+.prose-brutal h3,
+.prose-brutal h4 {
+  @apply font-bold text-foreground;
+  border-bottom: 3px solid var(--foreground);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose-brutal h1 {
+  @apply text-3xl md:text-4xl;
+}
+
+.prose-brutal h2 {
+  @apply text-2xl md:text-3xl;
+}
+
+.prose-brutal h3 {
+  @apply text-xl md:text-2xl;
+}
+
+.prose-brutal p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose-brutal a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.prose-brutal a:hover {
+  background: var(--accent);
+  color: var(--background);
+}
+
+.prose-brutal code {
+  @apply bg-secondary px-2 py-1 text-sm;
+  border: 2px solid var(--foreground);
+}
+
+.prose-brutal pre {
+  @apply bg-secondary p-4 overflow-x-auto mb-4;
+  border: 3px solid var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+.prose-brutal pre code {
+  @apply border-0 p-0 bg-transparent;
+}
+
+.prose-brutal blockquote {
+  @apply pl-4 italic my-4;
+  border-left: 4px solid var(--accent);
+}
+
+.prose-brutal ul,
+.prose-brutal ol {
+  @apply ml-6 mb-4;
+}
+
+.prose-brutal ul {
+  list-style-type: square;
+}
+
+.prose-brutal ol {
+  list-style-type: decimal;
+}
+
+.prose-brutal li {
+  @apply mb-2;
+}
+
+.prose-brutal img {
+  @apply my-4;
+  border: 3px solid var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+.prose-brutal hr {
+  @apply my-8;
+  border: none;
+  border-top: 3px solid var(--foreground);
+}
+
+/* Code block with title bar */
+.code-block-wrapper {
+  @apply mb-4;
+}
+
+.code-title-bar {
+  @apply flex items-center justify-between px-4 py-2 text-sm font-bold;
+  background: var(--foreground);
+  color: var(--background);
+  border: 3px solid var(--foreground);
+  border-bottom: none;
+}
+
+.code-lang {
+  @apply uppercase tracking-wider text-xs;
+}
+
+.copy-btn {
+  @apply px-3 py-1 text-xs uppercase tracking-wider cursor-pointer;
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--background);
+  transition: all 0.1s;
+}
+
+.copy-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.code-block-wrapper pre {
+  @apply mt-0 mb-0;
+  border-top: none;
+}
+
+/* YouTube embed */
+.youtube-embed {
+  @apply my-6;
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border: 3px solid var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+.youtube-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Syntax highlighting - Neo-brutalist theme */
+.hljs {
+  @apply bg-secondary text-foreground;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-string,
+.hljs-meta .hljs-meta-string,
+.hljs-literal,
+.hljs-doctag,
+.hljs-regexp {
+  color: #22863a;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #6f42c1;
+  font-weight: bold;
+}
+
+.hljs-attribute,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #005cc5;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-subst,
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-link {
+  color: #e36209;
+}
+
+.hljs-built_in,
+.hljs-deletion {
+  color: #b31d28;
+}
+
+.hljs-formula {
+  background: #f6f8fa;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}

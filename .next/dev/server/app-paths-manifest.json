@@ -1,0 +1,15 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/new/page": "app/admin/new/page.js",
+  "/admin/newsletter/page": "app/admin/newsletter/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/admin/newsletter/route": "app/api/admin/newsletter/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/posts/[slug]/route": "app/api/posts/[slug]/route.js",
+  "/api/posts/route": "app/api/posts/route.js",
+  "/api/subscribe/route": "app/api/subscribe/route.js",
+  "/newsletter/page": "app/newsletter/page.js",
+  "/page": "app/page.js",
+  "/post/[slug]/page": "app/post/[slug]/page.js"
+}

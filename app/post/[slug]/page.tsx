@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
-import { GiscusComments } from '@/components/GiscusComments'
+import  GiscusComments  from '@/components/GiscusComments'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
@@ -86,12 +86,7 @@ export default async function PostPage({ params }: Props) {
             <MarkdownContent content={post.content} />
           </div>
 
-          <section className="brutal-border brutal-shadow bg-card p-6">
-            <h3 className="text-xl font-bold mb-4">
-              <span className="text-accent">{'>'}</span> comments
-            </h3>
-            <GiscusComments />
-          </section>
+          <GiscusComments />
         </article>
       </main>
       <Footer />

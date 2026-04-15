@@ -1,81 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server'
+// app/api/posts/route.ts
+import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
 
-// GET all posts (public)
-export async function GET(request: NextRequest) {
-  try {
-    await dbConnect()
-
-    const { searchParams } = new URL(request.url)
-    const tag = searchParams.get('tag')
-    const published = searchParams.get('published')
-
-    const query: Record<string, unknown> = {}
-    
-    // Only show published posts for public access
-    if (published !== 'all') {
-      query.published = true
-    }
-    
-    if (tag) {
-      query.tags = tag
-    }
-
-    const posts = await Post.find(query)
-      .sort({ createdAt: -1 })
-      .select('-content')
-      .lean()
-
-    return NextResponse.json(posts)
-  } catch (error) {
-    console.error('Error fetching posts:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch posts' },
-      { status: 500 }
-    )
-  }
+/**
+ * Utility to generate a URL-friendly slug
+ */
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
 }
 
-// POST create new post (admin only)
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
     const session = await getSession()
-    console.log('[v0] Session check:', session ? 'authenticated' : 'no session')
-    
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     await dbConnect()
-    console.log('[v0] Database connected')
+    const body = await req.json()
+    const { title, content, excerpt, coverImage, tags, published } = body
 
-    const body = await request.json()
-    const { title, content, excerpt, tags, published } = body
-    console.log('[v0] Creating post with title:', title)
-
-    if (!title || !content || !excerpt) {
-      return NextResponse.json(
-        { error: 'Title, content, and excerpt are required' },
-        { status: 400 }
-      )
+    // Validation
+    if (!title || !content) {
+      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
+
+    // Ensure slug exists before creation
+    const slug = body.slug || generateSlug(title)
+
+    // Check for duplicate slug
+    const existingPost = await Post.findOne({ slug })
+    const finalSlug = existingPost ? `${slug}-${Date.now()}` : slug
 
     const post = await Post.create({
       title,
       content,
-      excerpt,
+      excerpt: excerpt || content.substring(0, 150),
+      slug: finalSlug,
+      coverImage,
       tags: tags || [],
       published: published ?? false,
     })
-    console.log('[v0] Post created successfully:', post._id)
 
     return NextResponse.json(post, { status: 201 })
-  } catch (error) {
-    console.error('[v0] Error creating post:', error)
+  } catch (error: any) {
+    console.error('Post creation error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create post' },
+      { error: error.message || 'Failed to create post' }, 
       { status: 500 }
     )
   }

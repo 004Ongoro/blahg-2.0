@@ -7,7 +7,7 @@ export function Header() {
         <Link href="/" className="group">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             <span className="text-accent">{'>'}</span>
-            <span className="text-foreground">dev</span>
+            <span className="text-foreground">geo</span>
             <span className="text-muted-foreground">.blog</span>
           </h1>
         </Link>
@@ -23,6 +23,12 @@ export function Header() {
             className="text-sm hover:text-accent transition-colors"
           >
             /tags
+          </Link>
+          <Link
+            href="/newsletter"
+            className="text-sm hover:text-accent transition-colors"
+          >
+            /newsletter
           </Link>
           <Link
             href="/admin"

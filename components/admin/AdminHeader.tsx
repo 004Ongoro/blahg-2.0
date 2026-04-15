@@ -33,6 +33,12 @@ export function AdminHeader() {
             >
               /new
             </Link>
+            <Link
+              href="/admin/newsletter"
+              className="text-sm hover:text-accent transition-colors"
+            >
+              /newsletter
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">

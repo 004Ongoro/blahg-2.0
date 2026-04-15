@@ -5,75 +5,33 @@ export interface IPost extends Document {
   slug: string
   content: string
   excerpt: string
+  coverImage?: string
   tags: string[]
-  readTime: number
   published: boolean
   createdAt: Date
   updatedAt: Date
 }
 
-// Delete the cached model to ensure we use the new schema
-if (mongoose.models.Post) {
-  delete mongoose.models.Post
-}
-
-const PostSchema = new Schema<IPost>(
+const PostSchema: Schema = new Schema(
   {
-    title: {
-      type: String,
-      required: [true, 'Title is required'],
+    title: { type: String, required: [true, 'Title is required'], trim: true },
+    slug: { 
+      type: String, 
+      required: [true, 'Slug is required'], 
+      unique: true, 
       trim: true,
+      lowercase: true 
     },
-    slug: {
-      type: String,
-      required: [true, 'Slug is required'],
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    content: {
-      type: String,
-      required: [true, 'Content is required'],
-    },
-    excerpt: {
-      type: String,
-      required: [true, 'Excerpt is required'],
-      maxlength: 300,
-    },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    readTime: {
-      type: Number,
-      default: 1,
-    },
-    published: {
-      type: Boolean,
-      default: false,
-    },
+    content: { type: String, required: [true, 'Content is required'] },
+    excerpt: { type: String, required: [true, 'Excerpt is required'] },
+    coverImage: { type: String },
+    tags: { type: [String], default: [] },
+    published: { type: Boolean, default: false },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 )
 
-// Calculate read time and slug before saving - no next() callback
-PostSchema.pre('save', function () {
-  // Calculate read time
-  const wordsPerMinute = 200
-  const wordCount = this.content.split(/\s+/).length
-  this.readTime = Math.ceil(wordCount / wordsPerMinute)
-  
-  // Create slug from title if not provided
-  if (!this.slug && this.title) {
-    this.slug = this.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
-})
+PostSchema.index({ slug: 1 })
 
-const Post: Model<IPost> = mongoose.model<IPost>('Post', PostSchema)
-
+const Post: Model<IPost> = mongoose.models.Post || mongoose.model<IPost>('Post', PostSchema)
 export default Post

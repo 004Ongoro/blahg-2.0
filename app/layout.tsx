@@ -1,41 +1,30 @@
-import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
-import dbConnect from '@/lib/mongodb'
-import Admin from '@/models/Admin'
-import { headers } from 'next/headers'
+import type { Metadata } from 'next'
+import { JetBrains_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
 
-async function checkSetupRequired() {
-  try {
-    await dbConnect()
-    const admin = await Admin.findOne({})
-    return !admin
-  } catch {
-    return true
-  }
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ['latin'],
+  variable: '--font-mono',
+})
+
+export const metadata: Metadata = {
+  title: 'Blog by George Ongoro - Tech and Coding',
+  description: 'Hey, this is my blog! What do you think about it?',
+  keywords: ['developer', 'blog', 'programming', 'code', 'tech'],
 }
 
-export default async function AdminLayout({
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
-  const setupRequired = await checkSetupRequired()
-  const session = await getSession()
-  
-  // Get the current path from headers to identify the login page
-  const headersList = await headers()
-  const fullUrl = headersList.get('x-url') || ''
-  const isLoginPage = fullUrl.endsWith('/admin/login')
-
-  // Allow access to setup page without auth
-  if (setupRequired) {
-    return <>{children}</>
-  }
-
-  // Redirect to login if not authenticated for protected pages,
-  if (!session && !isLoginPage) {
-    redirect('/admin/login')
-  }
-
-  return <>{children}</>
+}>) {
+  return (
+    <html lang="en" className="bg-background">
+      <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
 }

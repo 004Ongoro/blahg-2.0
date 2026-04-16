@@ -248,7 +248,7 @@ async function POST(req) {
             <p>You may reply to this address directly, I read all replies.</p>
             <p>
               To manage your subscription or opt-out, visit my 
-              <a href="https://blog.ongoro.top/newsletter" style="color: #ff0000;">Newsletter Center</a>.
+              <a href="https://dev.ongoro.top/newsletter" style="color: #ff0000;">Newsletter Center</a>.
             </p>
           </div>
         </div>

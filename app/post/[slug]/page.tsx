@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
-import  GiscusComments  from '@/components/GiscusComments'
+import GiscusComments from '@/components/GiscusComments'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
@@ -28,14 +28,33 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
   
   if (!post) {
     return { title: 'Post Not Found' }
   }
   
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}`
+  
   return {
-    title: `${post.title} | dev.blog`,
+    title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: `${baseUrl}/post/${slug}`, // Canonical link for SEO
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      url: `${baseUrl}/post/${slug}`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [ogImageUrl],
+    },
   }
 }
 
@@ -51,7 +70,7 @@ export default async function PostPage({ params }: Props) {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
-        <article>
+        <article itemScope itemType="https://schema.org/BlogPosting">
           <header className="mb-8">
             <Link
               href="/"
@@ -59,11 +78,13 @@ export default async function PostPage({ params }: Props) {
             >
               &larr; back to posts
             </Link>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h1 itemProp="headline" className="text-3xl md:text-4xl font-bold mb-4 text-balance">
               {post.title}
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
-              <span>{formatDate(post.createdAt)}</span>
+              <time itemProp="datePublished" dateTime={post.createdAt}>
+                {formatDate(post.createdAt)}
+              </time>
               <span className="text-accent">|</span>
               <span>{post.readTime} min read</span>
             </div>
@@ -82,7 +103,7 @@ export default async function PostPage({ params }: Props) {
             )}
           </header>
 
-          <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8">
+          <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8" itemProp="articleBody">
             <MarkdownContent content={post.content} />
           </div>
 

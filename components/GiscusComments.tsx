@@ -1,3 +1,4 @@
+// components/GiscusComments.tsx
 'use client'
 
 import Giscus from '@giscus/react'
@@ -20,6 +21,7 @@ export default function GiscusComments() {
         category="General"
         categoryId="DIC_kwDOSCcO5c4C65oX"
         mapping="pathname"
+        strict="0"
         reactionsEnabled="1"
         emitMetadata="0"
         inputPosition="top"

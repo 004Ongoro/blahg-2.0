@@ -8,6 +8,7 @@ export interface IPost extends Document {
   coverImage?: string
   tags: string[]
   published: boolean
+  readTime: number
   createdAt: Date
   updatedAt: Date
 }
@@ -27,6 +28,7 @@ const PostSchema: Schema = new Schema(
     coverImage: { type: String },
     tags: { type: [String], default: [] },
     published: { type: Boolean, default: false },
+    readTime: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

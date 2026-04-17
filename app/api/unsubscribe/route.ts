@@ -4,26 +4,23 @@ import Subscriber from '@/models/Subscriber'
 
 export async function POST(req: Request) {
   try {
-    const { id } = await req.json()
+    const { email } = await req.json()
 
-    if (!id) {
-      return NextResponse.json({ error: 'Subscriber ID is required' }, { status: 400 })
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
     await dbConnect()
-    const result = await Subscriber.findByIdAndUpdate(
-      id,
-      { active: false },
-      { new: true }
-    )
+    
+    const result = await Subscriber.findOneAndDelete({ email: email.toLowerCase() })
 
     if (!result) {
-      return NextResponse.json({ error: 'Subscriber not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Email not found in our list.' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, message: 'Unsubscribed successfully' })
+    return NextResponse.json({ success: true, message: 'Successfully unsubscribed' })
   } catch (error: any) {
-    console.error('Unsubscribe Error:', error)
+    console.error('Unsubscribe error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

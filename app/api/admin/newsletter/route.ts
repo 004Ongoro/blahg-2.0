@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import dbConnect from '@/lib/mongodb'
 import Subscriber from '@/models/Subscriber'
+import NewsletterIssue from '@/models/NewsletterIssue'
 import { getSession } from '@/lib/auth'
+import { slugify } from '@/lib/utils'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -10,9 +12,6 @@ import rehypeStringify from 'rehype-stringify'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-/**
- * Converts Markdown content to HTML for email delivery
- */
 async function markdownToHtml(markdown: string) {
   const result = await unified()
     .use(remarkParse)
@@ -22,79 +21,107 @@ async function markdownToHtml(markdown: string) {
   return result.toString()
 }
 
-export async function POST(req: Request) {
+/**
+ * GET: Fetch all newsletter issues for admin management
+ */
+export async function GET() {
   try {
     const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { subject, content, isMarkdown = true } = await req.json()
+    await dbConnect()
+    // Fetch all issues, sorted by newest first
+    const issues = await NewsletterIssue.find({}).sort({ createdAt: -1 }).lean()
+    
+    return NextResponse.json(issues)
+  } catch (error) {
+    console.error('Fetch Archive Error:', error)
+    return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 })
+  }
+}
 
-    if (!subject || !content) {
-      return NextResponse.json({ error: 'Subject and content are required' }, { status: 400 })
-    }
+/**
+ * POST: Blast a new newsletter and save to archive
+ */
+export async function POST(req: Request) {
+  try {
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { subject, content, isMarkdown = true, publishToArchive = true } = await req.json()
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+    const slug = `${slugify(subject)}-${Date.now()}`
 
     await dbConnect()
+    
+    // Save to database first so the slug is reserved and "View in Browser" link works
+    const issue = await NewsletterIssue.create({
+      subject,
+      content,
+      isMarkdown,
+      slug,
+      published: publishToArchive
+    })
+
     const subscribers = await Subscriber.find({ active: true })
     const recipientEmails = subscribers.map((sub) => sub.email)
-
-    if (recipientEmails.length === 0) {
-      return NextResponse.json({ error: 'No active subscribers found' }, { status: 404 })
-    }
-
-    // Process content: Markdown to HTML, or wrap plain text to respect line breaks
+    
     const processedContent = isMarkdown 
       ? await markdownToHtml(content)
       : `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`
 
-    const { data, error } = await resend.emails.send({
+    // Send via Resend
+    const { error } = await resend.emails.send({
       from: 'George Ongoro <george@ongoro.top>',
       to: 'george@ongoro.top',
       bcc: recipientEmails,
       subject: subject,
       html: `
-        <!DOCTYPE html>
-        <html>
-          <body style="background-color: #ffffff; font-family: 'Helvetica', 'Arial', sans-serif; margin: 0; padding: 40px 20px;">
-            <div style="max-width: 600px; margin: 0 auto; border: 4px solid #000000; background-color: #ffffff; box-shadow: 8px 8px 0px #000000;">
-              
-              <div style="background-color: #fb923c; border-bottom: 4px solid #000000; padding: 30px; text-align: left;">
-                <h1 style="margin: 0; font-size: 32px; font-weight: 900; text-transform: uppercase; color: #000000; line-height: 1;">
-                  ${subject}
-                </h1>
-              </div>
-
-              <div style="padding: 30px; font-size: 18px; line-height: 1.6; color: #000000;">
-                <div class="email-body">
-                  ${processedContent}
-                </div>
-              </div>
-
-              <div style="padding: 30px; background-color: #f3f4f6; border-top: 4px solid #000000; font-size: 14px; font-weight: bold;">
-                <p style="margin: 0 0 10px 0;">Sent from <a href="https://ongoro.top" style="color: #fb923c; text-decoration: none; border-bottom: 2px solid #fb923c;">ongoro.top</a></p>
-                <p style="margin: 0;">
-                  Need to leave? <a href="https://dev.ongoro.top/newsletter" style="color: #000000;">Unsubscribe here</a>.
-                </p>
-              </div>
-            </div>
-            
-            <style>
-              .email-body h1, .email-body h2 { color: #000; text-transform: uppercase; border-bottom: 2px solid #fb923c; padding-bottom: 5px; }
-              .email-body p { margin-bottom: 20px; }
-              .email-body a { color: #fb923c; font-weight: bold; }
-              .email-body code { background: #eee; padding: 2px 4px; border: 1px solid #000; }
-            </style>
-          </body>
-        </html>
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 4px solid #000; background: #fff;">
+          <div style="background: #fb923c; padding: 20px; border-bottom: 4px solid #000; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">${subject}</h1>
+            <a href="${baseUrl}/newsletter/archive/${slug}" style="font-size: 12px; color: #000; font-weight: bold;">View in Browser</a>
+          </div>
+          <div style="padding: 30px; font-size: 18px; line-height: 1.6;">
+            ${processedContent}
+          </div>
+          <div style="padding: 30px; background: #f3f4f6; border-top: 4px solid #000; font-size: 14px;">
+            <p><strong>Note:</strong> You can reply to this email directly! I read every single reply and will get back to you personally.</p>
+            <hr style="border: 1px solid #000; margin: 20px 0;" />
+            <p>Sent from <strong>George Ongoro</strong> to subscribers of <strong>dev.ongoro.top</strong>.</p>
+            <p>
+              Not a subscriber? <a href="${baseUrl}/newsletter" style="color: #fb923c; font-weight: bold;">Subscribe here</a>.
+              <br />
+              Need to leave? <a href="${baseUrl}/unsubscribe" style="color: #000;">Unsubscribe here</a>.
+            </p>
+          </div>
+        </div>
       `,
     })
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ success: true, slug: issue.slug })
   } catch (error: any) {
     console.error('Newsletter Error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
+}
+
+/**
+ * DELETE: Remove an issue from the archive
+ */
+export async function DELETE(req: Request) {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+
+  if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+
+  await dbConnect()
+  await NewsletterIssue.findByIdAndDelete(id)
+  return NextResponse.json({ success: true })
 }

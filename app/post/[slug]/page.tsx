@@ -1,116 +1,129 @@
+'use client'
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { motion, useScroll, useSpring } from 'framer-motion' // Added for animations
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
 import GiscusComments from '@/components/GiscusComments'
-import dbConnect from '@/lib/mongodb'
-import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 
 export const dynamic = 'force-static'
 export const revalidate = false
 
-interface Props {
-  params: Promise<{ slug: string }>
+interface Post {
+  title: string
+  content: string
+  excerpt: string
+  createdAt: string
+  readTime: number
+  tags: string[]
+  slug: string
 }
 
-async function getPost(slug: string) {
-  try {
-    await dbConnect()
-    const post = await Post.findOne({ slug, published: true }).lean()
-    return post ? JSON.parse(JSON.stringify(post)) : null
-  } catch (error) {
-    console.error('Error fetching post:', error)
-    return null
-  }
-}
-
-export async function generateMetadata({ params }: Props) {
-  const { slug } = await params
-  const post = await getPost(slug)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
-  
-  if (!post) {
-    return { title: 'Post Not Found' }
-  }
-  
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}`
-  
-  return {
-    title: post.title,
-    description: post.excerpt,
-    alternates: {
-      canonical: `${baseUrl}/post/${slug}`, // Canonical link for SEO
-    },
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: 'article',
-      url: `${baseUrl}/post/${slug}`,
-      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt,
-      images: [ogImageUrl],
-    },
+// Animation variants for section reveals
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } 
   }
 }
 
-export default async function PostPage({ params }: Props) {
-  const { slug } = await params
-  const post = await getPost(slug)
+export default function PostPage({ params }: { params: { slug: string } }) {
+  const [post, setPost] = useState<Post | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  if (!post) {
-    notFound()
-  }
+  // Scroll Progress Logic
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  })
+
+  useEffect(() => {
+    async function fetchPost() {
+      try {
+        const res = await fetch(`/api/posts/${params.slug}`)
+        if (res.ok) {
+          const data = await res.json()
+          setPost(data)
+        }
+      } catch (err) {
+        console.error("Failed to load post", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPost()
+  }, [params.slug])
+
+  if (loading) return <div className="min-h-screen bg-background" />
+  if (!post) notFound()
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {/*  Reading Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-2 bg-accent z-[60] origin-left"
+        style={{ scaleX }}
+      />
+
       <Header />
+      
       <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
-        <article itemScope itemType="https://schema.org/BlogPosting">
-          <header className="mb-8">
+        <article>
+          {/* Header Animation */}
+          <motion.header 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-8"
+          >
             <Link
               href="/"
-              className="text-muted-foreground hover:text-accent text-sm mb-4 inline-block"
+              className="text-muted-foreground hover:text-accent text-sm mb-4 inline-block font-bold"
             >
               &larr; back to posts
             </Link>
-            <h1 itemProp="headline" className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
               {post.title}
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
-              <time itemProp="datePublished" dateTime={post.createdAt}>
-                {formatDate(post.createdAt)}
-              </time>
+              <span>{formatDate(new Date(post.createdAt))}</span>
               <span className="text-accent">|</span>
               <span>{post.readTime} min read</span>
             </div>
-            {post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag: string) => (
-                  <Link
-                    key={tag}
-                    href={`/tags/${tag}`}
-                    className="bg-secondary text-secondary-foreground px-3 py-1 text-sm brutal-border hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </header>
+          </motion.header>
 
-          <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8" itemProp="articleBody">
+          {/* Content Body Animation */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUp}
+            className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8"
+          >
             <MarkdownContent content={post.content} />
-          </div>
+          </motion.div>
 
-          <GiscusComments />
+          {/* Comments Section Animation */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+          >
+            <GiscusComments />
+          </motion.div>
         </article>
       </main>
+
       <Footer />
     </div>
   )

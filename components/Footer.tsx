@@ -16,7 +16,7 @@ export function Footer() {
         <div className="space-y-4">
           <h3 className="text-xl font-black uppercase italic">blahg.2.0</h3>
           <p className="text-muted-foreground font-medium">
-            Building in public, breaking things, and documenting the journey.
+            Half-baked ideas, fully-baked builds, and the messy bits in between.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export function Footer() {
 
         <div className="space-y-4 text-sm md:text-right">
           <p className="font-bold">© {new Date().getFullYear()} George Ongoro // No rights reserved</p>
-          <p className="text-muted-foreground">This site is created by <a href='https://github.com/004Ongoro' target='_blank' >@004Ongoro </a>and it is open-source on <a href='https://github.com/004Ongoro/blahg-2.0' target='_blank'>Github</a></p>
+          <p className="text-muted-foreground">This site is created by <a href='https://github.com/004Ongoro' target='_blank' className='text-accent' >@004Ongoro </a>and it is open-source on <a href='https://github.com/004Ongoro/blahg-2.0' target='_blank' className='text-accent' >Github</a></p>
         </div>
       </div>
     </footer>

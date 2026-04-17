@@ -9,6 +9,7 @@ const navLinks = [
   { name: 'posts', href: '/' },
   { name: 'tags', href: '/tags' },
   { name: 'newsletter', href: '/newsletter' },
+  { name: 'admin', href: '/admin' },
 ]
 
 export function Header() {

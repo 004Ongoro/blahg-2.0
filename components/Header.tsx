@@ -9,6 +9,7 @@ const navLinks = [
   { name: 'posts', href: '/' },
   { name: 'tags', href: '/tags' },
   { name: 'newsletter', href: '/newsletter' },
+  { name: 'issues', href: '/newsletter/archive' },
   { name: 'admin', href: '/admin' },
 ]
 

@@ -79,23 +79,84 @@ export async function POST(req: Request) {
       bcc: recipientEmails,
       subject: subject,
       html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 4px solid #000; background: #fff;">
-          <div style="background: #fb923c; padding: 20px; border-bottom: 4px solid #000; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="margin: 0; font-size: 24px; text-transform: uppercase;">${subject}</h1>
-            <a href="${baseUrl}/newsletter/archive/${slug}" style="font-size: 12px; color: #000; font-weight: bold;">View in Browser</a>
-          </div>
-          <div style="padding: 30px; font-size: 18px; line-height: 1.6;">
-            ${processedContent}
-          </div>
-          <div style="padding: 30px; background: #f3f4f6; border-top: 4px solid #000; font-size: 14px;">
-            <p><strong>Note:</strong> You can reply to this email directly! I read every single reply and will get back to you personally.</p>
-            <hr style="border: 1px solid #000; margin: 20px 0;" />
-            <p>Sent from <strong>George Ongoro</strong> to subscribers of <strong>dev.ongoro.top</strong>.</p>
-            <p>
-              Not a subscriber? <a href="${baseUrl}/newsletter" style="color: #fb923c; font-weight: bold;">Subscribe here</a>.
-              <br />
-              Need to leave? <a href="${baseUrl}/unsubscribe" style="color: #000;">Unsubscribe here</a>.
-            </p>
+        <div style="font-family: Arial, Helvetica, sans-serif; background: #f9fafb; padding: 20px;">
+          
+          <!-- MAIN WRAPPER -->
+          <div style="max-width: 620px; margin: 0 auto; background: #ffffff; border: 4px solid #000; box-shadow: 8px 8px 0px #000;">
+            
+            <!-- HEADER -->
+            <div style="background: #000; color: #fff; padding: 24px; border-bottom: 4px solid #000;">
+              <h1 style="margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 1px;">
+                ${subject}
+              </h1>
+
+              <div style="margin-top: 10px;">
+                <a href="${baseUrl}/newsletter/archive/${slug}" 
+                  style="font-size: 12px; color: #fb923c; font-weight: bold; text-decoration: none; border-bottom: 2px solid #fb923c;">
+                  VIEW IN BROWSER →
+                </a>
+              </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div style="padding: 30px; font-size: 17px; line-height: 1.7; color: #000;">
+              ${processedContent}
+            </div>
+
+            <!-- CTA BLOCK -->
+            <div style="margin: 0 30px 30px; border: 4px solid #000; padding: 20px; background: #fb923c;">
+              <p style="margin: 0; font-weight: bold; font-size: 15px;">
+                💬 Reply to this email — I actually read everything.
+              </p>
+            </div>
+
+            <!-- SOCIALS -->
+            <div style="padding: 0 30px 30px;">
+              <p style="font-weight: bold; margin-bottom: 10px;">CONNECT</p>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                
+                <a href="https://github.com/004Ongoro" 
+                  style="border: 3px solid #000; padding: 10px 14px; text-decoration: none; color: #000; font-weight: bold; background: #fff;">
+                  GITHUB ↗
+                </a>
+
+                <a href="https://x.com/ongorogeorg_e" 
+                  style="border: 3px solid #000; padding: 10px 14px; text-decoration: none; color: #000; font-weight: bold; background: #fff;">
+                  X ↗
+                </a>
+
+                <a href="https://linkedin.com/in/georgeongoro2" 
+                  style="border: 3px solid #000; padding: 10px 14px; text-decoration: none; color: #000; font-weight: bold; background: #fff;">
+                  LINKEDIN ↗
+                </a>
+
+              </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div style="background: #000; color: #fff; padding: 24px; border-top: 4px solid #000; font-size: 13px;">
+              
+              <p style="margin: 0 0 10px;">
+                Sent by <strong>George Ongoro</strong>
+              </p>
+
+              <p style="margin: 0 0 15px;">
+                dev.ongoro.top — building, breaking, learning.
+              </p>
+
+              <div style="margin-top: 10px;">
+                <a href="${baseUrl}/newsletter" style="color: #fb923c; font-weight: bold; text-decoration: none;">
+                  Subscribe
+                </a>
+                <span style="margin: 0 8px;">•</span>
+                <a href="${baseUrl}/unsubscribe" style="color: #fff; text-decoration: underline;">
+                  Unsubscribe
+                </a>
+              </div>
+
+            </div>
+
           </div>
         </div>
       `,

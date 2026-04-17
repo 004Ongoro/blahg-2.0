@@ -8,7 +8,8 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
+export const revalidate = false
 
 interface Props {
   params: Promise<{ slug: string }>

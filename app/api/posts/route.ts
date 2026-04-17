@@ -1,12 +1,15 @@
-// app/api/posts/route.ts
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
 
-/**
- * Utility to generate a URL-friendly slug
- */
+function calculateReadTime(content: string): number {
+  const wordsPerMinute = 200
+  const words = content.trim().split(/\s+/).length
+  return Math.ceil(words / wordsPerMinute)
+}
+
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
@@ -25,17 +28,15 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { title, content, excerpt, coverImage, tags, published } = body
 
-    // Validation
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
-    // Ensure slug exists before creation
     const slug = body.slug || generateSlug(title)
-
-    // Check for duplicate slug
     const existingPost = await Post.findOne({ slug })
     const finalSlug = existingPost ? `${slug}-${Date.now()}` : slug
+
+    const readTime = calculateReadTime(content)
 
     const post = await Post.create({
       title,
@@ -45,7 +46,16 @@ export async function POST(req: Request) {
       coverImage,
       tags: tags || [],
       published: published ?? false,
+      readTime,
     })
+
+    // If the post is published, clear the cache for the homepage and tags
+    if (post.published) {
+      // revalidate
+      revalidatePath('/')
+      revalidatePath('/tags')
+      tags?.forEach((tag: string) => revalidatePath(`/tags/${tag}`))
+    }
 
     return NextResponse.json(post, { status: 201 })
   } catch (error: any) {

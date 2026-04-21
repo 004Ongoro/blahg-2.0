@@ -30,7 +30,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
       <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="text-2xl font-black uppercase tracking-tighter hover:text-accent transition-colors">
-          blahg<span className="text-accent">.</span>2.0
+          george<span className="text-accent">.</span>2.0
         </Link>
 
         {/* Desktop Nav */}

@@ -10,6 +10,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+const gaId = process.env.GOOGLE_ANALYTICS_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -54,19 +55,22 @@ export default function RootLayout({
       <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
         
         {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-N9W5NHT9N3"
-          strategy="afterInteractive"
-        />
-        
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-N9W5NHT9N3');
-          `}
-        </Script>
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
 
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

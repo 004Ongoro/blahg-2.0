@@ -8,6 +8,8 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
+import { Button } from '@/components/ui/button'
+import { Shuffle, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -24,6 +26,40 @@ async function getPost(slug: string) {
   } catch (error) {
     console.error('Error fetching post:', error)
     return null
+  }
+}
+
+async function getNavigation(currentCreatedAt: Date) {
+  try {
+    await dbConnect()
+    
+    // Fetch Previous and Next based on creation date
+    const prevPost = await Post.findOne({ 
+      published: true, 
+      createdAt: { $lt: currentCreatedAt } 
+    }).sort({ createdAt: -1 }).select('slug').lean()
+
+    const nextPost = await Post.findOne({ 
+      published: true, 
+      createdAt: { $gt: currentCreatedAt } 
+    }).sort({ createdAt: 1 }).select('slug').lean()
+
+    // i'm Feeling Lucky
+    const count = await Post.countDocuments({ published: true })
+    const random = Math.floor(Math.random() * count)
+    const luckyPost = await Post.findOne({ published: true })
+      .skip(random)
+      .select('slug')
+      .lean()
+
+    return {
+      prev: prevPost?.slug || null,
+      next: nextPost?.slug || null,
+      lucky: luckyPost?.slug || null
+    }
+  } catch (error) {
+    console.error('Error fetching navigation:', error)
+    return { prev: null, next: null, lucky: null }
   }
 }
 
@@ -60,9 +96,10 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) notFound()
 
+  const nav = await getNavigation(new Date(post.createdAt))
+
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Client Component for the Progress Bar & Initial Entry */}
       <PostAnimations />
 
       <Header />
@@ -88,6 +125,31 @@ export default async function PostPage({ params }: Props) {
 
           <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8">
             <MarkdownContent content={post.content} />
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+            {nav.prev ? (
+              <Link href={`/post/${nav.prev}`} passHref>
+                <Button variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                  <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+                </Button>
+              </Link>
+            ) : <div />}
+
+            <Link href={nav.lucky ? `/post/${nav.lucky}` : '#'} passHref>
+              <Button variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                <Shuffle className="mr-2 h-4 w-4" /> I'm Feeling Lucky
+              </Button>
+            </Link>
+
+            {nav.next ? (
+              <Link href={`/post/${nav.next}`} passHref>
+                <Button variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                  Next <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            ) : <div />}
           </div>
 
           <GiscusComments />

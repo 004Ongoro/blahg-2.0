@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LayoutDashboard, FileText, PlusCircle, LogOut, Menu, X, Mail } from 'lucide-react'
+import { LayoutDashboard, FileText, PlusCircle, LogOut, Menu, X, Mail, Users } from 'lucide-react'
 
 const adminLinks = [
   { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={18} /> },
   { name: 'New Post', href: '/admin/new', icon: <PlusCircle size={18} /> },
   { name: 'Newsletter', href: '/admin/newsletter', icon: <Mail size={18} /> },
+  { name: 'Subscribers', href: '/admin/newsletter/subscribers', icon: <Users size={18} /> },
 ]
 
 export function AdminHeader() {

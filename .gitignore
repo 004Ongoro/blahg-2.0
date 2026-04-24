@@ -1,6 +1,6 @@
 node_modules
 .env.local
-<<<<<<< HEAD
-.next 
-=======
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
+.next
+.env
+.vercel
+*.log

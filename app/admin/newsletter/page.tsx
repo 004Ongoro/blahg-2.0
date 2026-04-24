@@ -6,12 +6,8 @@ import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
-<<<<<<< HEAD
 import { Trash2, Eye, Send, History, CheckCircle2, AlertTriangle, Users, Mail, CheckSquare, Square } from 'lucide-react'
 import Link from 'next/link'
-=======
-import { Trash2, Eye, Send, History, CheckCircle2, AlertTriangle } from 'lucide-react'
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
 
 export default function AdminNewsletter() {
   const [subject, setSubject] = useState('')
@@ -25,7 +21,6 @@ export default function AdminNewsletter() {
   const [issues, setIssues] = useState<any[]>([])
   const [showPreviewMobile, setShowPreviewMobile] = useState(false)
 
-<<<<<<< HEAD
   // Subscribers state
   const [subscribers, setSubscribers] = useState<any[]>([])
   const [selectedSubscribers, setSelectedSubscribers] = useState<string[]>([])
@@ -52,23 +47,10 @@ export default function AdminNewsletter() {
       }
     } catch (err) {
       console.error("Failed to load data", err)
-=======
-  // Fetch existing issues for management
-  const fetchIssues = async () => {
-    try {
-      const res = await fetch('/api/admin/newsletter')
-      if (res.ok) {
-        const data = await res.json()
-        setIssues(data)
-      }
-    } catch (err) {
-      console.error("Failed to load archive", err)
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
     }
   }
 
   useEffect(() => {
-<<<<<<< HEAD
     fetchData()
   }, [])
 
@@ -88,11 +70,6 @@ export default function AdminNewsletter() {
     }
   }
 
-=======
-    fetchIssues()
-  }, [])
-
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
   const previewHtml = useMemo(() => {
     if (!content) return ''
     if (!isMarkdown) return `<div style="white-space: pre-wrap;">${content}</div>`
@@ -110,13 +87,10 @@ export default function AdminNewsletter() {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
-<<<<<<< HEAD
     if (selectedSubscribers.length === 0) {
       setStatus({ type: 'error', msg: 'Select at least one recipient' })
       return
     }
-=======
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
     setSending(true)
     setStatus({ type: '', msg: '' })
 
@@ -124,7 +98,6 @@ export default function AdminNewsletter() {
       const res = await fetch('/api/admin/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-<<<<<<< HEAD
         body: JSON.stringify({ 
           subject, 
           content, 
@@ -139,16 +112,6 @@ export default function AdminNewsletter() {
         setSubject('')
         setContent('')
         fetchData() // Refresh list
-=======
-        body: JSON.stringify({ subject, content, isMarkdown, publishToArchive }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setStatus({ type: 'success', msg: 'Broadcast sent and archived!' })
-        setSubject('')
-        setContent('')
-        fetchIssues() // Refresh list
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
       } else {
         setStatus({ type: 'error', msg: data.error })
       }
@@ -179,7 +142,6 @@ export default function AdminNewsletter() {
           <h1 className="text-4xl font-black uppercase italic">
             Broadcast <span className="text-accent">Center</span>
           </h1>
-<<<<<<< HEAD
           <div className="flex flex-wrap gap-2">
             <Link 
               href="/admin/newsletter/subscribers"
@@ -194,19 +156,10 @@ export default function AdminNewsletter() {
               <Eye size={16} /> {showPreviewMobile ? 'Edit Content' : 'Preview Email'}
             </button>
           </div>
-=======
-          <button 
-            onClick={() => setShowPreviewMobile(!showPreviewMobile)}
-            className="lg:hidden flex items-center justify-center gap-2 brutal-border bg-secondary px-4 py-2 font-bold uppercase text-xs"
-          >
-            <Eye size={16} /> {showPreviewMobile ? 'Edit Content' : 'Preview Email'}
-          </button>
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Composer Panel */}
-<<<<<<< HEAD
           <div className={`flex flex-col gap-6 ${showPreviewMobile ? 'hidden lg:flex' : 'flex'}`}>
             <form 
               onSubmit={handleSend} 
@@ -226,27 +179,6 @@ export default function AdminNewsletter() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-sm font-bold uppercase text-accent">Message Content</label>
-=======
-          <form 
-            onSubmit={handleSend} 
-            className={`flex flex-col gap-6 brutal-border bg-card p-6 brutal-shadow ${showPreviewMobile ? 'hidden lg:flex' : 'flex'}`}
-          >
-            <div>
-              <label className="block text-sm font-bold mb-2 uppercase">Subject Line</label>
-              <input 
-                value={subject} 
-                onChange={e => setSubject(e.target.value)}
-                className="w-full brutal-border bg-background px-4 py-3 text-lg font-bold focus:ring-2 ring-accent outline-none"
-                placeholder="The Latest Updates..."
-                required
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-bold uppercase text-accent">Message Content</label>
-                <div className="flex gap-2">
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
                   <button 
                     type="button" 
                     onClick={() => setIsMarkdown(!isMarkdown)}
@@ -255,7 +187,6 @@ export default function AdminNewsletter() {
                     MODE: {isMarkdown ? 'MARKDOWN' : 'PLAIN TEXT'}
                   </button>
                 </div>
-<<<<<<< HEAD
                 <textarea 
                   value={content} 
                   onChange={e => setContent(e.target.value)}
@@ -335,46 +266,6 @@ export default function AdminNewsletter() {
               )}
             </form>
           </div>
-=======
-              </div>
-              <textarea 
-                value={content} 
-                onChange={e => setContent(e.target.value)}
-                rows={12}
-                className="w-full brutal-border bg-background px-4 py-3 font-mono text-base focus:ring-2 ring-accent outline-none"
-                placeholder={isMarkdown ? "# Hello\nYour markdown here..." : "Type plain message here..."}
-                required
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-               <input 
-                type="checkbox" 
-                id="archive-toggle"
-                checked={publishToArchive}
-                onChange={e => setPublishToArchive(e.target.checked)}
-                className="w-5 h-5 accent-accent cursor-pointer"
-               />
-               <label htmlFor="archive-toggle" className="text-sm font-bold uppercase cursor-pointer">
-                 Publish to Public Archive
-               </label>
-            </div>
-
-            <button 
-              disabled={sending}
-              className="brutal-btn bg-accent text-accent-foreground py-4 font-black uppercase text-xl flex items-center justify-center gap-3 disabled:opacity-50"
-            >
-              {sending ? 'Blasting...' : <><Send size={24} /> Blast Newsletter</>}
-            </button>
-
-            {status.msg && (
-              <div className={`flex items-center gap-3 font-bold p-3 brutal-border ${status.type === 'success' ? 'bg-green-200' : 'bg-red-200'}`}>
-                {status.type === 'success' ? <CheckCircle2 size={20}/> : <AlertTriangle size={20}/>}
-                {status.msg}
-              </div>
-            )}
-          </form>
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e
 
           {/* Responsive Preview Panel */}
           <div className={`${showPreviewMobile ? 'flex' : 'hidden lg:flex'} flex-col gap-4`}>
@@ -443,8 +334,4 @@ export default function AdminNewsletter() {
       </main>
     </div>
   )
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> f20ccfbde4a0698bf3fc069451cf49f956c9b26e

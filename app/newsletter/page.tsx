@@ -3,9 +3,33 @@
 import { useState } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles } from 'lucide-react'
+import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 type Mode = 'subscribe' | 'unsubscribe'
+
+const testimonials = [
+  {
+    name: "Paul Marc",
+    handle: "@paulmarc",
+    text: "I keep learning new things, I like it ;)",
+    color: "bg-yellow-200"
+  },
+  {
+    name: "Isaac de Andrade",
+    handle: "@andradei",
+    text: "Good read. Short and to the point.",
+    color: "bg-blue-200"
+  },
+  {
+    name: "Rafael",
+    handle: "@rafaelnacle",
+    text: "Nice!",
+    color: "bg-green-200"
+  }
+]
+
+const techStack = ["Next.js", "TypeScript", "MongoDB", "Architecture", "Serverless", "Security", "Optimization"]
 
 export default function NewsletterPage() {
   const [email, setEmail] = useState('')
@@ -47,20 +71,22 @@ export default function NewsletterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center p-4 py-20">
-        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 brutal-border brutal-shadow bg-card overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 py-12 md:py-20">
+        
+        {/* Main Hero Card */}
+        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 brutal-border brutal-shadow bg-card overflow-hidden mb-16">
           
           {/* Left Column: Benefits/Hype */}
           <div className="bg-accent text-accent-foreground p-8 md:p-12 flex flex-col justify-center border-b-4 md:border-b-0 md:border-r-4 border-foreground">
             <div className="inline-block bg-foreground text-background px-3 py-1 text-xs font-black uppercase mb-6 self-start">
               Weekly Insights
             </div>
-            <h1 className="text-5xl font-black uppercase italic mb-6 leading-[0.9]">
-              The <span className="text-white">Underground</span> Dev
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase italic mb-6 leading-[0.8] tracking-tighter">
+              The <span className="text-white block sm:inline">Underground</span> Dev
             </h1>
-            <p className="text-lg font-bold mb-8 opacity-90">
+            <p className="text-lg font-bold mb-8 opacity-90 leading-tight">
               Deep dives into high-performance web architecture, building profitable side projects, and the unvarnished truth about tech.
             </p>
             
@@ -147,15 +173,58 @@ export default function NewsletterPage() {
             </p>
           </div>
         </div>
-        
-        <div className="mt-12 flex gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 overflow-hidden whitespace-nowrap">
-           <span className="font-black italic text-2xl uppercase">Next.js</span>
-           <span className="font-black italic text-2xl uppercase">TypeScript</span>
-           <span className="font-black italic text-2xl uppercase">MongoDB</span>
-           <span className="font-black italic text-2xl uppercase">Architecture</span>
-           <span className="font-black italic text-2xl uppercase">Next.js</span>
-           <span className="font-black italic text-2xl uppercase">TypeScript</span>
+
+        {/* Testimonials Section */}
+        <div className="max-w-6xl w-full mb-20 px-4">
+          <h3 className="text-3xl font-black uppercase italic text-center mb-12">
+            What <span className="text-accent underline decoration-4 underline-offset-4">Developers</span> Are Saying
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20, rotate: i % 2 === 0 ? -2 : 2 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
+                viewport={{ once: true }}
+                className={`p-6 brutal-border brutal-shadow ${t.color} flex flex-col justify-between min-h-[180px] relative group cursor-default`}
+              >
+                <Quote className="absolute top-2 right-2 opacity-10 group-hover:opacity-20 transition-opacity" size={40} />
+                <p className="text-lg font-black leading-tight mb-6">"{t.text}"</p>
+                <div>
+                  <div className="font-black uppercase text-sm">{t.name}</div>
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase">
+                    <Twitter size={10} /> {t.handle}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
+        
+        {/* Infinite Marquee Tech Stack */}
+        <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground">
+          <motion.div 
+            animate={{ x: [0, -1000] }}
+            transition={{ 
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 20,
+                ease: "linear",
+              }
+            }}
+            className="flex gap-12 whitespace-nowrap min-w-full"
+          >
+            {[...techStack, ...techStack, ...techStack].map((tech, i) => (
+              <span key={i} className="text-3xl md:text-5xl font-black uppercase italic text-background tracking-tighter">
+                {tech} <span className="text-accent ml-8">///</span>
+              </span>
+            ))}
+          </motion.div>
+        </div>
+
       </main>
       <Footer />
     </div>

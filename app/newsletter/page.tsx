@@ -169,7 +169,7 @@ export default function NewsletterPage() {
             )}
 
             <p className="mt-8 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">
-              Joined by 500+ developers worldwide.
+              Joined by developers worldwide.
             </p>
           </div>
         </div>

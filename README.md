@@ -8,6 +8,8 @@ Blahg 2.0 is a production-grade, open-source blog platform built with **Next.js 
 -   **Clean UI/UX**: Responsive design using Tailwind CSS 4.0 and accessible components from Radix UI.
 -   **Markdown Content**: Full support for writing posts in Markdown with syntax highlighting via `rehype-highlight`.
 -   **Newsletter Integration**: Built-in subscription system using Resend and MongoDB.
+-   **Email Webhooks**: Integrated Resend webhooks for tracking email events (delivered, opened, bounced, etc.) with an admin view.
+-   **RSS Feed**: Automatically generated RSS feed at `/rss.xml` for content syndication.
 -   **Dynamic SEO**: Automated Open Graph (OG) image generation and metadata management for optimized social sharing.
 -   **Interactive Comments**: Integrated Giscus support for GitHub-powered discussions.
 -   **Analytics**: Native support for Vercel Analytics and Google Analytics.
@@ -35,6 +37,7 @@ Update the values in `.env` with your specific credentials:
 - **JWT_SECRET**: A secure key for user authentication.
 - **GMAIL_APP_PASSWORD / USER**: Credentials for transactional emails.
 - **RESEND_API_KEY**: API key for newsletter distribution.
+- **RESEND_WEBHOOK_SECRET**: Signing secret for verifying Resend webhooks.
 - **GOOGLE_ANALYTICS_ID**: Your tracking ID - You can gt this from Google analytics(e.g., `G-XXXXXXXXXX`).
 
 ### 4. Customize Analytics
@@ -61,6 +64,7 @@ JWT_SECRET="your_jwt_secret_key"
 GMAIL_APP_PASSWORD="your_gmail_app_password"
 GMAIL_USER="your_gmail_user@gmail.com"
 RESEND_API_KEY="your_resend_api_key"
+RESEND_WEBHOOK_SECRET="your_resend_webhook_secret"
 
 # Analytics
 GOOGLE_ANALYTICS_ID="your_google_analytics_id"

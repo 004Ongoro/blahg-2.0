@@ -144,6 +144,12 @@ export default function AdminNewsletter() {
           </h1>
           <div className="flex flex-wrap gap-2">
             <Link 
+              href="/admin/newsletter/events"
+              className="flex items-center justify-center gap-2 brutal-border bg-white px-4 py-2 font-black uppercase text-xs hover:bg-accent transition-colors"
+            >
+              <Mail size={16} /> Email Events
+            </Link>
+            <Link 
               href="/admin/newsletter/subscribers"
               className="flex items-center justify-center gap-2 brutal-border bg-white px-4 py-2 font-black uppercase text-xs hover:bg-accent transition-colors"
             >

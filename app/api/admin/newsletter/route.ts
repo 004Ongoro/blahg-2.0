@@ -82,13 +82,7 @@ export async function POST(req: Request) {
       ? await markdownToHtml(content)
       : `<div style="white-space: pre-wrap; font-family: sans-serif;">${content}</div>`
 
-    // Send via Resend
-    const { error } = await resend.emails.send({
-      from: 'George Ongoro <george@ongoro.top>',
-      to: 'george@ongoro.top',
-      bcc: recipientEmails,
-      subject: subject,
-      html: `
+    const emailHtml = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -192,10 +186,48 @@ export async function POST(req: Request) {
           </div>
         </body>
         </html>
-      `,
-    })
+      `
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+    // Implement controlled throughput with batching
+    // CHUNK_SIZE of 45 ensures we stay well within Resend's 100 limit and handles Gmail more gently
+    const CHUNK_SIZE = 45
+    const DELAY_MS = 1000 // 1 second delay between batches
+    
+    let lastError = null
+
+    // Chunk the recipients
+    const chunks = []
+    for (let i = 0; i < recipientEmails.length; i += CHUNK_SIZE) {
+      chunks.push(recipientEmails.slice(i, i + CHUNK_SIZE))
+    }
+
+    // Process each chunk
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i]
+      const batchRequest = chunk.map(email => ({
+        from: 'George Ongoro <george@ongoro.top>',
+        to: email,
+        subject: subject,
+        html: emailHtml,
+      }))
+
+      const { error } = await resend.batch.send(batchRequest)
+      
+      if (error) {
+        console.error(`Error sending newsletter batch ${i + 1}:`, error)
+        lastError = error
+      }
+
+      // If there are more chunks, wait before sending the next one
+      if (i < chunks.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, DELAY_MS))
+      }
+    }
+
+    if (lastError && recipientEmails.length <= CHUNK_SIZE) {
+      return NextResponse.json({ error: lastError.message }, { status: 400 })
+    }
+
     return NextResponse.json({ success: true, slug: issue.slug })
   } catch (error: any) {
     console.error('Newsletter Error:', error)

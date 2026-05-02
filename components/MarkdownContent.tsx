@@ -53,10 +53,27 @@ function processCodeBlocks(html: string): string {
   )
 }
 
+// Ensure all links in the article open in a new tab
+function processLinks(html: string): string {
+  return html.replace(/<a\s+href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
+}
+
+// Implement custom syntax for highlights
+function processCustomSyntax(content: string): string {
+  // !!definition!! -> highlighted term
+  let processed = content.replace(/!!(.+?)!!/g, '<span class="definition-highlight">$1</span>')
+  
+  // (1) or [1] references
+  processed = processed.replace(/(^|\s)(\[(\d+)\]|\((\d+)\))/g, '$1<span class="reference-highlight">$2</span>')
+  
+  return processed
+}
+
 export function MarkdownContent({ content }: MarkdownContentProps) {
   const htmlContent = useMemo(() => {
-    // Process YouTube embeds first
-    const processedContent = processYouTubeEmbeds(content)
+    // Process custom syntax and YouTube embeds first
+    const withCustomSyntax = processCustomSyntax(content)
+    const processedContent = processYouTubeEmbeds(withCustomSyntax)
     
     const result = unified()
       .use(remarkParse)
@@ -65,10 +82,11 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
       .use(rehypeStringify, { allowDangerousHtml: true })
       .processSync(processedContent)
 
-    // Add title bars to code blocks
-    const htmlWithTitles = processCodeBlocks(String(result))
+    // Post-process HTML
+    let finalHtml = processCodeBlocks(String(result))
+    finalHtml = processLinks(finalHtml)
     
-    return htmlWithTitles
+    return finalHtml
   }, [content])
 
   return (

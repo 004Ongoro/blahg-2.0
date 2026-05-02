@@ -264,6 +264,22 @@
   height: 100%;
 }
 
+/* Definition and Reference Highlights */
+.definition-highlight {
+  @apply font-black italic px-1;
+  background: var(--accent);
+  color: var(--background);
+  border: 2px solid var(--foreground);
+}
+
+.reference-highlight {
+  @apply font-bold px-1 text-xs align-top;
+  background: var(--secondary);
+  color: var(--accent);
+  border: 1px solid var(--foreground);
+  vertical-align: super;
+}
+
 /* Syntax highlighting - Neo-brutalist theme */
 .hljs {
   @apply bg-secondary text-foreground;

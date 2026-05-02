@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
+import { TableOfContents } from '@/components/TableOfContents'
 import GiscusComments from '@/components/GiscusComments'
 import { Newsletter } from '@/components/Newsletter'
 import { LuckyButton } from '@/components/LuckyButton'
@@ -96,9 +97,13 @@ export default async function PostPage({ params }: Props) {
 
   const nav = await getNavigation(new Date(post.createdAt))
 
+  const isUpdated = post.updatedAt && 
+    new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5 // More than 5 minutes difference
+
   return (
     <div className="min-h-screen flex flex-col relative">
       <PostAnimations />
+      <TableOfContents content={post.content} />
 
       <Header />
       
@@ -116,6 +121,12 @@ export default async function PostPage({ params }: Props) {
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
               <span>{formatDate(post.createdAt)}</span>
+              {isUpdated && (
+                <>
+                  <span className="text-accent">•</span>
+                  <span className="italic font-medium">Last edited {formatDate(post.updatedAt)}</span>
+                </>
+              )}
               <span className="text-accent">|</span>
               <span>{post.readTime} mins read</span>
             </div>

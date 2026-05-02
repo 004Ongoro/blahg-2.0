@@ -9,13 +9,26 @@ export default function SubscribersPage() {
   const [subscribers, setSubscribers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 20,
+    pages: 0
+  })
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0
+  })
 
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = async (page = 1, searchQuery = '') => {
+    setLoading(true)
     try {
-      const res = await fetch('/api/admin/subscribers')
+      const res = await fetch(`/api/admin/subscribers?page=${page}&search=${encodeURIComponent(searchQuery)}`)
       if (res.ok) {
         const data = await res.json()
-        setSubscribers(data)
+        setSubscribers(data.subscribers)
+        setPagination(data.pagination)
+        setStats(data.stats)
       }
     } catch (err) {
       console.error('Failed to load subscribers', err)
@@ -24,9 +37,13 @@ export default function SubscribersPage() {
     }
   }
 
+  // Debounced search
   useEffect(() => {
-    fetchSubscribers()
-  }, [])
+    const timer = setTimeout(() => {
+      fetchSubscribers(1, search)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const toggleStatus = async (id: string, currentStatus: boolean) => {
     try {
@@ -37,6 +54,11 @@ export default function SubscribersPage() {
       })
       if (res.ok) {
         setSubscribers(subscribers.map(s => s._id === id ? { ...s, active: !currentStatus } : s))
+        // Also update active stats locally or re-fetch stats
+        setStats(prev => ({
+          ...prev,
+          active: prev.active + (currentStatus ? -1 : 1)
+        }))
       }
     } catch (err) {
       alert('Update failed')
@@ -48,16 +70,13 @@ export default function SubscribersPage() {
     try {
       const res = await fetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
-        setSubscribers(subscribers.filter(s => s._id !== id))
+        // Re-fetch to keep pagination and stats consistent
+        fetchSubscribers(pagination.page, search)
       }
     } catch (err) {
       alert('Delete failed')
     }
   }
-
-  const filteredSubscribers = subscribers.filter(s => 
-    s.email.toLowerCase().includes(search.toLowerCase())
-  )
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -84,7 +103,7 @@ export default function SubscribersPage() {
           </div>
         </div>
 
-        {loading ? (
+        {loading && subscribers.length === 0 ? (
           <div className="grid gap-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="h-20 brutal-border bg-card animate-pulse" />
@@ -92,7 +111,7 @@ export default function SubscribersPage() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {filteredSubscribers.length === 0 ? (
+            {subscribers.length === 0 ? (
               <div className="brutal-border p-8 text-center bg-card text-muted-foreground font-bold italic">
                 {search ? `No subscribers matching "${search}"` : 'No subscribers found.'}
               </div>
@@ -104,7 +123,7 @@ export default function SubscribersPage() {
                   <div className="col-span-2 text-center">Status</div>
                   <div className="col-span-2 text-right">Actions</div>
                 </div>
-                {filteredSubscribers.map((sub) => (
+                {subscribers.map((sub) => (
                   <div 
                     key={sub._id} 
                     className="brutal-border bg-card p-5 flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 hover:translate-x-[-2px] transition-transform"
@@ -149,17 +168,72 @@ export default function SubscribersPage() {
                     </div>
                   </div>
                 ))}
+
+                {/* Pagination Controls */}
+                {pagination.pages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-4">
+                    <button
+                      onClick={() => fetchSubscribers(pagination.page - 1, search)}
+                      disabled={pagination.page === 1}
+                      className="px-4 py-2 brutal-border bg-card font-black uppercase text-xs disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
+                    >
+                      Prev
+                    </button>
+                    <div className="flex gap-1">
+                      {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(p => {
+                        // Show only a few page numbers if there are many
+                        if (
+                          p === 1 || 
+                          p === pagination.pages || 
+                          (p >= pagination.page - 1 && p <= pagination.page + 1)
+                        ) {
+                          return (
+                            <button
+                              key={p}
+                              onClick={() => fetchSubscribers(p, search)}
+                              className={`w-10 h-10 brutal-border font-black ${
+                                pagination.page === p ? 'bg-accent text-accent-foreground' : 'bg-card hover:bg-accent/50'
+                              }`}
+                            >
+                              {p}
+                            </button>
+                          )
+                        } else if (
+                          p === pagination.page - 2 || 
+                          p === pagination.page + 2
+                        ) {
+                          return <span key={p} className="flex items-end pb-2">...</span>
+                        }
+                        return null
+                      })}
+                    </div>
+                    <button
+                      onClick={() => fetchSubscribers(pagination.page + 1, search)}
+                      disabled={pagination.page === pagination.pages}
+                      className="px-4 py-2 brutal-border bg-card font-black uppercase text-xs disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
         <div className="mt-8 p-6 brutal-border bg-accent/10 border-dashed">
-          <p className="text-xs font-bold uppercase">
-            Total Subscribers: <span className="text-accent text-lg">{subscribers.length}</span> 
-            <span className="mx-2">|</span>
-            Active: <span className="text-green-600 text-lg">{subscribers.filter(s => s.active).length}</span>
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <p className="text-xs font-bold uppercase">
+              Total Subscribers: <span className="text-accent text-lg">{stats.total}</span> 
+              <span className="mx-2">|</span>
+              Active: <span className="text-green-600 text-lg">{stats.active}</span>
+            </p>
+            {search && (
+              <p className="text-xs font-bold uppercase italic text-muted-foreground">
+                Showing {subscribers.length} of {pagination.total} matches for "{search}"
+              </p>
+            )}
+          </div>
         </div>
       </main>
     </div>

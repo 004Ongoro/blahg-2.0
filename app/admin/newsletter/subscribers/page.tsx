@@ -221,17 +221,43 @@ export default function SubscribersPage() {
           </div>
         )}
 
-        <div className="mt-8 p-6 brutal-border bg-accent/10 border-dashed">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <p className="text-xs font-bold uppercase">
-              Total Subscribers: <span className="text-accent text-lg">{stats.total}</span> 
-              <span className="mx-2">|</span>
-              Active: <span className="text-green-600 text-lg">{stats.active}</span>
+        {/* Enhanced Stats Footer */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="brutal-border bg-card p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+            <p className="text-xs font-black uppercase text-muted-foreground mb-1">Total Audience</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-black italic text-accent">{stats.total}</span>
+              <span className="text-xs font-bold uppercase">Subscribers</span>
+            </div>
+          </div>
+
+          <div className="brutal-border bg-card p-6 shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(34,197,94,1)] transition-all">
+            <p className="text-xs font-black uppercase text-muted-foreground mb-1">Health Status</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-black italic text-green-600">{stats.active}</span>
+              <span className="text-xs font-bold uppercase text-green-600/80">Active Users</span>
+            </div>
+          </div>
+
+          <div className={`brutal-border p-6 transition-all ${
+            search 
+              ? 'bg-accent/10 border-accent border-dashed shadow-[4px_4px_0px_0px_var(--color-accent)]' 
+              : 'bg-muted/30 border-muted-foreground/20 border-dashed opacity-60'
+          }`}>
+            <p className="text-xs font-black uppercase text-muted-foreground mb-1 flex items-center gap-2">
+              <Search size={12} /> Search Filter
             </p>
-            {search && (
-              <p className="text-xs font-bold uppercase italic text-muted-foreground">
-                Showing {subscribers.length} of {pagination.total} matches for "{search}"
-              </p>
+            {search ? (
+              <div className="flex flex-col">
+                <span className="text-xl font-black italic truncate">"{search}"</span>
+                <span className="text-[10px] font-bold uppercase text-muted-foreground mt-1">
+                  Showing {subscribers.length} of {pagination.total} results
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center h-full">
+                <span className="text-sm font-bold uppercase italic text-muted-foreground">No active search filter</span>
+              </div>
             )}
           </div>
         </div>

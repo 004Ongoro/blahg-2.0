@@ -12,21 +12,34 @@ import {
 } from '@/components/ui/dialog'
 import { ContactForm } from '@/components/ContactForm'
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+
 export function FloatingContactButton() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>
       <div className="fixed bottom-[100px] right-6 z-40">
-        <motion.button
-          whileHover={{ scale: 1.1, rotate: -2 }}
-          whileTap={{ scale: 0.9, rotate: 2 }}
-          onClick={() => setIsOpen(true)}
-          className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center rounded-none"
-          aria-label="Contact me"
-        >
-          <MessageSquareIcon className="size-6" />
-        </motion.button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: -2 }}
+              whileTap={{ scale: 0.9, rotate: 2 }}
+              onClick={() => setIsOpen(true)}
+              className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center rounded-none"
+              aria-label="Contact me"
+            >
+              <MessageSquareIcon className="size-6" />
+            </motion.button>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            send me a message
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

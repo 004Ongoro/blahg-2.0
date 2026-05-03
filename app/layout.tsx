@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { FloatingContactButton } from '@/components/FloatingContactButton'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const jetbrainsMono = JetBrains_Mono({ 
@@ -86,6 +88,8 @@ export default function RootLayout({
 
           {children}
           <ThemeToggle />
+          <FloatingContactButton />
+          <Toaster />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>
       </body>

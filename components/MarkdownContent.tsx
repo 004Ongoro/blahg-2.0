@@ -73,9 +73,31 @@ function processHeadings(html: string): string {
   )
 }
 
-// Ensure all links in the article open in a new tab
+// Ensure all links in the article open in a new tab and have tracking refs
 function processLinks(html: string): string {
-  return html.replace(/<a\s+href=/g, '<a target="_blank" rel="noopener noreferrer" href=')
+  return html.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/g, (match, href) => {
+    // Only process absolute URLs (external links)
+    if (href.startsWith('http')) {
+      try {
+        const url = new URL(href)
+        // Skip if it's our own domain (though absolute links to self are rare in markdown)
+        if (url.hostname === 'dev.ongoro.top' || url.hostname === 'localhost') {
+          return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
+        }
+
+        // Add tracking parameter
+        url.searchParams.set('utm_source', 'dev.ongoro.top')
+        url.searchParams.set('utm_medium', 'blog')
+        url.searchParams.set('utm_campaign', 'blog_reading')
+        
+        return `<a target="_blank" rel="noopener noreferrer" href="${url.toString()}"`
+      } catch (e) {
+        // Fallback for invalid URLs
+        return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
+      }
+    }
+    return match
+  })
 }
 
 // Implement custom syntax for highlights

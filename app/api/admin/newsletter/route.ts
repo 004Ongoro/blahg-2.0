@@ -4,7 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import Subscriber from '@/models/Subscriber'
 import NewsletterIssue from '@/models/NewsletterIssue'
 import { getSession } from '@/lib/auth'
-import { slugify } from '@/lib/utils'
+import { slugify, addTrackingParams } from '@/lib/utils'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -188,6 +188,19 @@ export async function POST(req: Request) {
         </html>
       `
 
+    const trackingParams = {
+      utm_source: 'newsletter',
+      utm_medium: 'email',
+      utm_campaign: slug,
+    }
+
+    const trackedEmailHtml = emailHtml.replace(/href=(["'])([^"']+)\1/g, (match, quote, url) => {
+      if (url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith('#')) {
+        return match
+      }
+      return `href=${quote}${addTrackingParams(url, trackingParams)}${quote}`
+    })
+
     // Implement controlled throughput with batching
     // CHUNK_SIZE of 45 ensures we stay well within Resend's 100 limit and handles Gmail more gently
     const CHUNK_SIZE = 45
@@ -208,7 +221,7 @@ export async function POST(req: Request) {
         from: 'George Ongoro <george@ongoro.top>',
         to: email,
         subject: subject,
-        html: emailHtml,
+        html: trackedEmailHtml,
       }))
 
       const { error } = await resend.batch.send(batchRequest)

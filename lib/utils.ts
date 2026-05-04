@@ -26,3 +26,22 @@ export function calculateReadTime(content: string): number {
   const wordCount = content.split(/\s+/).length
   return Math.ceil(wordCount / wordsPerMinute)
 }
+
+export function addTrackingParams(url: string, params: Record<string, string>): string {
+  try {
+    // Check if it's a relative URL
+    const isRelative = !url.startsWith('http') && !url.startsWith('//')
+    const base = 'https://dummy.com'
+    const urlObj = new URL(url, isRelative ? base : undefined)
+    
+    Object.entries(params).forEach(([key, value]) => {
+      urlObj.searchParams.set(key, value)
+    })
+    
+    return isRelative 
+      ? urlObj.pathname + urlObj.search + urlObj.hash
+      : urlObj.toString()
+  } catch (e) {
+    return url
+  }
+}

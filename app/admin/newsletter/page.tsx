@@ -40,7 +40,7 @@ export default function AdminNewsletter() {
       
       if (subsRes.ok) {
         const data = await subsRes.json()
-        const activeSubs = data.filter((s: any) => s.active)
+        const activeSubs = (data.subscribers || []).filter((s: any) => s.active)
         setSubscribers(activeSubs)
         // Default to all selected
         setSelectedSubscribers(activeSubs.map((s: any) => s.email))

@@ -1,12 +1,18 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
+
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
 
 interface MarkdownContentProps {
   content: string
@@ -112,6 +118,24 @@ function processCustomSyntax(content: string): string {
 }
 
 export function MarkdownContent({ content }: MarkdownContentProps) {
+  useEffect(() => {
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor && anchor.href && typeof window.gtag === 'function') {
+        window.gtag('event', 'click', {
+          'event_category': 'link_click',
+          'event_label': anchor.href,
+          'transport_type': 'beacon',
+          'outbound': anchor.href.startsWith('http') && !anchor.href.includes(window.location.hostname)
+        });
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, []);
+
   const htmlContent = useMemo(() => {
     // Process custom syntax and YouTube embeds first
     const withCustomSyntax = processCustomSyntax(content)

@@ -30,7 +30,7 @@ export default function AdminNewsletter() {
     try {
       const [issuesRes, subsRes] = await Promise.all([
         fetch('/api/admin/newsletter'),
-        fetch('/api/admin/subscribers')
+        fetch('/api/admin/subscribers?limit=1000')
       ])
       
       if (issuesRes.ok) {

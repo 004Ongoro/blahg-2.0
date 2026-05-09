@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import GuestbookEntry from '@/models/GuestbookEntry'
 
+export const revalidate = 60
+
 export async function GET() {
   try {
     await dbConnect()

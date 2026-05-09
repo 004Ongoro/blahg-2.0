@@ -8,13 +8,21 @@ interface ViewCounterProps {
 
 export function ViewCounter({ slug }: ViewCounterProps) {
   useEffect(() => {
-    // Only increment views in production to avoid polluting stats during dev
-    // Or you can remove this check if you want to see it work locally
     const incrementView = async () => {
       try {
+        // Check if we already viewed this post in the last 24 hours
+        const lastViewed = localStorage.getItem(`viewed_${slug}`)
+        const now = Date.now()
+        
+        if (lastViewed && now - parseInt(lastViewed) < 24 * 60 * 60 * 1000) {
+          return
+        }
+
         await fetch(`/api/posts/${slug}/view`, {
           method: 'POST',
         })
+
+        localStorage.setItem(`viewed_${slug}`, now.toString())
       } catch (err) {
         console.error('Failed to increment view count', err)
       }
@@ -23,5 +31,5 @@ export function ViewCounter({ slug }: ViewCounterProps) {
     incrementView()
   }, [slug])
 
-  return null // This component doesn't render anything, just handles the logic
+  return null
 }

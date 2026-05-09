@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
 // GET all unique tags with post counts
+export const revalidate = 3600
+
 export async function GET() {
   try {
     await dbConnect()

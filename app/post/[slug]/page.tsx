@@ -12,7 +12,7 @@ import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ViewCounter } from '@/components/ViewCounter'
 import { SeriesCard } from '@/components/SeriesCard'
 import { PostReactions } from '@/components/PostReactions'
@@ -166,13 +166,18 @@ export default async function PostPage({ params }: Props) {
               )}
               <span className="text-accent">|</span>
               <span>{post.readTime} mins read</span>
-              <span className="text-accent">|</span>
-              <span className="flex items-center gap-1">
-                <Eye className="w-4 h-4" />
-                {post.views || 0}
-              </span>
+              {post.views > 100 && (
+                <>
+                  <span className="text-accent">|</span>
+                  <span className="flex items-center gap-1 bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow animate-pulse">
+                    <span>🔥</span> trending
+                  </span>
+                </>
+              )}
             </div>
           </header>
+
+          <ViewCounter slug={slug} />
 
           {seriesPosts.length > 0 && (
             <SeriesCard 

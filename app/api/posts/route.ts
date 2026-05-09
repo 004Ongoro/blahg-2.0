@@ -17,6 +17,8 @@ function generateSlug(title: string): string {
     .replace(/(^-|-$)+/g, '')
 }
 
+export const revalidate = 3600
+
 export async function GET() {
   try {
     await dbConnect()

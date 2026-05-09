@@ -35,13 +35,13 @@ export function CommandMenu() {
   }, [])
 
   React.useEffect(() => {
-    if (open) {
+    if (open && posts.length === 0) {
       fetch('/api/posts')
         .then((res) => res.json())
         .then((data) => setPosts(data))
         .catch((err) => console.error('Failed to fetch posts', err))
     }
-  }, [open])
+  }, [open, posts.length])
 
   const runCommand = React.useCallback((command: () => void) => {
     setOpen(false)
@@ -164,9 +164,6 @@ export function CommandMenu() {
                             {post.tags.map((t: string) => `#${t}`).join(' ')}
                           </span>
                         )}
-                        <span className="text-[10px] opacity-50 flex items-center gap-1 font-mono">
-                          <Eye className="w-3 h-3" /> {post.views || 0}
-                        </span>
                         {post.views > 100 && (
                           <span className="text-[10px] text-accent font-black uppercase tracking-tighter">
                             🔥 Trending

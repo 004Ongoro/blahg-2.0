@@ -16,6 +16,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ViewCounter } from '@/components/ViewCounter'
 import { SeriesCard } from '@/components/SeriesCard'
 import { PostReactions } from '@/components/PostReactions'
+import { SocialShare } from '@/components/SocialShare'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -24,6 +25,7 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
+// Data fetching
 async function getPost(slug: string) {
   try {
     await dbConnect()
@@ -35,6 +37,7 @@ async function getPost(slug: string) {
   }
 }
 
+// Series data fetching
 async function getSeriesPosts(seriesName: string) {
   try {
     await dbConnect()
@@ -49,11 +52,11 @@ async function getSeriesPosts(seriesName: string) {
   }
 }
 
+// Navigation data fetching
 async function getNavigation(currentCreatedAt: Date) {
   try {
     await dbConnect()
     
-    // Fetch Previous and Next based on creation date
     const prevPost = await Post.findOne({ 
       published: true, 
       createdAt: { $lt: currentCreatedAt } 
@@ -64,7 +67,6 @@ async function getNavigation(currentCreatedAt: Date) {
       createdAt: { $gt: currentCreatedAt } 
     }).sort({ createdAt: 1 }).select('slug').lean()
 
-    // Fetch all slugs for the "I'm Feeling Lucky" logic (client-side randomness)
     const allPosts = await Post.find({ published: true }).select('slug').lean()
     const allSlugs = allPosts.map(p => p.slug)
 
@@ -79,6 +81,7 @@ async function getNavigation(currentCreatedAt: Date) {
   }
 }
 
+// Metadata generation
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
@@ -106,6 +109,7 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
+// Main component
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
@@ -131,7 +135,7 @@ export default async function PostPage({ params }: Props) {
   }
 
   const isUpdated = post.updatedAt && 
-    new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5 // More than 5 minutes difference
+    new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -147,15 +151,20 @@ export default async function PostPage({ params }: Props) {
       <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
         <article>
           <header className="mb-8">
-            <Link
-              href="/"
-              className="text-muted-foreground hover:text-accent text-sm mb-4 inline-block font-bold"
-            >
-              &larr; back to posts
-            </Link>
+            <div className="flex justify-between items-center mb-4">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-accent text-sm font-bold"
+              >
+                &larr; back to posts
+              </Link>
+              <SocialShare title={post.title} slug={slug} />
+            </div>
+            
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
               {post.title}
             </h1>
+            
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
               <span>{formatDate(post.createdAt)}</span>
               {isUpdated && (
@@ -191,12 +200,10 @@ export default async function PostPage({ params }: Props) {
             <MarkdownContent content={post.content} />
           </div>
 
-          {/* Inline Newsletter Signup */}
           <div className="mb-12">
             <Newsletter />
           </div>
 
-          {/* Navigation Controls */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
             <div className="w-full">
               {nav.prev ? (

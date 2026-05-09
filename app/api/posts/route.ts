@@ -17,6 +17,21 @@ function generateSlug(title: string): string {
     .replace(/(^-|-$)+/g, '')
 }
 
+export async function GET() {
+  try {
+    await dbConnect()
+    const posts = await Post.find({ published: true })
+      .sort({ createdAt: -1 })
+      .select('title slug tags excerpt')
+      .lean()
+    
+    return NextResponse.json(posts)
+  } catch (error) {
+    console.error('Fetch posts error:', error)
+    return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 })
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getSession()

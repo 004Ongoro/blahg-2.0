@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { FloatingContactButton } from '@/components/FloatingContactButton'
 import { Toaster } from '@/components/ui/sonner'
+import { CommandMenu } from '@/components/CommandMenu'
 import './globals.css'
 
 const jetbrainsMono = JetBrains_Mono({ 
@@ -87,6 +88,7 @@ export default function RootLayout({
           )}
 
           {children}
+          <CommandMenu />
           <ThemeToggle />
           <FloatingContactButton />
           <Toaster />

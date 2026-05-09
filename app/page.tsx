@@ -1,6 +1,6 @@
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { PostCard } from '@/components/PostCard'
+import { PostList } from '@/components/PostList'
 import { Newsletter } from '@/components/Newsletter'
 import { AboutSection } from '@/components/AboutSection'
 import dbConnect from '@/lib/mongodb'
@@ -40,42 +40,7 @@ export default async function HomePage() {
             </span>
           </h2>
 
-          {posts.length === 0 ? (
-            <div className="brutal-border brutal-shadow bg-card p-8 text-center">
-              <p className="text-muted-foreground text-lg mb-2">
-                no posts yet.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                check back later or head to{' '}
-                <a href="/admin" className="text-accent hover:underline">
-                  /admin
-                </a>{' '}
-                to create your first post.
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6">
-              {posts.map((post: {
-                _id: string
-                title: string
-                slug: string
-                excerpt: string
-                createdAt: string
-                readTime: number
-                tags: string[]
-              }) => (
-                <PostCard
-                  key={post._id}
-                  title={post.title}
-                  slug={post.slug}
-                  excerpt={post.excerpt}
-                  createdAt={new Date(post.createdAt)}
-                  readTime={post.readTime}
-                  tags={post.tags}
-                />
-              ))}
-            </div>
-          )}
+          <PostList posts={posts} />
         </section>
 
         <Newsletter />

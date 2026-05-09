@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: Props) {
   
   if (!post) return { title: 'Post Not Found' }
   
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}`
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&tags=${post.tags?.join(',')}&readTime=${post.readTime}`
   
   return {
     title: post.title,
@@ -115,11 +115,30 @@ export default async function PostPage({ params }: Props) {
   const seriesPosts = post.series ? await getSeriesPosts(post.series) : []
   const nav = await getNavigation(new Date(post.createdAt))
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    image: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'}/api/og?title=${encodeURIComponent(post.title)}`,
+    datePublished: post.createdAt,
+    dateModified: post.updatedAt || post.createdAt,
+    author: {
+      '@type': 'Person',
+      name: 'George Ongoro',
+      url: 'https://dev.ongoro.top',
+    },
+  }
+
   const isUpdated = post.updatedAt && 
     new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5 // More than 5 minutes difference
 
   return (
     <div className="min-h-screen flex flex-col relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ViewCounter slug={slug} />
       <PostAnimations />
       <TableOfContents content={post.content} />

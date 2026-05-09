@@ -16,12 +16,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
+// Command palette component
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false)
   const [posts, setPosts] = React.useState<any[]>([])
   const router = useRouter()
   const { setTheme } = useTheme()
 
+  // Handle keyboard shortcuts
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -34,6 +36,7 @@ export function CommandMenu() {
     return () => document.removeEventListener('keydown', down)
   }, [])
 
+  // Fetch posts once per session
   React.useEffect(() => {
     if (open && posts.length === 0) {
       fetch('/api/posts')
@@ -43,6 +46,7 @@ export function CommandMenu() {
     }
   }, [open, posts.length])
 
+  // Execute command and close
   const runCommand = React.useCallback((command: () => void) => {
     setOpen(false)
     command()
@@ -95,6 +99,20 @@ export function CommandMenu() {
             >
               <Tag className="mr-3 h-5 w-5" />
               <span>Tags Archive</span>
+            </CommandItem>
+            <CommandItem 
+              onSelect={() => runCommand(() => router.push('/archive'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <FileText className="mr-3 h-5 w-5" />
+              <span>Content Calendar</span>
+            </CommandItem>
+            <CommandItem 
+              onSelect={() => runCommand(() => router.push('/newsletter/archive'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <Mail className="mr-3 h-5 w-5" />
+              <span>Newsletter Archive</span>
             </CommandItem>
             <CommandItem 
               onSelect={() => runCommand(() => router.push('/guestbook'))}

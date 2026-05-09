@@ -8,20 +8,24 @@ import { Menu, X } from 'lucide-react'
 const navLinks = [
   { name: 'posts', href: '/' },
   { name: 'tags', href: '/tags' },
+  { name: 'archive', href: '/archive' },
+  { name: 'newsletters', href: '/newsletter/archive' },
   { name: 'guestbook', href: '/guestbook' },
   { name: 'newsletter', href: '/newsletter' },
-  { name: 'issues', href: '/newsletter/archive' },
   { name: 'admin', href: '/admin' },
 ]
 
+// Main header component
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
+  // Animation variants
   const menuVariants = {
     closed: { opacity: 0, y: -20, transition: { staggerChildren: 0.05, staggerDirection: -1 } },
     open: { opacity: 1, y: 0, transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
   }
 
+  // Item variants
   const itemVariants = {
     closed: { opacity: 0, x: -10 },
     open: { opacity: 1, x: 0 },

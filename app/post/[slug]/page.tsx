@@ -139,7 +139,6 @@ export default async function PostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ViewCounter slug={slug} />
       <PostAnimations />
       <TableOfContents content={post.content} />
 

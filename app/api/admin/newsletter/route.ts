@@ -84,105 +84,155 @@ export async function POST(req: Request) {
 
     const emailHtml = `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
           <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${subject}</title>
           <style>
-            .brutal-card {
-              border: 4px solid #000;
-              box-shadow: 8px 8px 0px #000;
-              background: #fff;
-              margin: 20px auto;
-              max-width: 600px;
-              font-family: 'Helvetica', 'Arial', sans-serif;
+            @media only screen and (max-width: 600px) {
+              .main { width: 100% !important; border-left: none !important; border-right: none !important; box-shadow: none !important; }
+              .content { padding: 30px 20px !important; }
+              .header { padding: 30px 20px !important; }
+              .footer { padding: 30px 20px !important; }
             }
-            .header {
-              background: #fb923c;
-              padding: 30px;
-              border-bottom: 4px solid #000;
-            }
-            .content {
-              padding: 30px;
-              color: #000;
-              line-height: 1.6;
-              font-size: 16px;
-            }
-            .footer {
-              background: #000;
-              color: #fff;
-              padding: 30px;
-              font-size: 12px;
-            }
-            .btn {
-              display: inline-block;
-              background: #fb923c;
-              color: #000;
-              text-decoration: none;
-              padding: 12px 24px;
-              font-weight: 900;
+            .content p { margin-bottom: 24px; }
+            .content h1, .content h2, .content h3 { 
+              margin-top: 40px; 
+              margin-bottom: 16px; 
+              line-height: 1.1; 
               text-transform: uppercase;
+              font-weight: 900;
+              letter-spacing: -0.02em;
+            }
+            .content h1 { font-size: 32px; }
+            .content h2 { font-size: 28px; }
+            .content h3 { font-size: 24px; }
+            .content img { 
+              max-width: 100%; 
+              height: auto; 
+              border: 4px solid #000; 
+              box-shadow: 8px 8px 0px #000; 
+              margin: 32px 0;
+              display: block;
+            }
+            .content blockquote { 
+              border-left: 8px solid #fb923c; 
+              margin: 32px 0; 
+              padding: 16px 24px; 
+              background: #fff7ed; 
+              font-style: italic;
+              border-top: 2px solid #000;
+              border-right: 2px solid #000;
+              border-bottom: 2px solid #000;
+            }
+            .content code { 
+              background: #e5e7eb; 
+              padding: 2px 6px; 
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+              font-size: 0.9em;
+              border: 1px solid #000;
+            }
+            .content pre {
+              background: #1f2937;
+              color: #f9fafb;
+              padding: 20px;
               border: 3px solid #000;
-              box-shadow: 4px 4px 0px #000;
-              margin-top: 20px;
-            }
-            .btn:hover {
-              transform: translate(-2px, -2px);
               box-shadow: 6px 6px 0px #000;
+              overflow-x: auto;
+              margin: 32px 0;
             }
-            a { color: #fb923c; text-decoration: underline; font-weight: bold; }
+            .content ul, .content ol { margin-bottom: 24px; padding-left: 24px; }
+            .content li { margin-bottom: 12px; }
+            .content hr { border: none; border-top: 4px solid #000; margin: 48px 0; }
           </style>
         </head>
-        <body style="background: #f0f0f0; padding: 20px;">
-          <div class="brutal-card">
-            <div class="header">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1;">
-                ${subject}
-              </h1>
-              <div style="margin-top: 15px;">
-                <a href="${baseUrl}/newsletter/archive/${slug}" style="color: #000; text-decoration: none; font-size: 12px; font-weight: 900; background: #fff; padding: 4px 8px; border: 2px solid #000;">
-                  VIEW IN BROWSER ↗
-                </a>
-              </div>
-            </div>
-            
-            <div class="content">
-              ${processedContent}
-            </div>
-
-            <div style="padding: 0 30px 30px;">
-              <div style="border: 4px solid #000; padding: 20px; background: #a78bfa;">
-                <p style="margin: 0; font-weight: 900; text-transform: uppercase; font-size: 14px;">
-                  Enjoying the content?
-                </p>
-                <p style="margin: 5px 0 0; font-size: 14px; font-weight: bold;">
-                  Reply to this email — I read every single one.
-                </p>
-              </div>
-            </div>
-
-            <div class="footer">
-              <p style="margin: 0; font-weight: 900; text-transform: uppercase; font-size: 14px; color: #fb923c;">
-                George Ongoro
-              </p>
-              <p style="margin: 5px 0 20px; font-weight: bold;">
-                Software Engineer & Maker
-              </p>
+        <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+          <div style="background-color: #f3f4f6; padding: 40px 0;">
+            <!--[if mso]>
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+            <tr>
+            <td align="center" valign="top" width="600">
+            <![endif]-->
+            <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
               
-              <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <a href="https://github.com/004Ongoro" style="color: #fff; margin-right: 15px;">GitHub</a>
-                <a href="https://x.com/ongorogeorg_e" style="color: #fff; margin-right: 15px;">X / Twitter</a>
-                <a href="https://linkedin.com/in/georgeongoro2" style="color: #fff;">LinkedIn</a>
+              <!-- Header -->
+              <div class="header" style="background-color: #fb923c; padding: 48px 40px; border-bottom: 4px solid #000000;">
+                <p style="margin: 0 0 16px 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.1em; color: #000;">
+                  Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}
+                </p>
+                <h1 style="margin: 0; font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; line-height: 0.9; color: #000;">
+                  ${subject}
+                </h1>
+                <div style="margin-top: 32px;">
+                  <a href="${baseUrl}/newsletter/archive/${slug}" style="display: inline-block; background-color: #fff; color: #000; text-decoration: none; font-size: 13px; font-weight: 900; padding: 10px 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; text-transform: uppercase;">
+                    View in Browser ↗
+                  </a>
+                </div>
+              </div>
+              
+              <!-- Main Content -->
+              <div class="content" style="padding: 48px 40px; color: #000000; font-size: 19px; line-height: 1.6;">
+                ${processedContent}
               </div>
 
-              <div style="border-top: 2px solid #333; pt-20px; margin-top: 20px; padding-top: 20px;">
-                <p style="margin: 0; opacity: 0.8;">
-                  You're receiving this because you're awesome and subscribed to my newsletter.
-                </p>
-                <p style="margin: 10px 0 0;">
-                  <a href="${baseUrl}/unsubscribe" style="color: #ef4444;">Unsubscribe</a>
-                </p>
+              <!-- CTA / Interaction -->
+              <div style="padding: 0 40px 48px;">
+                <div style="border: 4px solid #000; padding: 32px; background-color: #a78bfa; box-shadow: 8px 8px 0px #000;">
+                  <h3 style="margin: 0 0 12px 0; font-weight: 900; text-transform: uppercase; font-size: 20px; line-height: 1;">
+                    Let's Chat
+                  </h3>
+                  <p style="margin: 0; font-size: 16px; font-weight: 700; line-height: 1.4;">
+                    I love hearing from readers. Hit reply to this email to share your thoughts, questions, or just to say hi. I read and respond to every single one.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="footer" style="background-color: #000000; color: #ffffff; padding: 48px 40px;">
+                <div style="margin-bottom: 32px;">
+                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #fb923c;">
+                    George Ongoro
+                  </h2>
+                  <p style="margin: 8px 0 0 0; font-weight: 700; font-size: 16px; color: #9ca3af;">
+                    Software Engineer & Maker
+                  </p>
+                </div>
+
+                <div style="margin-bottom: 40px;">
+                  <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="padding-right: 20px;">
+                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">GitHub</a>
+                      </td>
+                      <td style="padding-right: 20px;">
+                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">Twitter/X</a>
+                      </td>
+                      <td>
+                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">LinkedIn</a>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div style="border-top: 2px solid #374151; padding-top: 32px;">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
+                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">ongoro.top</a>. 
+                    If you're no longer interested, you can unsubscribe at any time.
+                  </p>
+                  <p style="margin: 24px 0 0 0;">
+                    <a href="${baseUrl}/unsubscribe" style="display: inline-block; color: #ef4444; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 12px; border: 2px solid #ef4444; padding: 6px 12px;">
+                      Unsubscribe
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
+            <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
           </div>
         </body>
         </html>

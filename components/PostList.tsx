@@ -12,6 +12,7 @@ interface Post {
   createdAt: string
   readTime: number
   tags: string[]
+  views: number
 }
 
 interface PostListProps {
@@ -83,6 +84,7 @@ export function PostList({ posts }: PostListProps) {
             createdAt={new Date(post.createdAt)}
             readTime={post.readTime}
             tags={post.tags}
+            views={post.views}
             isSelected={index === selectedIndex}
           />
         </div>

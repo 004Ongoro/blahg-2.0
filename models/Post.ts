@@ -9,6 +9,7 @@ export interface IPost extends Document {
   tags: string[]
   published: boolean
   readTime: number
+  views: number
   createdAt: Date
   updatedAt: Date
 }
@@ -29,6 +30,7 @@ const PostSchema: Schema = new Schema(
     tags: { type: [String], default: [] },
     published: { type: Boolean, default: false },
     readTime: { type: Number, default: 0 },
+    views: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

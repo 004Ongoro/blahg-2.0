@@ -12,7 +12,8 @@ import Post from '@/models/Post'
 import { formatDate } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { ViewCounter } from '@/components/ViewCounter'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -102,6 +103,7 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col relative">
+      <ViewCounter slug={slug} />
       <PostAnimations />
       <TableOfContents content={post.content} />
 
@@ -129,6 +131,11 @@ export default async function PostPage({ params }: Props) {
               )}
               <span className="text-accent">|</span>
               <span>{post.readTime} mins read</span>
+              <span className="text-accent">|</span>
+              <span className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                {post.views || 0}
+              </span>
             </div>
           </header>
 

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard } from 'lucide-react'
+import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard, Eye } from 'lucide-react'
 import {
   CommandDialog,
   CommandEmpty,
@@ -123,11 +123,21 @@ export function CommandMenu() {
                     <FileText className="mr-3 h-5 w-5 shrink-0" />
                     <div className="flex flex-col">
                       <span className="line-clamp-1">{post.title}</span>
-                      {post.tags && post.tags.length > 0 && (
-                        <span className="text-[10px] opacity-70 mt-1 flex gap-2">
-                          {post.tags.map((t: string) => `#${t}`).join(' ')}
+                      <div className="flex gap-3 mt-1 items-center">
+                        {post.tags && post.tags.length > 0 && (
+                          <span className="text-[10px] opacity-70 flex gap-1">
+                            {post.tags.map((t: string) => `#${t}`).join(' ')}
+                          </span>
+                        )}
+                        <span className="text-[10px] opacity-50 flex items-center gap-1 font-mono">
+                          <Eye className="w-3 h-3" /> {post.views || 0}
                         </span>
-                      )}
+                        {post.views > 100 && (
+                          <span className="text-[10px] text-accent font-black uppercase tracking-tighter">
+                            🔥 Trending
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <ArrowRight className="ml-auto h-4 w-4 opacity-50" />
                   </CommandItem>

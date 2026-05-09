@@ -22,7 +22,7 @@ export async function GET() {
     await dbConnect()
     const posts = await Post.find({ published: true })
       .sort({ createdAt: -1 })
-      .select('title slug tags excerpt')
+      .select('title slug tags excerpt views')
       .lean()
     
     return NextResponse.json(posts)

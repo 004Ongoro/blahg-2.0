@@ -9,6 +9,7 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
+  views?: number
   isSelected?: boolean
 }
 
@@ -19,6 +20,7 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
+  views = 0,
   isSelected = false,
 }: PostCardProps) {
   return (
@@ -36,6 +38,11 @@ export function PostCard({
           : "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)]"
       )}
     >
+      {views > 100 && (
+        <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-2 py-1 text-[10px] font-black uppercase brutal-border brutal-shadow z-10 flex items-center gap-1 animate-pulse">
+          <span>🔥</span> trending
+        </div>
+      )}
       {isSelected && (
         <div className="absolute top-0 left-0 w-2 h-full bg-foreground" />
       )}

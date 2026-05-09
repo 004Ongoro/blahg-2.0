@@ -35,9 +35,6 @@ export default async function HomePage() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <span className="text-accent">{'>'}</span> latest posts
-            <span className="text-muted-foreground text-sm font-normal ml-2">
-              ({posts.length})
-            </span>
           </h2>
 
           <PostList posts={posts} />

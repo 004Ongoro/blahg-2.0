@@ -72,8 +72,18 @@ export function PostList({ posts }: PostListProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="hidden md:flex items-center gap-4 mb-2 text-xs font-bold uppercase text-muted-foreground opacity-50">
-        <span>Tip: use <kbd className="brutal-border px-1 bg-background text-foreground">j</kbd> / <kbd className="brutal-border px-1 bg-background text-foreground">k</kbd> to navigate, <kbd className="brutal-border px-1 bg-background text-foreground">enter</kbd> to open</span>
+      <div className="hidden md:flex items-center gap-4 mb-2 text-[10px] font-black uppercase text-muted-foreground/60">
+        <span className="flex items-center gap-1.5">
+          NAV: <kbd className="brutal-border-sm px-1 bg-background text-foreground">j</kbd> / <kbd className="brutal-border-sm px-1 bg-background text-foreground">k</kbd> 
+        </span>
+        <span className="text-accent">|</span>
+        <span className="flex items-center gap-1.5">
+          OPEN: <kbd className="brutal-border-sm px-1 bg-background text-foreground">enter</kbd>
+        </span>
+        <span className="text-accent">|</span>
+        <span className="flex items-center gap-1.5 text-accent">
+          PALETTE: <kbd className="brutal-border-sm px-1 bg-background text-foreground">⌘</kbd> + <kbd className="brutal-border-sm px-1 bg-background text-foreground">k</kbd>
+        </span>
       </div>
       {posts.map((post, index) => (
         <div key={post._id} id={`post-${post._id}`}>

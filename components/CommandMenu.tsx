@@ -2,7 +2,8 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard, Eye, MessageSquare } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard, Eye, MessageSquare, Sun, Moon, Monitor } from 'lucide-react'
 import {
   CommandDialog,
   CommandEmpty,
@@ -19,6 +20,7 @@ export function CommandMenu() {
   const [open, setOpen] = React.useState(false)
   const [posts, setPosts] = React.useState<any[]>([])
   const router = useRouter()
+  const { setTheme } = useTheme()
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -114,6 +116,32 @@ export function CommandMenu() {
             >
               <Shield className="mr-3 h-5 w-5" />
               <span>Admin Dashboard</span>
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator className="bg-foreground h-1 my-2" />
+          
+          <CommandGroup heading={<span className="font-black uppercase text-foreground px-2 pb-2 block border-b-2 border-foreground mb-2">Theme</span>}>
+            <CommandItem 
+              onSelect={() => runCommand(() => setTheme('light'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <Sun className="mr-3 h-5 w-5" />
+              <span>Light Mode</span>
+            </CommandItem>
+            <CommandItem 
+              onSelect={() => runCommand(() => setTheme('dark'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <Moon className="mr-3 h-5 w-5" />
+              <span>Dark Mode</span>
+            </CommandItem>
+            <CommandItem 
+              onSelect={() => runCommand(() => setTheme('system'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <Monitor className="mr-3 h-5 w-5" />
+              <span>System Default</span>
             </CommandItem>
           </CommandGroup>
 

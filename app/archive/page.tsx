@@ -9,7 +9,7 @@ import NewsletterIssue from '@/models/NewsletterIssue'
 export const dynamic = 'force-static'
 export const revalidate = 3600
 
-// Fetch all archive data
+// Fetch archive data
 async function getArchiveData() {
   try {
     await dbConnect()
@@ -37,37 +37,31 @@ async function getArchiveData() {
 
     return [...formattedPosts, ...formattedIssues]
   } catch (error) {
-    console.error('Error fetching archive data:', error)
+    console.error('Error fetching archive:', error)
     return []
   }
 }
 
-// Archive page
+// Full-width calendar archive page
 export default async function ArchivePage() {
   const items = await getArchiveData()
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-6xl mx-auto px-4 py-12 w-full">
-        <header className="mb-12">
-          <div className="flex justify-between items-end mb-4">
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">
-              Content <span className="text-accent italic">Archive</span>
-            </h1>
-            <Link 
-              href="/newsletter/archive" 
-              className="brutal-border px-4 py-2 bg-accent text-accent-foreground font-black uppercase text-xs hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)] transition-all"
-            >
-              List View
-            </Link>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed font-bold uppercase">
-            Browse through every blog post and newsletter issue published since the beginning.
+      <main className="flex-1 w-full px-4 py-8 sm:py-12">
+        <header className="mb-12 max-w-7xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-black uppercase mb-4 tracking-tighter">
+            Content <span className="text-accent italic">Archive</span>
+          </h1>
+          <p className="text-muted-foreground text-sm sm:text-lg font-bold uppercase leading-tight">
+            Historical roadmap of all published thoughts and newsletter dispatches.
           </p>
         </header>
 
-        <ArchiveCalendar items={JSON.parse(JSON.stringify(items))} />
+        <div className="max-w-[1600px] mx-auto">
+          <ArchiveCalendar items={JSON.parse(JSON.stringify(items))} />
+        </div>
       </main>
       <Footer />
     </div>

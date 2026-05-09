@@ -1,12 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { Calendar } from '@/components/ui/calendar'
 import { useRouter } from 'next/navigation'
-import { format, isSameDay } from 'date-fns'
+import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isToday, addMonths, subMonths } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { FileText, Mail, ChevronRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { FileText, Mail, ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 
 interface ArchiveItem {
   id: string
@@ -20,143 +19,101 @@ interface ArchiveCalendarProps {
   items: ArchiveItem[]
 }
 
-// Calendar archive component
+// Full-width frictionless calendar archive
 export function ArchiveCalendar({ items }: ArchiveCalendarProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(new Date())
+  const [currentMonth, setCurrentMonth] = React.useState(new Date())
   const router = useRouter()
 
-  const itemsOnSelectedDate = items.filter((item) => 
-    selectedDate && isSameDay(new Date(item.date), selectedDate)
-  )
+  // Calendar dates generation
+  const monthStart = startOfMonth(currentMonth)
+  const monthEnd = endOfMonth(monthStart)
+  const startDate = startOfWeek(monthStart)
+  const endDate = endOfWeek(monthEnd)
+  const calendarDays = eachDayOfInterval({ start: startDate, end: endDate })
 
-  const modifiers = {
-    hasContent: (date: Date) => items.some((item) => isSameDay(new Date(item.date), date)),
-  }
-
-  const modifiersStyles = {
-    hasContent: {
-      fontWeight: 'bold',
-      border: '2px solid var(--accent)',
-    },
-  }
+  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
+  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-      <div className="brutal-border brutal-shadow bg-card p-4">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          modifiers={modifiers}
-          modifiersStyles={modifiersStyles}
-          className="w-full"
-          classNames={{
-            month: "w-full space-y-4",
-            table: "w-full h-full",
-            head_row: "flex w-full",
-            head_cell: "flex-1 font-black uppercase text-xs",
-            row: "flex w-full mt-2",
-            cell: "flex-1 h-12 md:h-16 relative p-0 hover:bg-accent/10 transition-colors",
-            day: "w-full h-full p-0 font-bold",
-          }}
-          components={{
-            DayButton: ({ day, modifiers, ...props }: any) => {
-              const hasItem = items.some(item => isSameDay(new Date(item.date), day.date))
-              const isToday = isSameDay(day.date, new Date())
-              const isSelected = selectedDate && isSameDay(day.date, selectedDate)
-
-              return (
-                <button
-                  {...props}
-                  className={cn(
-                    "w-full h-full flex flex-col items-center justify-center gap-1 transition-all relative",
-                    isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/20",
-                    isToday && !isSelected && "text-accent border-2 border-accent/30"
-                  )}
-                >
-                  <span className="text-sm md:text-base">{format(day.date, 'd')}</span>
-                  {hasItem && (
-                    <div className="flex gap-0.5">
-                      {items.filter(item => isSameDay(new Date(item.date), day.date)).map((item, i) => (
-                        <div 
-                          key={i} 
-                          className={cn(
-                            "w-1.5 h-1.5 rounded-full",
-                            item.type === 'post' ? "bg-foreground" : "bg-white border border-foreground"
-                          )} 
-                        />
-                      ))}
-                    </div>
-                  )}
-                </button>
-              )
-            }
-          }}
-        />
+    <div className="w-full flex flex-col gap-6">
+      <div className="flex items-center justify-between brutal-border bg-foreground text-background p-4 sm:p-6">
+        <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter italic">
+          {format(currentMonth, 'MMMM yyyy')}
+        </h2>
+        <div className="flex gap-2">
+          <button onClick={prevMonth} className="p-2 hover:bg-accent hover:text-accent-foreground brutal-border bg-background text-foreground transition-all">
+            <ChevronLeft size={24} />
+          </button>
+          <button onClick={nextMonth} className="p-2 hover:bg-accent hover:text-accent-foreground brutal-border bg-background text-foreground transition-all">
+            <ChevronRight size={24} />
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-4 h-full flex flex-col">
-        <div className="brutal-border bg-foreground text-background p-4">
-          <h3 className="font-black uppercase tracking-tighter text-xl">
-            {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
-          </h3>
+      <div className="brutal-border brutal-shadow-lg overflow-hidden bg-card">
+        <div className="grid grid-cols-7 border-b-4 border-foreground bg-accent text-accent-foreground">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="p-2 sm:p-4 text-center font-black uppercase text-xs sm:text-sm border-r-2 last:border-r-0 border-foreground/20">
+              {day}
+            </div>
+          ))}
         </div>
 
-        <div className="flex-1 space-y-4">
-          <AnimatePresence mode="wait">
-            {itemsOnSelectedDate.length > 0 ? (
-              <motion.div
-                key="content"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
+        <div className="grid grid-cols-7 grid-rows-5 sm:grid-rows-6 min-h-[600px] sm:min-h-[800px]">
+          {calendarDays.map((day, i) => {
+            const dayItems = items.filter(item => isSameDay(new Date(item.date), day))
+            const isCurrentMonth = isSameDay(startOfMonth(day), monthStart)
+            
+            return (
+              <div 
+                key={i} 
+                className={cn(
+                  "border-b-2 border-r-2 border-foreground/10 p-1 sm:p-2 flex flex-col gap-1 transition-colors relative group",
+                  !isCurrentMonth ? "bg-muted/30 opacity-40" : "bg-card hover:bg-accent/5",
+                  isToday(day) && "bg-accent/10"
+                )}
               >
-                {itemsOnSelectedDate.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => router.push(item.type === 'post' ? `/post/${item.slug}` : `/newsletter/archive/${item.slug}`)}
-                    className="w-full brutal-border brutal-shadow bg-card p-4 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)] transition-all flex items-center justify-between group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="bg-accent text-accent-foreground p-2 brutal-border-sm">
-                        {item.type === 'post' ? <FileText size={20} /> : <Mail size={20} />}
-                      </div>
-                      <div className="text-left">
-                        <span className="text-[10px] font-black uppercase opacity-60 block">
-                          {item.type}
-                        </span>
-                        <h4 className="font-bold group-hover:text-accent transition-colors">
-                          {item.title}
-                        </h4>
-                      </div>
-                    </div>
-                    <ChevronRight className="opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                  </button>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="brutal-border border-dashed p-12 text-center h-full flex flex-col items-center justify-center text-muted-foreground"
-              >
-                <p className="font-bold italic uppercase">Nothing published on this day</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                <span className={cn(
+                  "text-xs sm:text-sm font-black p-1 self-end",
+                  isToday(day) ? "bg-accent text-accent-foreground" : "opacity-40"
+                )}>
+                  {format(day, 'd')}
+                </span>
 
-        <div className="brutal-border p-4 bg-muted text-[10px] font-black uppercase flex gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-foreground" />
-            <span>Blog Post</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-white border border-foreground" />
-            <span>Newsletter</span>
-          </div>
+                <div className="flex flex-col gap-1 overflow-y-auto max-h-[80px] sm:max-h-[120px] scrollbar-hide">
+                  {dayItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.type === 'post' ? `/post/${item.slug}` : `/newsletter/archive/${item.slug}`}
+                      className={cn(
+                        "text-[9px] sm:text-[10px] p-1.5 leading-tight font-bold brutal-border-sm flex items-center gap-1 transition-all hover:translate-x-[2px] hover:translate-y-[-2px] hover:shadow-[2px_2px_0_#000]",
+                        item.type === 'post' ? "bg-white text-black" : "bg-foreground text-background"
+                      )}
+                    >
+                      <div className="shrink-0">
+                        {item.type === 'post' ? <FileText size={10} /> : <Mail size={10} />}
+                      </div>
+                      <span className="line-clamp-2 uppercase">{item.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-4 p-4 brutal-border bg-muted font-black uppercase text-[10px] sm:text-xs">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-white brutal-border-sm" />
+          <span>Blog Post</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-foreground brutal-border-sm" />
+          <span>Newsletter Issue</span>
+        </div>
+        <div className="ml-auto italic opacity-60">
+          Tip: Click any item to jump straight to it
         </div>
       </div>
     </div>

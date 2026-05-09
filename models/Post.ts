@@ -10,6 +10,8 @@ export interface IPost extends Document {
   published: boolean
   readTime: number
   views: number
+  series?: string
+  seriesOrder?: number
   createdAt: Date
   updatedAt: Date
 }
@@ -31,6 +33,8 @@ const PostSchema: Schema = new Schema(
     published: { type: Boolean, default: false },
     readTime: { type: Number, default: 0 },
     views: { type: Number, default: 0 },
+    series: { type: String, trim: true },
+    seriesOrder: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

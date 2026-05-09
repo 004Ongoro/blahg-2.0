@@ -280,6 +280,52 @@
   vertical-align: super;
 }
 
+/* Callouts / Side-notes */
+.callout {
+  @apply my-8 border-4 border-foreground overflow-hidden;
+  box-shadow: 8px 8px 0 var(--foreground);
+}
+
+.callout-header {
+  @apply flex items-center gap-2 px-4 py-2 border-b-4 border-foreground font-black uppercase text-sm;
+}
+
+.callout-content {
+  @apply p-4 bg-card;
+}
+
+.callout-note {
+  @apply border-foreground;
+}
+
+.callout-note .callout-header {
+  @apply bg-secondary;
+}
+
+.callout-warning {
+  @apply border-foreground;
+}
+
+.callout-warning .callout-header {
+  @apply bg-destructive text-destructive-foreground;
+}
+
+.callout-tip {
+  @apply border-foreground;
+}
+
+.callout-tip .callout-header {
+  @apply bg-accent text-accent-foreground;
+}
+
+.callout-info {
+  @apply border-foreground;
+}
+
+.callout-info .callout-header {
+  @apply bg-blue-500 text-white;
+}
+
 /* Syntax highlighting - Neo-brutalist theme */
 .hljs {
   @apply bg-secondary text-foreground;

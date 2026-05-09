@@ -117,6 +117,31 @@ function processCustomSyntax(content: string): string {
   return processed
 }
 
+// Process side-notes/callouts with syntax :::type title ... :::
+function processSideNotes(content: string): string {
+  // Regex to match :::type [title]\nContent\n:::
+  const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
+  
+  return content.replace(sideNoteRegex, (match, type, title, body) => {
+    const defaultTitles = {
+      note: 'Note',
+      warning: 'Warning',
+      tip: 'Pro-Tip',
+      info: 'Information'
+    }
+    
+    const displayTitle = (title || defaultTitles[type as keyof typeof defaultTitles]).trim()
+    const icon = {
+      note: '📝',
+      warning: '⚠️',
+      tip: '💡',
+      info: 'ℹ️'
+    }[type as keyof typeof defaultTitles]
+
+    return `\n<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">${body}</div></div>\n`
+  })
+}
+
 export function MarkdownContent({ content }: MarkdownContentProps) {
   useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
@@ -139,7 +164,8 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
   const htmlContent = useMemo(() => {
     // Process custom syntax and YouTube embeds first
     const withCustomSyntax = processCustomSyntax(content)
-    const processedContent = processYouTubeEmbeds(withCustomSyntax)
+    const withSideNotes = processSideNotes(withCustomSyntax)
+    const processedContent = processYouTubeEmbeds(withSideNotes)
     
     const result = unified()
       .use(remarkParse)

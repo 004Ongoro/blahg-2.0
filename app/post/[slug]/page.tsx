@@ -14,6 +14,7 @@ import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import { ViewCounter } from '@/components/ViewCounter'
+import { SeriesCard } from '@/components/SeriesCard'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -30,6 +31,20 @@ async function getPost(slug: string) {
   } catch (error) {
     console.error('Error fetching post:', error)
     return null
+  }
+}
+
+async function getSeriesPosts(seriesName: string) {
+  try {
+    await dbConnect()
+    const posts = await Post.find({ series: seriesName, published: true })
+      .select('title slug seriesOrder')
+      .sort({ seriesOrder: 1 })
+      .lean()
+    return JSON.parse(JSON.stringify(posts))
+  } catch (error) {
+    console.error('Error fetching series posts:', error)
+    return []
   }
 }
 
@@ -96,6 +111,7 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) notFound()
 
+  const seriesPosts = post.series ? await getSeriesPosts(post.series) : []
   const nav = await getNavigation(new Date(post.createdAt))
 
   const isUpdated = post.updatedAt && 
@@ -138,6 +154,14 @@ export default async function PostPage({ params }: Props) {
               </span>
             </div>
           </header>
+
+          {seriesPosts.length > 0 && (
+            <SeriesCard 
+              currentSlug={slug} 
+              seriesName={post.series} 
+              posts={seriesPosts} 
+            />
+          )}
 
           <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8">
             <MarkdownContent content={post.content} />

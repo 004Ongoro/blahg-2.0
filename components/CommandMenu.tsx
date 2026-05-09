@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard, Eye } from 'lucide-react'
+import { Search, FileText, Tag, Home, Mail, Shield, ArrowRight, Keyboard, Eye, MessageSquare } from 'lucide-react'
 import {
   CommandDialog,
   CommandEmpty,
@@ -93,6 +93,13 @@ export function CommandMenu() {
             >
               <Tag className="mr-3 h-5 w-5" />
               <span>Tags Archive</span>
+            </CommandItem>
+            <CommandItem 
+              onSelect={() => runCommand(() => router.push('/guestbook'))}
+              className="font-bold uppercase py-3 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+            >
+              <MessageSquare className="mr-3 h-5 w-5" />
+              <span>Guestbook</span>
             </CommandItem>
             <CommandItem 
               onSelect={() => runCommand(() => router.push('/newsletter'))}

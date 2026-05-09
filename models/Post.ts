@@ -12,6 +12,7 @@ export interface IPost extends Document {
   views: number
   series?: string
   seriesOrder?: number
+  reactions?: Record<string, number>
   createdAt: Date
   updatedAt: Date
 }
@@ -35,6 +36,11 @@ const PostSchema: Schema = new Schema(
     views: { type: Number, default: 0 },
     series: { type: String, trim: true },
     seriesOrder: { type: Number, default: 0 },
+    reactions: {
+      type: Map,
+      of: Number,
+      default: { 'like': 0, 'mindblown': 0, 'rocket': 0 }
+    }
   },
   { timestamps: true }
 )

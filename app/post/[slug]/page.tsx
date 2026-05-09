@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import { ViewCounter } from '@/components/ViewCounter'
 import { SeriesCard } from '@/components/SeriesCard'
+import { PostReactions } from '@/components/PostReactions'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -196,6 +197,11 @@ export default async function PostPage({ params }: Props) {
               ) : null}
             </div>
           </div>
+
+          <PostReactions 
+            slug={slug} 
+            initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
+          />
 
           <GiscusComments />
         </article>

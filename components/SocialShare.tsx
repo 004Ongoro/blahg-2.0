@@ -2,6 +2,21 @@
 
 import { useState } from 'react'
 import { Share2, Twitter, Facebook, Linkedin, Link2, Send, MessageSquare } from 'lucide-react'
+
+// Daily.dev icon component
+const DailyDevIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 256 256" 
+    className={className}
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect width="256" height="256" rx="60" fill="#5222D0"/>
+    <path d="M174.5 140.5V83C174.5 73.0589 166.441 65 156.5 65H134.5V140.5C134.5 150.441 142.559 158.5 152.5 158.5H156.5C166.441 158.5 174.5 150.441 174.5 140.5Z" fill="white"/>
+    <path d="M81.5 140.5V118C81.5 108.059 89.5589 100 99.5 100H121.5V175.5C121.5 185.441 113.441 193.5 103.5 193.5H99.5C89.5589 193.5 81.5 185.441 81.5 175.5V140.5Z" fill="white"/>
+  </svg>
+)
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +51,11 @@ export function SocialShare({ title, slug }: SocialShareProps) {
       name: 'LinkedIn',
       icon: Linkedin,
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    },
+    {
+      name: 'daily.dev',
+      icon: DailyDevIcon,
+      href: `https://app.daily.dev/posts/new?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
     },
     {
       name: 'Facebook',

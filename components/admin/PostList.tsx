@@ -14,6 +14,8 @@ interface Post {
   createdAt: string
   readTime: number
   tags: string[]
+  series?: string
+  seriesOrder?: number
 }
 
 interface PostListProps {
@@ -75,6 +77,12 @@ export function PostList({ posts }: PostListProps) {
               <span>{formatDate(post.createdAt)}</span>
               <span>|</span>
               <span>{post.readTime} min read</span>
+              {post.series && (
+                <>
+                  <span>|</span>
+                  <span className="font-bold text-accent">Series: {post.series} (#{post.seriesOrder})</span>
+                </>
+              )}
               {post.tags.length > 0 && (
                 <>
                   <span>|</span>

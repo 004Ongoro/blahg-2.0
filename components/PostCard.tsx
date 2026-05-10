@@ -9,6 +9,7 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
+  series?: string
   views?: number
   isSelected?: boolean
 }
@@ -20,6 +21,7 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
+  series,
   views = 0,
   isSelected = false,
 }: PostCardProps) {
@@ -38,11 +40,28 @@ export function PostCard({
           : "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)]"
       )}
     >
-      {views > 100 && (
-        <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-2 py-1 text-[10px] font-black uppercase brutal-border brutal-shadow z-10 flex items-center gap-1 animate-pulse">
-          <span>🔥</span> trending
+      <div className="flex justify-between items-start mb-2 gap-4">
+        <div className="flex flex-wrap gap-2">
+          {series && (
+            <Link 
+              href={`/series/${encodeURIComponent(series)}`}
+              className={cn(
+                "px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[4px_4px_0_var(--foreground)]",
+                isSelected ? "bg-background text-foreground" : "bg-accent text-accent-foreground"
+              )}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="shrink-0">📚</span> {series}
+            </Link>
+          )}
+          {views > 100 && (
+            <div className="bg-accent text-accent-foreground px-2 py-1 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 animate-pulse">
+              <span>🔥</span> trending
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
       {isSelected && (
         <div className="absolute top-0 left-0 w-2 h-full bg-foreground" />
       )}

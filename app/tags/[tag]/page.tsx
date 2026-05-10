@@ -79,6 +79,7 @@ export default async function TagPage({ params }: Props) {
               createdAt: string
               readTime: number
               tags: string[]
+              series?: string
             }) => (
               <PostCard
                 key={post._id}
@@ -88,6 +89,7 @@ export default async function TagPage({ params }: Props) {
                 createdAt={new Date(post.createdAt)}
                 readTime={post.readTime}
                 tags={post.tags}
+                series={post.series}
               />
             ))}
           </div>

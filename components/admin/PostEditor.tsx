@@ -17,6 +17,8 @@ interface Post {
   excerpt: string
   tags: string[]
   published: boolean
+  series?: string
+  seriesOrder?: number
 }
 
 interface PostEditorProps {
@@ -33,6 +35,9 @@ export function PostEditor({ post }: PostEditorProps) {
   const [excerpt, setExcerpt] = useState(post?.excerpt || '')
   const [tagsInput, setTagsInput] = useState(post?.tags.join(', ') || '')
   const [published, setPublished] = useState(post?.published || false)
+  const [series, setSeries] = useState(post?.series || '')
+  const [seriesOrder, setSeriesOrder] = useState(post?.seriesOrder?.toString() || '0')
+  const [allSeries, setAllSeries] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPreview, setShowPreview] = useState(false)
@@ -43,6 +48,22 @@ export function PostEditor({ post }: PostEditorProps) {
       setSlug(slugify(title))
     }
   }, [title, isEditing])
+
+  // Fetch all series for the dropdown
+  useEffect(() => {
+    async function fetchSeries() {
+      try {
+        const res = await fetch('/api/admin/series')
+        if (res.ok) {
+          const data = await res.json()
+          setAllSeries(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch series', err)
+      }
+    }
+    fetchSeries()
+  }, [])
 
   const readTime = calculateReadTime(content)
 
@@ -77,6 +98,8 @@ export function PostEditor({ post }: PostEditorProps) {
       excerpt,
       tags,
       published,
+      series: series.trim() || undefined,
+      seriesOrder: parseInt(seriesOrder) || 0,
     }
 
     try {
@@ -165,6 +188,34 @@ export function PostEditor({ post }: PostEditorProps) {
               placeholder="javascript, react, tutorial"
               className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
             />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-bold mb-2">series (optional)</label>
+              <input
+                type="text"
+                value={series}
+                onChange={(e) => setSeries(e.target.value)}
+                list="series-list"
+                placeholder="e.g. Building in Public"
+                className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+              <datalist id="series-list">
+                {allSeries.map((s) => (
+                  <option key={s} value={s} />
+                ))}
+              </datalist>
+            </div>
+            <div>
+              <label className="block text-sm font-bold mb-2">series order</label>
+              <input
+                type="number"
+                value={seriesOrder}
+                onChange={(e) => setSeriesOrder(e.target.value)}
+                className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
           </div>
 
           <div>

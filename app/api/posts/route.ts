@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     await dbConnect()
     const body = await req.json()
-    const { title, content, excerpt, coverImage, tags, published } = body
+    const { title, content, excerpt, coverImage, tags, published, series, seriesOrder } = body
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
@@ -64,6 +64,8 @@ export async function POST(req: Request) {
       tags: tags || [],
       published: published ?? false,
       readTime,
+      series,
+      seriesOrder: seriesOrder || 0,
     })
 
     // If the post is published, clear the cache for the homepage and tags

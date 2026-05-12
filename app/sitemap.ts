@@ -4,7 +4,7 @@ import Post from '@/models/Post'
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
 
   // Fetch all published posts for the sitemap
   await dbConnect()

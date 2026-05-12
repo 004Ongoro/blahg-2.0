@@ -87,12 +87,12 @@ function processLinks(html: string): string {
       try {
         const url = new URL(href)
         // Skip if it's our own domain (though absolute links to self are rare in markdown)
-        if (url.hostname === 'dev.ongoro.top' || url.hostname === 'localhost') {
+        if (url.hostname === 'g.deepread.website' || url.hostname === 'localhost') {
           return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
         }
 
         // Add tracking parameter
-        url.searchParams.set('utm_source', 'dev.ongoro.top')
+        url.searchParams.set('utm_source', 'g.deepread.website')
         url.searchParams.set('utm_medium', 'blog')
         url.searchParams.set('utm_campaign', 'blog_reading')
         

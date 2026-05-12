@@ -11,7 +11,7 @@ export async function GET() {
     .limit(20)
     .lean()
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
 
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

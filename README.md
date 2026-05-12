@@ -80,4 +80,4 @@ I welcome community contributions!
 5. Open a Pull Request.
 
 ---
-Built by [George Ongoro](https://dev.ongoro.top).
+Built by [George Ongoro](https://g.deepread.website).

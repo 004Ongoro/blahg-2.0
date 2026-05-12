@@ -136,7 +136,7 @@ export default function NewsletterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@awesome-dev.com"
+                  placeholder="you@deepread.website"
                   required
                   className="w-full brutal-border bg-background px-4 py-4 text-lg font-bold focus:ring-4 ring-accent outline-none placeholder:opacity-30 border-black"
                 />

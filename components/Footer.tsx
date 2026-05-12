@@ -3,7 +3,7 @@ import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } fr
 
 const socials = [
   { name: 'Twitter', href: 'https://x.com/ongorogeorg_e', icon: <Twitter size={20} /> },
-  { name: 'Bluesky', href: 'https://bsky.app/profile/ongoro.top', icon: <MessageSquare size={20} /> },
+  { name: 'Bluesky', href: 'https://bsky.app/profile/deepread.website', icon: <MessageSquare size={20} /> },
   { name: 'TikTok', href: 'https://www.tiktok.com/@developer.george', icon: <Video size={20} /> },
   { name: 'GitHub', href: 'https://github.com/004Ongoro', icon: <Github size={20} /> },
   { name: 'LinkedIn', href: 'https://linkedin.com/in/georgeongoro2', icon: <Linkedin size={20} /> },

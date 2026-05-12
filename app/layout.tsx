@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 })
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
 const gaId = process.env.GOOGLE_ANALYTICS_ID
 
 export const metadata: Metadata = {

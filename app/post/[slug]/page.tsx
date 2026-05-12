@@ -85,7 +85,7 @@ async function getNavigation(currentCreatedAt: Date) {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
   
   if (!post) return { title: 'Post Not Found' }
   
@@ -124,13 +124,13 @@ export default async function PostPage({ params }: Props) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'}/api/og?title=${encodeURIComponent(post.title)}`,
+    image: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'}/api/og?title=${encodeURIComponent(post.title)}`,
     datePublished: post.createdAt,
     dateModified: post.updatedAt || post.createdAt,
     author: {
       '@type': 'Person',
       name: 'George Ongoro',
-      url: 'https://dev.ongoro.top',
+      url: 'https://g.deepread.website',
     },
   }
 

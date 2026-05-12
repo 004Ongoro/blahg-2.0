@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { subject, content, isMarkdown = true, publishToArchive = true, recipients } = await req.json()
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.ongoro.top'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
     const slug = `${slugify(subject)}-${Date.now()}`
 
     await dbConnect()
@@ -217,7 +217,7 @@ export async function POST(req: Request) {
 
                 <div style="border-top: 2px solid #374151; padding-top: 32px;">
                   <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">ongoro.top</a>. 
+                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">deepread.website</a>. 
                     If you're no longer interested, you can unsubscribe at any time.
                   </p>
                   <p style="margin: 24px 0 0 0;">
@@ -251,8 +251,7 @@ export async function POST(req: Request) {
       return `href=${quote}${addTrackingParams(url, trackingParams)}${quote}`
     })
 
-    // Implement controlled throughput with batching
-    // CHUNK_SIZE of 45 ensures we stay well within Resend's 100 limit and handles Gmail more gently
+
     const CHUNK_SIZE = 45
     const DELAY_MS = 1000 // 1 second delay between batches
     
@@ -268,7 +267,7 @@ export async function POST(req: Request) {
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i]
       const batchRequest = chunk.map(email => ({
-        from: 'George Ongoro <george@ongoro.top>',
+        from: 'George Ongoro <george.blog@deepread.website>',
         to: email,
         subject: subject,
         html: trackedEmailHtml,

@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-
+import { getBaseUrl } from '@/lib/utils'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
+  const baseUrl = getBaseUrl()
+
 
   // Fetch all published posts for the sitemap
   await dbConnect()

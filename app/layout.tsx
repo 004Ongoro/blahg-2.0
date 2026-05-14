@@ -7,6 +7,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { FloatingContactButton } from '@/components/FloatingContactButton'
 import { Toaster } from '@/components/ui/sonner'
 import { CommandMenu } from '@/components/CommandMenu'
+import { getBaseUrl } from '@/lib/utils'
 import './globals.css'
 
 const jetbrainsMono = JetBrains_Mono({ 
@@ -14,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 })
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
+const baseUrl = getBaseUrl()
 const gaId = process.env.GOOGLE_ANALYTICS_ID
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     siteName: 'George Ongoro Blog',
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent('George Ongoro Blog')}`,
+        url: `${baseUrl}/api/og?title=${encodeURIComponent('George Ongoro Blog')}`,
         width: 1200,
         height: 630,
         alt: 'George Ongoro Blog',

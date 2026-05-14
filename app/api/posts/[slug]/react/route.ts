@@ -2,6 +2,34 @@ import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    await dbConnect()
+    const { slug } = await params
+    const post = await Post.findOne({ slug }).select('reactions').lean()
+
+    if (!post) {
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    }
+
+    const reactions = Object.fromEntries(post.reactions || new Map())
+    return NextResponse.json({ reactions }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30'
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching reactions:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch reactions' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }

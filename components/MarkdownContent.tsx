@@ -81,18 +81,20 @@ function processHeadings(html: string): string {
 
 // Ensure all links in the article open in a new tab and have tracking refs
 function processLinks(html: string): string {
+  const currentHostname = typeof window !== 'undefined' ? window.location.hostname : 'g.deepread.website'
+  
   return html.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/g, (match, href) => {
     // Only process absolute URLs (external links)
     if (href.startsWith('http')) {
       try {
         const url = new URL(href)
         // Skip if it's our own domain (though absolute links to self are rare in markdown)
-        if (url.hostname === 'g.deepread.website' || url.hostname === 'localhost') {
+        if (url.hostname === currentHostname || url.hostname === 'localhost') {
           return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
         }
 
         // Add tracking parameter
-        url.searchParams.set('utm_source', 'g.deepread.website')
+        url.searchParams.set('utm_source', currentHostname)
         url.searchParams.set('utm_medium', 'blog')
         url.searchParams.set('utm_campaign', 'blog_reading')
         

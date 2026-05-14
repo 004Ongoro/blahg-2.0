@@ -9,7 +9,7 @@ import { Newsletter } from '@/components/Newsletter'
 import { LuckyButton } from '@/components/LuckyButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getBaseUrl } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -85,11 +85,11 @@ async function getNavigation(currentCreatedAt: Date) {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
+  const baseUrl = getBaseUrl()
   
   if (!post) return { title: 'Post Not Found' }
   
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(post.title)}&tags=${post.tags?.join(',')}&readTime=${post.readTime}`
+  const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}&tags=${post.tags?.join(',')}&readTime=${post.readTime}`
   
   return {
     title: post.title,
@@ -119,18 +119,20 @@ export default async function PostPage({ params }: Props) {
   const seriesPosts = post.series ? await getSeriesPosts(post.series) : []
   const nav = await getNavigation(new Date(post.createdAt))
 
+  const baseUrl = getBaseUrl()
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'}/api/og?title=${encodeURIComponent(post.title)}`,
+    image: `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`,
     datePublished: post.createdAt,
     dateModified: post.updatedAt || post.createdAt,
     author: {
       '@type': 'Person',
       name: 'George Ongoro',
-      url: 'https://g.deepread.website',
+      url: baseUrl,
     },
   }
 

@@ -4,7 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import Subscriber from '@/models/Subscriber'
 import NewsletterIssue from '@/models/NewsletterIssue'
 import { getSession } from '@/lib/auth'
-import { slugify, addTrackingParams } from '@/lib/utils'
+import { slugify, addTrackingParams, getBaseUrl } from '@/lib/utils'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { subject, content, isMarkdown = true, publishToArchive = true, recipients } = await req.json()
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://g.deepread.website'
+    const baseUrl = getBaseUrl()
     const slug = `${slugify(subject)}-${Date.now()}`
 
     await dbConnect()

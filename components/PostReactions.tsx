@@ -26,6 +26,28 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
     if (stored) {
       setReacted(JSON.parse(stored))
     }
+
+    // Fetch latest reactions from API
+    const controller = new AbortController()
+    const fetchReactions = async () => {
+      try {
+        const res = await fetch(`/api/posts/${slug}/react`, {
+          signal: controller.signal
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setReactions(data.reactions)
+        }
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Failed to fetch reactions', err)
+        }
+      }
+    }
+
+    fetchReactions()
+
+    return () => controller.abort()
   }, [slug])
 
   const handleReact = async (type: string) => {

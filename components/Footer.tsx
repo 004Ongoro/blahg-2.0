@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Script from 'next/script'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } from 'lucide-react'
 
 const socials = [
@@ -82,6 +83,15 @@ export function Footer() {
           </div>
 
         </div>
+      </div>
+
+      {/* Analytics Widget - discreetly placed at the very bottom */}
+      <div className="flex justify-center pb-8 opacity-50 hover:opacity-100 transition-opacity">
+        <Script 
+          id="mapmyvisitors" 
+          src="//mapmyvisitors.com/map.js?d=cij0AGIW040q23qf3CHWqQ1aBT8SEPAGcVHt2U3rgvM&cl=ffffff&w=a"
+          strategy="lazyOnload"
+        />
       </div>
     </footer>
   )

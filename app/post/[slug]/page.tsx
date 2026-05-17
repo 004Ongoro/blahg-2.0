@@ -21,6 +21,20 @@ import { SocialShare } from '@/components/SocialShare'
 export const dynamic = 'force-static'
 export const revalidate = false
 
+// Static generation
+export async function generateStaticParams() {
+  try {
+    await dbConnect()
+    const posts = await Post.find({ published: true }).select('slug').lean()
+    return posts.map((post: any) => ({
+      slug: post.slug,
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }

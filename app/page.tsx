@@ -6,7 +6,8 @@ import { AboutSection } from '@/components/AboutSection'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
-export const revalidate = 3600 // Revalidate every hour
+export const dynamic = 'force-static'
+export const revalidate = false // Fully static
 
 async function getPosts() {
   try {

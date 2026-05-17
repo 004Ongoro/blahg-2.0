@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { formatDate } from '@/lib/utils'
 import { MessageSquare, Send, User } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface Entry {
   _id: string
@@ -130,27 +129,22 @@ export default function GuestbookPage() {
           </h2>
 
           <div className="space-y-6">
-            <AnimatePresence mode="popLayout">
-              {entries.map((entry) => (
-                <motion.div
-                  key={entry._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  layout
-                  className="brutal-border brutal-shadow bg-card p-6 relative overflow-hidden"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-black uppercase text-accent">{entry.name}</h3>
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                      {formatDate(entry.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-foreground leading-relaxed italic">
-                    "{entry.message}"
-                  </p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {entries.map((entry) => (
+              <div
+                key={entry._id}
+                className="brutal-border brutal-shadow bg-card p-6 relative overflow-hidden transition-all animate-in fade-in slide-in-from-bottom-4 duration-500"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="font-black uppercase text-accent">{entry.name}</h3>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    {formatDate(entry.createdAt)}
+                  </span>
+                </div>
+                <p className="text-foreground leading-relaxed italic">
+                  "{entry.message}"
+                </p>
+              </div>
+            ))}
 
             {!isLoading && entries.length === 0 && (
               <div className="text-center py-20 brutal-border border-dashed border-4 opacity-50">

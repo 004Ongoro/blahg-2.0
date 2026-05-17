@@ -1,5 +1,6 @@
+'use client'
+
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { formatDate, cn } from '@/lib/utils'
 
 interface PostCardProps {
@@ -26,18 +27,12 @@ export function PostCard({
   isSelected = false,
 }: PostCardProps) {
   return (
-    <motion.article 
-      initial={false}
-      animate={{ 
-        x: isSelected ? 4 : 0,
-        backgroundColor: isSelected ? 'var(--accent)' : 'var(--card)',
-        color: isSelected ? 'var(--accent-foreground)' : 'inherit'
-      }}
+    <article 
       className={cn(
         "brutal-border brutal-shadow p-6 transition-all duration-200 relative overflow-hidden",
         isSelected 
-          ? "border-foreground shadow-[8px_8px_0_var(--foreground)] ring-2 ring-foreground ring-offset-2 ring-offset-background" 
-          : "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)]"
+          ? "border-foreground shadow-[8px_8px_0_var(--foreground)] ring-2 ring-foreground ring-offset-2 ring-offset-background translate-x-1 bg-accent text-accent-foreground" 
+          : "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)] bg-card"
       )}
     >
       <div className="flex justify-between items-start mb-2 gap-4">
@@ -109,6 +104,7 @@ export function PostCard({
           </>
         )}
       </div>
-    </motion.article>
+    </article>
   )
 }
+

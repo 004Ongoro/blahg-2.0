@@ -7,6 +7,22 @@ import { notFound } from 'next/navigation'
 import { Layers } from 'lucide-react'
 import Link from 'next/link'
 
+export const dynamic = 'force-static'
+export const revalidate = false
+
+export async function generateStaticParams() {
+  try {
+    await dbConnect()
+    const series = await Post.distinct('series', { published: true, series: { $ne: null } })
+    return series.map((name: string) => ({
+      name: encodeURIComponent(name),
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
+}
+
 interface Props {
   params: Promise<{ name: string }>
 }

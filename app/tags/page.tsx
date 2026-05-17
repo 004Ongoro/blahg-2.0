@@ -4,7 +4,8 @@ import { Footer } from '@/components/Footer'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
+export const revalidate = false
 
 async function getTags() {
   try {

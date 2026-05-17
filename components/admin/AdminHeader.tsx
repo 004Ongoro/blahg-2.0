@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import { LayoutDashboard, FileText, PlusCircle, LogOut, Menu, X, Mail, Users } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const adminLinks = [
   { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={18} /> },
@@ -63,44 +63,47 @@ export function AdminHeader() {
       </div>
 
       {/* Mobile Sidebar Navigation */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.nav
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 w-64 bg-card border-l-4 border-foreground z-50 p-6 md:hidden flex flex-col gap-6"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-black uppercase text-sm text-accent">Navigation</span>
-              <button onClick={() => setIsOpen(false)}><X size={24} /></button>
-            </div>
-            
-            {adminLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-4 text-xl font-black uppercase ${
-                  pathname === link.href ? 'text-accent' : ''
-                }`}
-              >
-                {link.icon} {link.name}
-              </Link>
-            ))}
-            
-            <div className="mt-auto pt-6 border-t-2 border-muted">
-              <Link 
-                href="/" 
-                className="flex items-center gap-4 font-bold uppercase text-sm"
-              >
-                <FileText size={18} /> Exit to Site
-              </Link>
-            </div>
-          </motion.nav>
+      <div
+        className={cn(
+          "fixed inset-y-0 right-0 w-64 bg-card border-l-4 border-foreground z-50 p-6 md:hidden flex flex-col gap-6 transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "translate-x-full"
         )}
-      </AnimatePresence>
+      >
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-black uppercase text-sm text-accent">Navigation</span>
+          <button onClick={() => setIsOpen(false)}><X size={24} /></button>
+        </div>
+        
+        {adminLinks.map((link) => (
+          <Link
+            key={link.name}
+            href={link.href}
+            onClick={() => setIsOpen(false)}
+            className={`flex items-center gap-4 text-xl font-black uppercase ${
+              pathname === link.href ? 'text-accent' : ''
+            }`}
+          >
+            {link.icon} {link.name}
+          </Link>
+        ))}
+        
+        <div className="mt-auto pt-6 border-t-2 border-muted">
+          <Link 
+            href="/" 
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-4 font-bold uppercase text-sm"
+          >
+            <FileText size={18} /> Exit to Site
+          </Link>
+        </div>
+      </div>
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
     </header>
   )
 }

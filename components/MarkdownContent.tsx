@@ -1,18 +1,10 @@
-'use client'
-
-import { useMemo, useEffect } from 'react'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
-
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-  }
-}
+import { LinkTracker } from './LinkTracker'
 
 interface MarkdownContentProps {
   content: string
@@ -34,7 +26,6 @@ function extractYouTubeId(url: string): string | null {
 
 // Process YouTube embeds in markdown
 function processYouTubeEmbeds(content: string): string {
-  // Match YouTube URLs on their own line or in markdown link format
   const youtubeRegex = /(?:^|\n)(?:\[.*?\]\()?(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[\w-]+)(?:\))?(?:\n|$)/g
   
   return content.replace(youtubeRegex, (match, url) => {
@@ -47,7 +38,6 @@ function processYouTubeEmbeds(content: string): string {
 
 // Add title bars to code blocks
 function processCodeBlocks(html: string): string {
-  // Match code blocks with language class and extract language
   return html.replace(
     /<pre><code class="hljs language-(\w+)">/g,
     (_, lang) => {
@@ -81,26 +71,22 @@ function processHeadings(html: string): string {
 
 // Ensure all links in the article open in a new tab and have tracking refs
 function processLinks(html: string): string {
-  const currentHostname = typeof window !== 'undefined' ? window.location.hostname : 'g.deepread.website'
+  const currentHostname = 'g.deepread.website'
   
   return html.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/g, (match, href) => {
-    // Only process absolute URLs (external links)
     if (href.startsWith('http')) {
       try {
         const url = new URL(href)
-        // Skip if it's our own domain (though absolute links to self are rare in markdown)
         if (url.hostname === currentHostname || url.hostname === 'localhost') {
           return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
         }
 
-        // Add tracking parameter
         url.searchParams.set('utm_source', currentHostname)
         url.searchParams.set('utm_medium', 'blog')
         url.searchParams.set('utm_campaign', 'blog_reading')
         
         return `<a target="_blank" rel="noopener noreferrer" href="${url.toString()}"`
       } catch (e) {
-        // Fallback for invalid URLs
         return `<a target="_blank" rel="noopener noreferrer" href="${href}"`
       }
     }
@@ -110,18 +96,13 @@ function processLinks(html: string): string {
 
 // Implement custom syntax for highlights
 function processCustomSyntax(content: string): string {
-  // !!definition!! -> highlighted term
   let processed = content.replace(/!!(.+?)!!/g, '<span class="definition-highlight">$1</span>')
-  
-  // (1) or [1] references
   processed = processed.replace(/(^|\s)(\[(\d+)\]|\((\d+)\))/g, '$1<span class="reference-highlight">$2</span>')
-  
   return processed
 }
 
-// Process side-notes/callouts with syntax :::type title ... :::
+// Process side-notes/callouts
 function processSideNotes(content: string): string {
-  // Regex to match :::type [title]\nContent\n:::
   const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
   
   return content.replace(sideNoteRegex, (match, type, title, body) => {
@@ -144,51 +125,32 @@ function processSideNotes(content: string): string {
   })
 }
 
-export function MarkdownContent({ content }: MarkdownContentProps) {
-  useEffect(() => {
-    const handleLinkClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest('a');
-      if (anchor && anchor.href && typeof window.gtag === 'function') {
-        window.gtag('event', 'click', {
-          'event_category': 'link_click',
-          'event_label': anchor.href,
-          'transport_type': 'beacon',
-          'outbound': anchor.href.startsWith('http') && !anchor.href.includes(window.location.hostname)
-        });
-      }
-    };
+export async function MarkdownContent({ content }: MarkdownContentProps) {
+  // Process custom syntax and YouTube embeds first
+  const withCustomSyntax = processCustomSyntax(content)
+  const withSideNotes = processSideNotes(withCustomSyntax)
+  const processedContent = processYouTubeEmbeds(withSideNotes)
+  
+  const result = await unified()
+    .use(remarkParse)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeSlug)
+    .use(rehypeHighlight, { detect: true })
+    .use(rehypeStringify, { allowDangerousHtml: true })
+    .process(processedContent)
 
-    document.addEventListener('click', handleLinkClick);
-    return () => document.removeEventListener('click', handleLinkClick);
-  }, []);
-
-  const htmlContent = useMemo(() => {
-    // Process custom syntax and YouTube embeds first
-    const withCustomSyntax = processCustomSyntax(content)
-    const withSideNotes = processSideNotes(withCustomSyntax)
-    const processedContent = processYouTubeEmbeds(withSideNotes)
-    
-    const result = unified()
-      .use(remarkParse)
-      .use(remarkRehype, { allowDangerousHtml: true })
-      .use(rehypeSlug)
-      .use(rehypeHighlight, { detect: true })
-      .use(rehypeStringify, { allowDangerousHtml: true })
-      .processSync(processedContent)
-
-    // Post-process HTML
-    let finalHtml = processCodeBlocks(String(result))
-    finalHtml = processHeadings(finalHtml)
-    finalHtml = processLinks(finalHtml)
-    
-    return finalHtml
-  }, [content])
+  // Post-process HTML
+  let finalHtml = processCodeBlocks(String(result))
+  finalHtml = processHeadings(finalHtml)
+  finalHtml = processLinks(finalHtml)
 
   return (
-    <div
-      className="prose-brutal"
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
+    <>
+      <LinkTracker />
+      <div
+        className="prose-brutal"
+        dangerouslySetInnerHTML={{ __html: finalHtml }}
+      />
+    </>
   )
 }

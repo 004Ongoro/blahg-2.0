@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { ThumbsUp, Zap, Rocket } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -78,6 +77,15 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
 
   return (
     <div className="brutal-border brutal-shadow bg-card p-6 mb-12">
+      <style jsx>{`
+        @keyframes float-up {
+          0% { transform: translateY(0) scale(1); opacity: 1; }
+          100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        }
+        .animate-float-up {
+          animation: float-up 1s ease-out forwards;
+        }
+      `}</style>
       <h3 className="font-black uppercase text-sm mb-4 tracking-wider flex items-center gap-2">
         <span className="text-accent">{'>'}</span> Enjoyed this post?
       </h3>
@@ -107,18 +115,11 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
                 {count}
               </span>
 
-              <AnimatePresence>
-                {isAnimating && (
-                  <motion.div
-                    initial={{ y: 0, opacity: 1, scale: 1 }}
-                    animate={{ y: -50, opacity: 0, scale: 1.5 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                  >
-                    <Icon className={cn("w-8 h-8", type.color, "text-white p-1 rounded-full brutal-border-sm")} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {isAnimating && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <Icon className={cn("w-8 h-8 p-1 rounded-full brutal-border-sm text-white animate-float-up", type.color)} />
+                </div>
+              )}
             </button>
           )
         })}

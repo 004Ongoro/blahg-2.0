@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 interface TOCItem {
@@ -13,7 +12,6 @@ interface TOCItem {
 export function TableOfContents({ content }: { content: string }) {
   const [headings, setHeadings] = useState<TOCItem[]>([])
   const [activeId, setActiveId] = useState<string>('')
-  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
     // Find all headings within the prose-brutal container after a short delay
@@ -57,8 +55,6 @@ export function TableOfContents({ content }: { content: string }) {
   return (
     <div 
       className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-end py-4 group pr-2"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex flex-col items-end gap-2 border-r-2 border-foreground/10 pr-1">
         {headings.map((heading) => (
@@ -73,21 +69,14 @@ export function TableOfContents({ content }: { content: string }) {
               })
             }}
           >
-            <AnimatePresence>
-              {isHovered && (
-                <motion.span
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className={cn(
-                    "mr-4 text-[10px] uppercase tracking-tighter font-bold whitespace-nowrap px-2 py-1 bg-background border-2 brutal-border brutal-shadow-sm max-w-[200px] truncate",
-                    activeId === heading.id ? "bg-accent text-white" : "text-foreground"
-                  )}
-                >
-                  {heading.text}
-                </motion.span>
+            <span
+              className={cn(
+                "mr-4 text-[10px] uppercase tracking-tighter font-bold whitespace-nowrap px-2 py-1 bg-background border-2 brutal-border brutal-shadow-sm max-w-[200px] truncate transition-all duration-200 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 pointer-events-none group-hover:pointer-events-auto",
+                activeId === heading.id ? "bg-accent text-white" : "text-foreground"
               )}
-            </AnimatePresence>
+            >
+              {heading.text}
+            </span>
             
             <div 
               className={cn(

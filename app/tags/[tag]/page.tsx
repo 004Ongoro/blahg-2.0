@@ -5,7 +5,25 @@ import { PostCard } from '@/components/PostCard'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
+export const revalidate = false
+
+export async function generateStaticParams() {
+  try {
+    await dbConnect()
+    const posts = await Post.find({ published: true }).select('tags').lean()
+    const tags = new Set<string>()
+    posts.forEach((post: any) => {
+      post.tags?.forEach((tag: string) => tags.add(tag))
+    })
+    return Array.from(tags).map((tag) => ({
+      tag: encodeURIComponent(tag),
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
+}
 
 interface Props {
   params: Promise<{ tag: string }>

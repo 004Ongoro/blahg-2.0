@@ -6,7 +6,7 @@ import NewsletterIssue from '@/models/NewsletterIssue'
 import { formatDate } from '@/lib/utils'
 
 export const dynamic = 'force-static'
-export const revalidate = 3600
+export const revalidate = false
 
 async function getIssues() {
   await dbConnect()

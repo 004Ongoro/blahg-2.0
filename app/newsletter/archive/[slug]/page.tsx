@@ -10,6 +10,19 @@ import { formatDate } from '@/lib/utils'
 export const dynamic = 'force-static'
 export const revalidate = false
 
+export async function generateStaticParams() {
+  try {
+    await dbConnect()
+    const issues = await NewsletterIssue.find({ published: true }).select('slug').lean()
+    return issues.map((issue: any) => ({
+      slug: issue.slug,
+    }))
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error)
+    return []
+  }
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }

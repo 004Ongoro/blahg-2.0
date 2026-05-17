@@ -5,7 +5,8 @@ import Post from '@/models/Post'
 import Link from 'next/link'
 import { Layers } from 'lucide-react'
 
-export const revalidate = 3600
+export const dynamic = 'force-static'
+export const revalidate = false
 
 async function getSeries() {
   await dbConnect()

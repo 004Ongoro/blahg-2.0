@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const navLinks = [
   { name: 'posts', href: '/' },
@@ -19,18 +19,6 @@ const navLinks = [
 // Main header component
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
-
-  // Animation variants
-  const menuVariants = {
-    closed: { opacity: 0, y: -20, transition: { staggerChildren: 0.05, staggerDirection: -1 } },
-    open: { opacity: 1, y: 0, transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
-  }
-
-  // Item variants
-  const itemVariants = {
-    closed: { opacity: 0, x: -10 },
-    open: { opacity: 1, x: 0 },
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
@@ -59,31 +47,29 @@ export function Header() {
       </nav>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            className="absolute top-[68px] left-0 w-full bg-background border-b-4 border-foreground md:hidden overflow-hidden"
-          >
-            <div className="flex flex-col p-6 gap-6">
-              {navLinks.map((link) => (
-                <motion.div key={link.name} variants={itemVariants}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-3xl font-black uppercase hover:text-accent flex items-center gap-2"
-                  >
-                    <span className="text-accent">{'>'}</span> {link.name}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+      <div
+        className={cn(
+          "absolute top-[68px] left-0 w-full bg-background border-b-4 border-foreground md:hidden overflow-hidden transition-all duration-300 ease-in-out z-40",
+          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
         )}
-      </AnimatePresence>
+      >
+        <div className="flex flex-col p-6 gap-6">
+          {navLinks.map((link) => (
+            <div key={link.name} className={cn(
+              "transform transition-transform duration-300 delay-100",
+              isOpen ? "translate-x-0" : "-translate-x-10"
+            )}>
+              <Link
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="text-3xl font-black uppercase hover:text-accent flex items-center gap-2"
+              >
+                <span className="text-accent">{'>'}</span> {link.name}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
     </header>
   )
 }

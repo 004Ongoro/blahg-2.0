@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { MessageSquareIcon } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   Dialog,
   DialogContent,
@@ -26,15 +25,13 @@ export function FloatingContactButton() {
       <div className="fixed bottom-[100px] right-6 z-40">
         <Tooltip>
           <TooltipTrigger asChild>
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: -2 }}
-              whileTap={{ scale: 0.9, rotate: 2 }}
+            <button
               onClick={() => setIsOpen(true)}
-              className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center rounded-none"
+              className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center rounded-none transition-all hover:scale-110 hover:-rotate-2 active:scale-95 active:rotate-2"
               aria-label="Contact me"
             >
               <MessageSquareIcon className="size-6" />
-            </motion.button>
+            </button>
           </TooltipTrigger>
           <TooltipContent side="left">
             send me a message

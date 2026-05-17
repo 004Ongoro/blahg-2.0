@@ -1,28 +1,42 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Home, AlertCircle } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 text-center">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="brutal-border brutal-shadow bg-card p-12 max-w-2xl w-full"
-      >
-        <motion.h1 
-          animate={{ 
-            x: [0, -2, 2, -2, 2, 0],
-            color: ['#fb923c', '#000000', '#fb923c']
-          }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="text-8xl md:text-9xl font-black italic tracking-tighter mb-4"
-        >
+      <style jsx>{`
+        @keyframes spring-in {
+          0% { transform: scale(0.8); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes glitch {
+          0% { transform: translateX(0); color: #fb923c; }
+          20% { transform: translateX(-2px); }
+          40% { transform: translateX(2px); color: #000; }
+          60% { transform: translateX(-2px); }
+          80% { transform: translateX(2px); color: #fb923c; }
+          100% { transform: translateX(0); }
+        }
+        .animate-spring-in {
+          animation: spring-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .animate-glitch {
+          animation: glitch 2s infinite;
+        }
+        .animate-fade-in {
+          animation: fadeIn 1s ease-in forwards;
+          opacity: 0;
+        }
+        @keyframes fadeIn {
+          to { opacity: 1; }
+        }
+      `}</style>
+      <div className="brutal-border brutal-shadow bg-card p-12 max-w-2xl w-full animate-spring-in">
+        <h1 className="text-8xl md:text-9xl font-black italic tracking-tighter mb-4 animate-glitch">
           404
-        </motion.h1>
+        </h1>
         
         <h2 className="text-2xl md:text-3xl font-bold uppercase mb-6">
           Whoops! You've wandered into the <span className="text-accent">void</span>.
@@ -46,16 +60,11 @@ export default function NotFound() {
             <AlertCircle size={20} /> Try Again
           </button>
         </div>
-      </motion.div>
+      </div>
       
-      <motion.p 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="mt-8 font-mono text-sm text-muted-foreground"
-      >
+      <p className="mt-8 font-mono text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: '1s' }}>
         ERR_PAGE_NOT_FOUND // George Ongoro Blog 2.0
-      </motion.p>
+      </p>
     </div>
   )
 }

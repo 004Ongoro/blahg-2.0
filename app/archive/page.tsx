@@ -7,7 +7,7 @@ import Post from '@/models/Post'
 import NewsletterIssue from '@/models/NewsletterIssue'
 
 export const dynamic = 'force-static'
-export const revalidate = 3600
+export const revalidate = false
 
 // Fetch archive data
 async function getArchiveData() {

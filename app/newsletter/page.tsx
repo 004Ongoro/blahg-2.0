@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 type Mode = 'subscribe' | 'unsubscribe'
 
@@ -72,6 +71,22 @@ export default function NewsletterPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.5s ease-out forwards;
+        }
+      `}</style>
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center p-4 py-12 md:py-20">
         
@@ -182,13 +197,13 @@ export default function NewsletterPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((t, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, y: 20, rotate: i % 2 === 0 ? -2 : 2 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
-                viewport={{ once: true }}
-                className={`p-6 brutal-border brutal-shadow ${t.color} flex flex-col justify-between min-h-[180px] relative group cursor-default`}
+                className={`p-6 brutal-border brutal-shadow ${t.color} flex flex-col justify-between min-h-[180px] relative group cursor-default transition-all duration-300 hover:scale-105 hover:rotate-0 z-0 hover:z-10 animate-fade-in-up`}
+                style={{ 
+                  animationDelay: `${i * 100}ms`,
+                  transform: i % 2 === 0 ? 'rotate(-2deg)' : 'rotate(2deg)'
+                }}
               >
                 <Quote className="absolute top-2 right-2 opacity-10 group-hover:opacity-20 transition-opacity" size={40} />
                 <p className="text-lg font-black leading-tight mb-6">"{t.text}"</p>
@@ -198,31 +213,20 @@ export default function NewsletterPage() {
                     <Twitter size={10} /> {t.handle}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
         
         {/* Infinite Marquee Tech Stack */}
         <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground">
-          <motion.div 
-            animate={{ x: [0, -1000] }}
-            transition={{ 
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 20,
-                ease: "linear",
-              }
-            }}
-            className="flex gap-12 whitespace-nowrap min-w-full"
-          >
-            {[...techStack, ...techStack, ...techStack].map((tech, i) => (
+          <div className="flex gap-12 whitespace-nowrap min-w-full animate-marquee">
+            {[...techStack, ...techStack, ...techStack, ...techStack].map((tech, i) => (
               <span key={i} className="text-3xl md:text-5xl font-black uppercase italic text-background tracking-tighter">
                 {tech} <span className="text-accent ml-8">///</span>
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
 
       </main>

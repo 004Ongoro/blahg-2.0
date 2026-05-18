@@ -217,7 +217,7 @@ export async function POST(req: Request) {
 
                 <div style="border-top: 2px solid #374151; padding-top: 32px;">
                   <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">deepread.website</a>. 
+                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">code.geohack.top</a>. 
                     If you're no longer interested, you can unsubscribe at any time.
                   </p>
                   <p style="margin: 24px 0 0 0;">

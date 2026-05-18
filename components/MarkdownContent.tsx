@@ -71,7 +71,7 @@ function processHeadings(html: string): string {
 
 // Ensure all links in the article open in a new tab and have tracking refs
 function processLinks(html: string): string {
-  const currentHostname = 'g.deepread.website'
+  const currentHostname = 'code.geohack.top'
   
   return html.replace(/<a\s+(?:[^>]*?\s+)?href="([^"]*)"/g, (match, href) => {
     if (href.startsWith('http')) {

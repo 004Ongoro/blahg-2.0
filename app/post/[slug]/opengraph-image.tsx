@@ -1,13 +1,27 @@
 import { ImageResponse } from 'next/og'
+import dbConnect from '@/lib/mongodb'
+import Post from '@/models/Post'
 
 export const runtime = 'edge'
 
-export async function GET(request: Request) {
+export const alt = 'George Ongoro Blog'
+export const size = {
+  width: 1200,
+  height: 630,
+}
+
+export const contentType = 'image/png'
+
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+
   try {
-    const { searchParams } = new URL(request.url)
-    const title = searchParams.get('title') || 'George Ongoro'
-    const tags = searchParams.get('tags')?.split(',') || []
-    const readTime = searchParams.get('readTime')
+    await dbConnect()
+    const post = await Post.findOne({ slug, published: true }).select('title tags readTime').lean()
+
+    const title = post?.title || 'George Ongoro'
+    const tags = (post?.tags as string[]) || []
+    const readTime = post?.readTime
 
     return new ImageResponse(
       (
@@ -72,14 +86,17 @@ export async function GET(request: Request) {
         </div>
       ),
       {
-        width: 1200,
-        height: 630,
-        headers: {
-          'Cache-Control': 'public, max-age=31536000, immutable',
-        },
+        ...size,
       }
     )
   } catch (e: any) {
-    return new Response(`Failed to generate image`, { status: 500 })
+    return new ImageResponse(
+      (
+        <div style={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
+          <h1>George Ongoro</h1>
+        </div>
+      ),
+      { ...size }
+    )
   }
 }

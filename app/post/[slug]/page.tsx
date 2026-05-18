@@ -103,8 +103,6 @@ export async function generateMetadata({ params }: Props) {
   
   if (!post) return { title: 'Post Not Found' }
   
-  const ogImageUrl = `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}&tags=${post.tags?.join(',')}&readTime=${post.readTime}`
-  
   return {
     title: post.title,
     description: post.excerpt,
@@ -114,11 +112,9 @@ export async function generateMetadata({ params }: Props) {
       description: post.excerpt,
       type: 'article',
       url: `${baseUrl}/post/${slug}`,
-      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
-      images: [ogImageUrl],
     },
   }
 }
@@ -140,7 +136,6 @@ export default async function PostPage({ params }: Props) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`,
     datePublished: post.createdAt,
     dateModified: post.updatedAt || post.createdAt,
     author: {

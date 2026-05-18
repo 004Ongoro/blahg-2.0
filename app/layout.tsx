@@ -21,7 +21,7 @@ const jetbrainsMono = {
 }
 
 const baseUrl = getBaseUrl()
-const gaId = process.env.GOOGLE_ANALYTICS_ID
+const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),

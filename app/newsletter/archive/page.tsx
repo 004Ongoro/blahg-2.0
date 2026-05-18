@@ -3,7 +3,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import dbConnect from '@/lib/mongodb'
 import NewsletterIssue from '@/models/NewsletterIssue'
-import { formatDate } from '@/lib/utils'
+import { FormattedDate } from '@/components/FormattedDate'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -44,7 +44,7 @@ export default async function NewsletterArchivePage() {
                       {issue.subject}
                     </h2>
                     <p className="text-sm font-bold text-muted-foreground mt-1">
-                      {formatDate(issue.createdAt)}
+                      <FormattedDate date={issue.createdAt} />
                     </p>
                   </div>
                   <span className="text-accent font-black text-2xl group-hover:translate-x-2 transition-transform">

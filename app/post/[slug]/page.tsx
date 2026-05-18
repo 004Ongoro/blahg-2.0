@@ -9,7 +9,7 @@ import { Newsletter } from '@/components/Newsletter'
 import { LuckyButton } from '@/components/LuckyButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import { formatDate, getBaseUrl } from '@/lib/utils'
+import { getBaseUrl } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -17,6 +17,7 @@ import { ViewCounter } from '@/components/ViewCounter'
 import { SeriesCard } from '@/components/SeriesCard'
 import { PostReactions } from '@/components/PostReactions'
 import { SocialShare } from '@/components/SocialShare'
+import { FormattedDate } from '@/components/FormattedDate'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -177,11 +178,11 @@ export default async function PostPage({ params }: Props) {
             </h1>
             
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
-              <span>{formatDate(post.createdAt)}</span>
+              <FormattedDate date={post.createdAt} />
               {isUpdated && (
                 <>
                   <span className="text-accent">•</span>
-                  <span className="italic font-medium">Last edited {formatDate(post.updatedAt)}</span>
+                  <span className="italic font-medium">Last edited <FormattedDate date={post.updatedAt} /></span>
                 </>
               )}
               <span className="text-accent">|</span>

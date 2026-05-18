@@ -6,8 +6,8 @@ import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { formatDate } from '@/lib/utils'
 import { MessageSquare, Send, User } from 'lucide-react'
+import { FormattedDate } from '@/components/FormattedDate'
 
 interface Entry {
   _id: string
@@ -137,7 +137,7 @@ export default function GuestbookPage() {
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-black uppercase text-accent">{entry.name}</h3>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                    {formatDate(entry.createdAt)}
+                    <FormattedDate date={entry.createdAt} />
                   </span>
                 </div>
                 <p className="text-foreground leading-relaxed italic">

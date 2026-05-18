@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
 import dbConnect from '@/lib/mongodb'
 import NewsletterIssue from '@/models/NewsletterIssue'
-import { formatDate } from '@/lib/utils'
+import { FormattedDate } from '@/components/FormattedDate'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -74,7 +74,7 @@ export default async function NewsletterIssuePage({ params }: Props) {
               {issue.subject}
             </h1>
             <p className="font-bold mt-2 text-accent-foreground/80">
-              Published on {formatDate(issue.createdAt)}
+              Published <FormattedDate date={issue.createdAt} />
             </p>
           </header>
 

@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+import { formatDistanceToNow, subDays, isAfter } from 'date-fns'
+
 export function getBaseUrl() {
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
@@ -19,6 +21,17 @@ export function formatDate(date: Date | string): string {
     month: 'short',
     day: 'numeric',
   })
+}
+
+export function formatDateRelative(date: Date | string): string {
+  const d = new Date(date)
+  const aWeekAgo = subDays(new Date(), 7)
+
+  if (isAfter(d, aWeekAgo)) {
+    return formatDistanceToNow(d, { addSuffix: true })
+  }
+
+  return formatDate(d)
 }
 
 export function slugify(text: string): string {

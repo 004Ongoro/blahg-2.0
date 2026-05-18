@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { formatDate, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { FormattedDate } from './FormattedDate'
 
 interface PostCardProps {
   title: string
@@ -76,7 +77,7 @@ export function PostCard({
       </p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <span className={isSelected ? "text-accent-foreground/70" : "text-muted-foreground"}>
-          {formatDate(createdAt)}
+          <FormattedDate date={createdAt} />
         </span>
         <span className={isSelected ? "text-accent-foreground" : "text-accent"}>|</span>
         <span className={isSelected ? "text-accent-foreground/70" : "text-muted-foreground"}>

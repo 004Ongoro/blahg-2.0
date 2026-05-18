@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export const alt = 'George Ongoro Blog'
 export const size = {

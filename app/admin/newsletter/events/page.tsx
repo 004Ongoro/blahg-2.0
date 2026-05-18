@@ -33,7 +33,8 @@ export default function EmailEventsPage() {
       case 'email.sent': return 'bg-blue-200 text-blue-800'
       case 'email.delivered': return 'bg-green-200 text-green-800'
       case 'email.bounced': return 'bg-red-200 text-red-800'
-      case 'email.complained': return 'bg-lime-200 text-lime-800'      case 'email.opened': return 'bg-purple-200 text-purple-800'
+      case 'email.complained': return 'bg-lime-200 text-lime-800'
+      case 'email.opened': return 'bg-purple-200 text-purple-800'
       case 'email.clicked': return 'bg-cyan-200 text-cyan-800'
       default: return 'bg-gray-200 text-gray-800'
     }

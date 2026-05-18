@@ -17,7 +17,7 @@
   --secondary-foreground: #0a0a0a;
   --muted: #e8e8d0;
   --muted-foreground: #525252;
-  --accent: #ff6b35;
+  --accent: #39FF14;
   --accent-foreground: #0a0a0a;
   --destructive: #dc2626;
   --destructive-foreground: #fffef5;
@@ -40,7 +40,7 @@
   --secondary-foreground: #fffef5;
   --muted: #2a2a2a;
   --muted-foreground: #a0a0a0;
-  --accent: #ff6b35;
+  --accent: #39FF14;
   --accent-foreground: #0a0a0a;
   --destructive: #dc2626;
   --destructive-foreground: #fffef5;
@@ -379,7 +379,7 @@
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-link {
-  color: #e36209;
+  color: #39FF14;
 }
 
 .hljs-built_in,

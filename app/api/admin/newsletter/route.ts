@@ -117,7 +117,7 @@ export async function POST(req: Request) {
               display: block;
             }
             .content blockquote { 
-              border-left: 8px solid #fb923c; 
+              border-left: 8px solid #39FF14; 
               margin: 32px 0; 
               padding: 16px 24px; 
               background: #fff7ed; 
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
             <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
               
               <!-- Header -->
-              <div class="header" style="background-color: #fb923c; padding: 48px 40px; border-bottom: 4px solid #000000;">
+              <div class="header" style="background-color: #39FF14; padding: 48px 40px; border-bottom: 4px solid #000000;">
                 <p style="margin: 0 0 16px 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.1em; color: #000;">
                   Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}
                 </p>
@@ -191,7 +191,7 @@ export async function POST(req: Request) {
               <!-- Footer -->
               <div class="footer" style="background-color: #000000; color: #ffffff; padding: 48px 40px;">
                 <div style="margin-bottom: 32px;">
-                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #fb923c;">
+                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #39FF14;">
                     George Ongoro
                   </h2>
                   <p style="margin: 8px 0 0 0; font-weight: 700; font-size: 16px; color: #9ca3af;">
@@ -203,13 +203,13 @@ export async function POST(req: Request) {
                   <table border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td style="padding-right: 20px;">
-                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">GitHub</a>
+                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #39FF14;">GitHub</a>
                       </td>
                       <td style="padding-right: 20px;">
-                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">Twitter/X</a>
+                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #39FF14;">Twitter/X</a>
                       </td>
                       <td>
-                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #fb923c;">LinkedIn</a>
+                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #39FF14;">LinkedIn</a>
                       </td>
                     </tr>
                   </table>
@@ -217,7 +217,7 @@ export async function POST(req: Request) {
 
                 <div style="border-top: 2px solid #374151; padding-top: 32px;">
                   <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #fb923c; text-decoration: none;">code.geohack.top</a>. 
+                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #39FF14; text-decoration: none;">code.geohack.top</a>. 
                     If you're no longer interested, you can unsubscribe at any time.
                   </p>
                   <p style="margin: 24px 0 0 0;">

@@ -279,13 +279,13 @@ export default function AdminNewsletter() {
               <Eye size={18} className="text-accent"/> Live Email Preview
             </h2>
             <div className="brutal-border bg-white p-4 md:p-8 brutal-shadow overflow-y-auto max-h-[650px] text-black">
-              <div style={{ backgroundColor: '#fb923c', padding: '20px', borderBottom: '4px solid #000', marginBottom: '20px' }}>
+              <div style={{ backgroundColor: '#39FF14', padding: '20px', borderBottom: '4px solid #000', marginBottom: '20px' }}>
                 <h1 className="text-xl md:text-2xl font-black uppercase m-0 leading-tight">
                   {subject || 'SUBJECT PREVIEW'}
                 </h1>
               </div>
               <div 
-                className="prose prose-orange max-w-none" 
+                className="prose prose-lime max-w-none" 
                 dangerouslySetInnerHTML={{ __html: previewHtml || '<p class="text-gray-400 italic">Body content will appear here...</p>' }} 
               />
               <div className="mt-8 pt-8 border-t-4 border-black bg-gray-100 p-4 text-xs font-bold">
@@ -318,7 +318,7 @@ export default function AdminNewsletter() {
                     <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground">
                       <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
                       <span className="text-accent">|</span>
-                      <span className={issue.published ? "text-green-600" : "text-orange-600"}>
+                      <span className={issue.published ? "text-green-600" : "text-lime-600"}>
                         {issue.published ? "PUBLIC" : "DRAFT/TEST"}
                       </span>
                     </div>

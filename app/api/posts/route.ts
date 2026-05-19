@@ -72,8 +72,13 @@ export async function POST(req: Request) {
     if (post.published) {
       // revalidate
       revalidatePath('/')
+      revalidatePath('/archive')
       revalidatePath('/tags')
       tags?.forEach((tag: string) => revalidatePath(`/tags/${tag}`))
+      if (series) {
+        revalidatePath('/series')
+        revalidatePath(`/series/${series}`)
+      }
     }
 
     return NextResponse.json(post, { status: 201 })

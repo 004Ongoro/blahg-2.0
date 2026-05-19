@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
@@ -53,6 +54,23 @@ export async function PUT(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
+    // Clear caches
+    revalidatePath('/')
+    revalidatePath('/archive')
+    revalidatePath(`/post/${slug}`) // Old slug
+    if (post.slug !== slug) {
+      revalidatePath(`/post/${post.slug}`) // New slug
+    }
+    
+    if (post.tags) {
+      revalidatePath('/tags')
+      post.tags.forEach((tag: string) => revalidatePath(`/tags/${tag}`))
+    }
+    if (post.series) {
+      revalidatePath('/series')
+      revalidatePath(`/series/${post.series}`)
+    }
+
     return NextResponse.json(post)
   } catch (error) {
     console.error('Error updating post:', error)
@@ -81,6 +99,19 @@ export async function DELETE(
 
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    }
+
+    // Clear caches
+    revalidatePath('/')
+    revalidatePath('/archive')
+    revalidatePath(`/post/${slug}`)
+    if (post.tags) {
+      revalidatePath('/tags')
+      post.tags.forEach((tag: string) => revalidatePath(`/tags/${tag}`))
+    }
+    if (post.series) {
+      revalidatePath('/series')
+      revalidatePath(`/series/${post.series}`)
     }
 
     return NextResponse.json({ message: 'Post deleted successfully' })

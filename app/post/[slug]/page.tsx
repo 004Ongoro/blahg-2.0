@@ -246,6 +246,25 @@ export default async function PostPage({ params }: Props) {
           />
 
           <GiscusComments />
+
+          {post.tags && post.tags.length > 0 && (
+            <div className="mt-12 pt-8 border-t-4 border-foreground">
+              <h2 className="text-xl font-black uppercase mb-4 flex items-center gap-2">
+                <span className="text-accent">#</span> Related Topics
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {post.tags.map((tag: string) => (
+                  <Link
+                    key={tag}
+                    href={`/tags/${tag}`}
+                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold brutal-border brutal-shadow hover:bg-accent hover:text-accent-foreground transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </article>
       </main>
 

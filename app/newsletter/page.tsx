@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter } from 'lucide-react'
+import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter, ArrowRight, Mail } from 'lucide-react'
 
 type Mode = 'subscribe' | 'unsubscribe'
 
@@ -219,13 +219,32 @@ export default function NewsletterPage() {
         </div>
         
         {/* Infinite Marquee Tech Stack */}
-        <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground">
+        <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground mb-20">
           <div className="flex gap-12 whitespace-nowrap min-w-full animate-marquee">
             {[...techStack, ...techStack, ...techStack, ...techStack].map((tech, i) => (
               <span key={i} className="text-3xl md:text-5xl font-black uppercase italic text-background tracking-tighter">
                 {tech} <span className="text-accent ml-8">///</span>
               </span>
             ))}
+          </div>
+        </div>
+
+        {/* Link to Archive */}
+        <div className="max-w-4xl w-full text-center px-4">
+          <div className="brutal-border p-12 bg-card brutal-shadow relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Mail size={160} />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-black uppercase italic mb-4">Want to see what you're missing?</h3>
+            <p className="text-xl font-bold text-muted-foreground mb-8">
+              Explore our full catalog of past issues and deep dives.
+            </p>
+            <Link 
+              href="/newsletter/archive"
+              className="brutal-btn bg-background text-foreground px-8 py-4 font-black uppercase inline-flex items-center gap-2 text-xl hover:bg-accent hover:text-accent-foreground"
+            >
+              Browse Archive <ArrowRight size={24} />
+            </Link>
           </div>
         </div>
 

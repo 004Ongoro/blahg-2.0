@@ -12,11 +12,11 @@ export default function NotFound() {
           100% { transform: scale(1); opacity: 1; }
         }
         @keyframes glitch {
-          0% { transform: translateX(0); color: #39FF14; }
+          0% { transform: translateX(0); color: #ffa400; }
           20% { transform: translateX(-2px); }
           40% { transform: translateX(2px); color: #000; }
           60% { transform: translateX(-2px); }
-          80% { transform: translateX(2px); color: #39FF14; }
+          80% { transform: translateX(2px); color: #ffa400; }
           100% { transform: translateX(0); }
         }
         .animate-spring-in {

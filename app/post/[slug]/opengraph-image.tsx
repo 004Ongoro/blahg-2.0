@@ -33,14 +33,14 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
-            backgroundColor: '#fffef5',
+            backgroundColor: '#eaf6ff',
             padding: '80px',
-            border: '32px solid #39FF14',
+            border: '32px solid #ffa400',
             fontFamily: 'sans-serif',
           }}
         >
           {/* Background decoration */}
-          <div style={{ position: 'absolute', top: -50, right: -50, width: 300, height: 300, backgroundColor: '#39FF14', transform: 'rotate(15deg)', opacity: 0.1 }} />
+          <div style={{ position: 'absolute', top: -50, right: -50, width: 300, height: 300, backgroundColor: '#ffa400', transform: 'rotate(15deg)', opacity: 0.1 }} />
           
           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
@@ -68,7 +68,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', width: '100%' }}>
             <div style={{ display: 'flex', gap: 15 }}>
               {tags.slice(0, 3).map(tag => (
-                <div key={tag} style={{ backgroundColor: '#39FF14', padding: '10px 20px', border: '4px solid #000', display: 'flex' }}>
+                <div key={tag} style={{ backgroundColor: '#ffa400', padding: '10px 20px', border: '4px solid #000', display: 'flex' }}>
                   <span style={{ color: '#000', fontSize: 24, fontWeight: 900 }}>#{tag}</span>
                 </div>
               ))}

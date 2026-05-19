@@ -5,48 +5,48 @@
 
 /* Neo-brutalist design system */
 :root {
-  --background: #fffef5;
-  --foreground: #0a0a0a;
-  --card: #fffef5;
-  --card-foreground: #0a0a0a;
-  --popover: #fffef5;
-  --popover-foreground: #0a0a0a;
-  --primary: #39FF14;
-  --primary-foreground: #0a0a0a;
-  --secondary: #f5f5dc;
-  --secondary-foreground: #0a0a0a;
-  --muted: #e8e8d0;
-  --muted-foreground: #525252;
-  --accent: #39FF14;
-  --accent-foreground: #0a0a0a;
+  --background: #eaf6ff;
+  --foreground: #232528;
+  --card: #eaf6ff;
+  --card-foreground: #232528;
+  --popover: #eaf6ff;
+  --popover-foreground: #232528;
+  --primary: #ffa400;
+  --primary-foreground: #232528;
+  --secondary: #009ffd;
+  --secondary-foreground: #eaf6ff;
+  --muted: #d1e9ff;
+  --muted-foreground: #2a2a72;
+  --accent: #ffa400;
+  --accent-foreground: #232528;
   --destructive: #dc2626;
-  --destructive-foreground: #fffef5;
-  --border: #0a0a0a;
-  --input: #0a0a0a;
-  --ring: #39FF14;
+  --destructive-foreground: #eaf6ff;
+  --border: #232528;
+  --input: #232528;
+  --ring: #ffa400;
   --radius: 0;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #fffef5;
-  --card: #1a1a1a;
-  --card-foreground: #fffef5;
-  --popover: #1a1a1a;
-  --popover-foreground: #fffef5;
-  --primary: #39FF14;
-  --primary-foreground: #0a0a0a;
-  --secondary: #2a2a2a;
-  --secondary-foreground: #fffef5;
-  --muted: #2a2a2a;
-  --muted-foreground: #a0a0a0;
-  --accent: #39FF14;
-  --accent-foreground: #0a0a0a;
+  --background: #232528;
+  --foreground: #eaf6ff;
+  --card: #2a2a72;
+  --card-foreground: #eaf6ff;
+  --popover: #2a2a72;
+  --popover-foreground: #eaf6ff;
+  --primary: #ffa400;
+  --primary-foreground: #232528;
+  --secondary: #009ffd;
+  --secondary-foreground: #eaf6ff;
+  --muted: #2a2a72;
+  --muted-foreground: #009ffd;
+  --accent: #ffa400;
+  --accent-foreground: #232528;
   --destructive: #dc2626;
-  --destructive-foreground: #fffef5;
-  --border: #fffef5;
-  --input: #fffef5;
-  --ring: #39FF14;
+  --destructive-foreground: #eaf6ff;
+  --border: #eaf6ff;
+  --input: #eaf6ff;
+  --ring: #ffa400;
 }
 
 @theme inline {
@@ -379,7 +379,7 @@
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-link {
-  color: #39FF14;
+  color: #ffa400;
 }
 
 .hljs-built_in,

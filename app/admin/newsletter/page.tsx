@@ -279,7 +279,7 @@ export default function AdminNewsletter() {
               <Eye size={18} className="text-accent"/> Live Email Preview
             </h2>
             <div className="brutal-border bg-white p-4 md:p-8 brutal-shadow overflow-y-auto max-h-[650px] text-black">
-              <div style={{ backgroundColor: '#39FF14', padding: '20px', borderBottom: '4px solid #000', marginBottom: '20px' }}>
+              <div style={{ backgroundColor: '#ffa400', padding: '20px', borderBottom: '4px solid #000', marginBottom: '20px' }}>
                 <h1 className="text-xl md:text-2xl font-black uppercase m-0 leading-tight">
                   {subject || 'SUBJECT PREVIEW'}
                 </h1>

@@ -7,6 +7,7 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 
+export const dynamic = 'force-static'
 export const revalidate = 3600
 
 export async function GET() {

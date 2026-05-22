@@ -15,7 +15,7 @@ export async function GET(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    const reactions = Object.fromEntries(post.reactions || new Map())
+    const reactions = post.reactions || {}
     return NextResponse.json({ reactions }, {
       headers: {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30'
@@ -54,7 +54,9 @@ export async function POST(
     }
 
     // Convert Map to plain object for response
-    const reactions = Object.fromEntries(post.reactions || new Map())
+    const reactions = post.reactions instanceof Map 
+      ? Object.fromEntries(post.reactions) 
+      : (post.reactions || {})
 
     return NextResponse.json({ reactions })
   } catch (error) {

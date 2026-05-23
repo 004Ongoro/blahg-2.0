@@ -5,10 +5,21 @@ import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
+import { CodeExecutor } from './CodeExecutor'
 
 interface MarkdownContentProps {
   content: string
 }
+
+const RUNNABLE_LANGS = [
+  'js', 'javascript', 
+  'ts', 'typescript', 
+  'python', 'py', 
+  'react', 'jsx', 'tsx',
+  'cpp', 'c++',
+  'go',
+  'java'
+]
 
 // Extract YouTube video ID from various URL formats
 function extractYouTubeId(url: string): string | null {
@@ -42,7 +53,12 @@ function processCodeBlocks(html: string): string {
     /<pre><code class="hljs language-(\w+)">/g,
     (_, lang) => {
       const displayLang = lang.charAt(0).toUpperCase() + lang.slice(1)
-      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang">${displayLang}</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`
+      const isRunnable = RUNNABLE_LANGS.includes(lang.toLowerCase())
+      const runButton = isRunnable 
+        ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" onclick="window.runCode(this)">Run</button>`
+        : ''
+      
+      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`
     }
   ).replace(
     /<\/code><\/pre>/g,
@@ -147,6 +163,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
   return (
     <>
       <LinkTracker />
+      <CodeExecutor />
       <div
         className="prose-brutal"
         dangerouslySetInnerHTML={{ __html: finalHtml }}

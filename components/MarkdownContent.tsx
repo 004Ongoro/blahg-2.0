@@ -117,34 +117,48 @@ function processCustomSyntax(content: string): string {
   return processed
 }
 
-// Process side-notes/callouts
-function processSideNotes(content: string): string {
+// Process side-notes/callouts by injecting markers
+function injectSideNoteMarkers(content: string): string {
   const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
   
   return content.replace(sideNoteRegex, (match, type, title, body) => {
-    const defaultTitles = {
-      note: 'Note',
-      warning: 'Warning',
-      tip: 'Pro-Tip',
-      info: 'Information'
-    }
-    
-    const displayTitle = (title || defaultTitles[type as keyof typeof defaultTitles]).trim()
-    const icon = {
-      note: '📝',
-      warning: '⚠️',
-      tip: '💡',
-      info: 'ℹ️'
-    }[type as keyof typeof defaultTitles]
-
-    return `\n<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">${body}</div></div>\n`
+    return `\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n${body}\n:::CALLOUT_CLOSE:::\n`
   })
+}
+
+// Apply final HTML for side-notes
+function applySideNotes(html: string): string {
+  const openRegex = /<p>:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::<\/p>/g
+  const closeRegex = /<p>:::CALLOUT_CLOSE:::<\/p>/g
+
+  const defaultTitles = {
+    note: 'Note',
+    warning: 'Warning',
+    tip: 'Pro-Tip',
+    info: 'Information'
+  }
+
+  const icons = {
+    note: '📝',
+    warning: '⚠️',
+    tip: '💡',
+    info: 'ℹ️'
+  }
+
+  let processed = html.replace(openRegex, (match, type, title) => {
+    const displayTitle = (title || defaultTitles[type as keyof typeof defaultTitles]).trim()
+    const icon = icons[type as keyof typeof icons]
+    
+    return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">`
+  })
+
+  return processed.replace(closeRegex, '</div></div>')
 }
 
 export async function MarkdownContent({ content }: MarkdownContentProps) {
   // Process custom syntax and YouTube embeds first
   const withCustomSyntax = processCustomSyntax(content)
-  const withSideNotes = processSideNotes(withCustomSyntax)
+  const withSideNotes = injectSideNoteMarkers(withCustomSyntax)
   const processedContent = processYouTubeEmbeds(withSideNotes)
   
   const result = await unified()
@@ -156,7 +170,8 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
     .process(processedContent)
 
   // Post-process HTML
-  let finalHtml = processCodeBlocks(String(result))
+  let finalHtml = applySideNotes(String(result))
+  finalHtml = processCodeBlocks(finalHtml)
   finalHtml = processHeadings(finalHtml)
   finalHtml = processLinks(finalHtml)
 

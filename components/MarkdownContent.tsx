@@ -124,15 +124,16 @@ function injectSideNoteMarkers(content: string): string {
   const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
   
   return content.replace(sideNoteRegex, (match, type, title, body) => {
-    return `\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n${body}\n:::CALLOUT_CLOSE:::\n`
+    // Use double newlines to ensure Remark treats these as separate paragraphs
+    return `\n\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n\n${body}\n\n:::CALLOUT_CLOSE:::\n\n`
   })
 }
 
 // Apply final HTML for side-notes
 function applySideNotes(html: string): string {
-  // More flexible regex to match callout markers even if they are wrapped in P tags with spaces
-  const openRegex = /<p>\s*:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::\s*<\/p>/g
-  const closeRegex = /<p>\s*:::CALLOUT_CLOSE:::\s*<\/p>/g
+  // Even more flexible regex to match callout markers anywhere
+  const openRegex = /(?:<p>\s*)?:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::(?:\s*<\/p>)?/g
+  const closeRegex = /(?:<p>\s*)?:::CALLOUT_CLOSE:::(?:\s*<\/p>)?/g
 
   const defaultTitles = {
     note: 'Note',
@@ -152,6 +153,7 @@ function applySideNotes(html: string): string {
     const displayTitle = (title || defaultTitles[type as keyof typeof defaultTitles]).trim()
     const icon = icons[type as keyof typeof icons]
     
+    // We use a div here, so we must ensure we aren't leaving stray P tags if we didn't match them
     return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">`
   })
 

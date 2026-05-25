@@ -15,7 +15,40 @@ export function TableOfContents({ content }: { content: string }) {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    // ... (rest of useEffect remains same)
+    // Find all headings within the prose-brutal container after a short delay
+    // to ensure MarkdownContent has rendered
+    const timer = setTimeout(() => {
+      const articleElement = document.querySelector('.prose-brutal')
+      if (!articleElement) return
+
+      const headingElements = articleElement.querySelectorAll('h1, h2, h3')
+      const items: TOCItem[] = Array.from(headingElements).map((el) => ({
+        id: el.id,
+        text: (el.querySelector('span') || el).textContent || '',
+        level: parseInt(el.tagName.substring(1))
+      })).filter(item => item.id)
+
+      setHeadings(items)
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveId(entry.target.id)
+            }
+          })
+        },
+        { rootMargin: '-10% 0% -80% 0%' }
+      )
+
+      headingElements.forEach((el) => {
+        if (el.id) observer.observe(el)
+      })
+
+      return () => observer.disconnect()
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [content])
 
   if (headings.length === 0) return null

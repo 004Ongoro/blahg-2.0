@@ -50,12 +50,13 @@ function processYouTubeEmbeds(content: string): string {
 
 // Add title bars to code blocks
 function processCodeBlocks(html: string): string {
-  // More robust regex to match code blocks with highlight classes
+  // Even more robust regex to capture language even if other classes are present
   return html.replace(
     /<pre><code\s+class="([^"]*?language-(\w+)[^"]*?)">/g,
     (match, fullClass, lang) => {
       const displayLang = lang.charAt(0).toUpperCase() + lang.slice(1)
       const isRunnable = RUNNABLE_LANGS.includes(lang.toLowerCase())
+      
       const runButton = isRunnable 
         ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" onclick="window.runCode(this)">Run</button>`
         : ''
@@ -121,7 +122,7 @@ function processCustomSyntax(content: string): string {
 
 // Process side-notes/callouts by injecting markers
 function injectSideNoteMarkers(content: string): string {
-  const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
+  const sideNoteRegex = /:::(note|warning|tip|info|sponsor)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
   
   return content.replace(sideNoteRegex, (match, type, title, body) => {
     // Use double newlines to ensure Remark treats these as separate paragraphs
@@ -132,21 +133,23 @@ function injectSideNoteMarkers(content: string): string {
 // Apply final HTML for side-notes
 function applySideNotes(html: string): string {
   // Even more flexible regex to match callout markers anywhere
-  const openRegex = /(?:<p>\s*)?:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::(?:\s*<\/p>)?/g
+  const openRegex = /(?:<p>\s*)?:::CALLOUT_OPEN:(note|warning|tip|info|sponsor):(.*?)?:::(?:\s*<\/p>)?/g
   const closeRegex = /(?:<p>\s*)?:::CALLOUT_CLOSE:::(?:\s*<\/p>)?/g
 
   const defaultTitles = {
     note: 'Note',
     warning: 'Warning',
     tip: 'Pro-Tip',
-    info: 'Information'
+    info: 'Information',
+    sponsor: 'Sponsored'
   }
 
   const icons = {
     note: '📝',
     warning: '⚠️',
     tip: '💡',
-    info: 'ℹ️'
+    info: 'ℹ️',
+    sponsor: '🤝'
   }
 
   let processed = html.replace(openRegex, (match, type, title) => {
@@ -192,4 +195,3 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
     </>
   )
 }
-

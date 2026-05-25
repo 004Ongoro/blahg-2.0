@@ -162,8 +162,9 @@
 }
 
 .prose-brutal code {
-  @apply bg-secondary px-2 py-1 text-sm;
+  @apply bg-secondary px-1 text-sm;
   border: 2px solid var(--foreground);
+  border-radius: 4px;
 }
 
 .prose-brutal pre {
@@ -174,6 +175,30 @@
 
 .prose-brutal pre code {
   @apply border-0 p-0 bg-transparent text-[#e6edf3];
+  border-radius: 0;
+}
+
+.prose-brutal table {
+  @apply w-full border-collapse mb-6;
+  border: 3px solid var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+
+.prose-brutal th {
+  @apply bg-secondary p-3 text-left font-black uppercase text-xs border-b-[3px] border-r-[3px] border-foreground;
+}
+
+.prose-brutal td {
+  @apply p-3 border-b-[3px] border-r-[3px] border-foreground;
+}
+
+.prose-brutal th:last-child,
+.prose-brutal td:last-child {
+  @apply border-r-0;
+}
+
+.prose-brutal tr:last-child td {
+  @apply border-b-0;
 }
 
 .prose-brutal blockquote {

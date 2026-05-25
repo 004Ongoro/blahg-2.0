@@ -83,12 +83,12 @@ async function getNavigation(currentCreatedAt: Date) {
     }).sort({ createdAt: 1 }).select('slug').lean()
 
     const allPosts = await Post.find({ published: true }).select('slug').lean()
-    const allSlugs = allPosts.map(p => p.slug)
+    const allSlugs = allPosts.map(p => String(p.slug))
 
     return {
-      prev: prevPost?.slug || null,
-      next: nextPost?.slug || null,
-      allSlugs
+      prev: prevPost ? String(prevPost.slug) : null,
+      next: nextPost ? String(nextPost.slug) : null,
+      allSlugs: JSON.parse(JSON.stringify(allSlugs))
     }
   } catch (error) {
     console.error('Error fetching navigation:', error)
@@ -219,24 +219,32 @@ export default async function PostPage({ params }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
             <div className="w-full">
               {nav.prev ? (
-                <Link href={`/post/${nav.prev}`} passHref>
-                  <Button variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                <Button asChild variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                  <Link href={`/post/${nav.prev}`}>
                     <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-                  </Button>
-                </Link>
-              ) : null}
+                  </Link>
+                </Button>
+              ) : (
+                <div className="w-full h-12 brutal-border brutal-shadow bg-muted/20 flex items-center justify-center text-muted-foreground font-bold opacity-50 cursor-not-allowed">
+                  <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+                </div>
+              )}
             </div>
 
             <LuckyButton allSlugs={nav.allSlugs} currentSlug={slug} />
 
             <div className="w-full">
               {nav.next ? (
-                <Link href={`/post/${nav.next}`} passHref>
-                  <Button variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                <Button asChild variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
+                  <Link href={`/post/${nav.next}`}>
                     Next <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              ) : null}
+                  </Link>
+                </Button>
+              ) : (
+                <div className="w-full h-12 brutal-border brutal-shadow bg-muted/20 flex items-center justify-center text-muted-foreground font-bold opacity-50 cursor-not-allowed">
+                  Next <ChevronRight className="ml-2 h-4 w-4" />
+                </div>
+              )}
             </div>
           </div>
 

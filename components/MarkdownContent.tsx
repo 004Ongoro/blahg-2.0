@@ -1,5 +1,6 @@
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
+import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
@@ -49,16 +50,17 @@ function processYouTubeEmbeds(content: string): string {
 
 // Add title bars to code blocks
 function processCodeBlocks(html: string): string {
+  // More robust regex to match code blocks with highlight classes
   return html.replace(
-    /<pre><code class="hljs language-(\w+)">/g,
-    (_, lang) => {
+    /<pre><code\s+class="([^"]*?language-(\w+)[^"]*?)">/g,
+    (match, fullClass, lang) => {
       const displayLang = lang.charAt(0).toUpperCase() + lang.slice(1)
       const isRunnable = RUNNABLE_LANGS.includes(lang.toLowerCase())
       const runButton = isRunnable 
         ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" onclick="window.runCode(this)">Run</button>`
         : ''
       
-      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`
+      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="${fullClass}">`
     }
   ).replace(
     /<\/code><\/pre>/g,
@@ -128,8 +130,9 @@ function injectSideNoteMarkers(content: string): string {
 
 // Apply final HTML for side-notes
 function applySideNotes(html: string): string {
-  const openRegex = /<p>:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::<\/p>/g
-  const closeRegex = /<p>:::CALLOUT_CLOSE:::<\/p>/g
+  // More flexible regex to match callout markers even if they are wrapped in P tags with spaces
+  const openRegex = /<p>\s*:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::\s*<\/p>/g
+  const closeRegex = /<p>\s*:::CALLOUT_CLOSE:::\s*<\/p>/g
 
   const defaultTitles = {
     note: 'Note',
@@ -163,6 +166,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
   
   const result = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
     .use(rehypeHighlight, { detect: true })
@@ -186,3 +190,4 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
     </>
   )
 }
+

@@ -71,13 +71,22 @@ function processCodeBlocks(html: string): string {
 
 // Inject paperclip icons for section links
 function processHeadings(html: string): string {
+  // More robust regex to match headings with an id attribute, potentially among other attributes
   return html.replace(
-    /<(h[1-6])\s+id="([^"]+)">(.+?)<\/\1>/g,
-    (match, tag, id, content) => {
-      return `<${tag} id="${id}" class="group flex items-center gap-2">
+    /<(h[1-6])([^>]*?\s+id="([^"]+)"[^>]*?)>(.*?)<\/\1>/gi,
+    (match, tag, attributes, id, content) => {
+      // Remove the id from attributes if it exists to avoid duplication when we manually add it back
+      const cleanAttributes = attributes.replace(/\s+id="[^"]+"/, '').trim();
+      const extraClasses = cleanAttributes.match(/class="([^"]+)"/);
+      const otherAttrs = cleanAttributes.replace(/class="[^"]+"/, '').trim();
+      
+      const baseClass = "group flex items-center gap-2";
+      const finalClass = extraClasses ? `${baseClass} ${extraClasses[1]}` : baseClass;
+
+      return `<${tag} id="${id}" class="${finalClass}" ${otherAttrs}>
         <span>${content}</span>
         <button 
-          onclick="const url = new URL(window.location.origin + window.location.pathname); url.hash = '${id}'; navigator.clipboard.writeText(url.href).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); });"
+          onclick="const url = window.location.origin + window.location.pathname + '#' + '${id}'; (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); }).catch(() => { const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); });"
           class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded text-muted-foreground inline-flex items-center justify-center cursor-pointer"
           title="Copy link to section"
         >

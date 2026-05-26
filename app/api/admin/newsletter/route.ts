@@ -90,149 +90,219 @@ export async function POST(req: Request) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>${subject}</title>
           <style>
-            @media only screen and (max-width: 600px) {
-              .main { width: 100% !important; border-left: none !important; border-right: none !important; box-shadow: none !important; }
-              .content { padding: 30px 20px !important; }
-              .header { padding: 30px 20px !important; }
-              .footer { padding: 30px 20px !important; }
+            body {
+              background-color: #f4f7f9;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+              color: #334155;
+              margin: 0;
+              padding: 0;
+              -webkit-font-smoothing: antialiased;
+            }
+            .main {
+              max-width: 600px;
+              margin: 40px auto;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .header {
+              padding: 48px 40px 24px;
+            }
+            .issue-tag {
+              display: inline-block;
+              background-color: #f1f5f9;
+              color: #64748b;
+              font-size: 12px;
+              font-weight: 600;
+              padding: 4px 12px;
+              border-radius: 9999px;
+              margin-bottom: 16px;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+            }
+            h1 {
+              color: #0f172a;
+              font-size: 32px;
+              font-weight: 800;
+              line-height: 1.2;
+              margin: 0 0 16px 0;
+            }
+            .view-online {
+              font-size: 13px;
+              color: #3b82f6;
+              text-decoration: none;
+              font-weight: 500;
+            }
+            .content {
+              padding: 0 40px 48px;
+              font-size: 17px;
+              line-height: 1.6;
+              color: #334155;
             }
             .content p { margin-bottom: 24px; }
             .content h1, .content h2, .content h3 { 
+              color: #1e293b;
               margin-top: 40px; 
               margin-bottom: 16px; 
-              line-height: 1.1; 
-              text-transform: uppercase;
-              font-weight: 900;
-              letter-spacing: -0.02em;
+              line-height: 1.2;
             }
-            .content h1 { font-size: 32px; }
-            .content h2 { font-size: 28px; }
-            .content h3 { font-size: 24px; }
+            .content h1 { font-size: 28px; font-weight: 800; }
+            .content h2 { font-size: 24px; font-weight: 700; }
+            .content h3 { font-size: 20px; font-weight: 600; }
             .content img { 
               max-width: 100%; 
               height: auto; 
-              border: 4px solid #000; 
-              box-shadow: 8px 8px 0px #000; 
+              border-radius: 8px;
               margin: 32px 0;
               display: block;
             }
             .content blockquote { 
-              border-left: 8px solid #ffa400; 
+              border-left: 4px solid #3b82f6; 
               margin: 32px 0; 
-              padding: 16px 24px; 
-              background: #fff7ed; 
+              padding: 8px 24px; 
+              background: #f8fafc; 
               font-style: italic;
-              border-top: 2px solid #000;
-              border-right: 2px solid #000;
-              border-bottom: 2px solid #000;
+              color: #475569;
             }
             .content code { 
-              background: #e5e7eb; 
+              background: #f1f5f9; 
               padding: 2px 6px; 
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
               font-size: 0.9em;
-              border: 1px solid #000;
+              border-radius: 4px;
+              color: #0f172a;
             }
             .content pre {
-              background: #1f2937;
-              color: #f9fafb;
-              padding: 20px;
-              border: 3px solid #000;
-              box-shadow: 6px 6px 0px #000;
+              background: #0f172a;
+              color: #f8fafc;
+              padding: 24px;
+              border-radius: 8px;
               overflow-x: auto;
               margin: 32px 0;
+              font-size: 14px;
+              line-height: 1.5;
             }
-            .content ul, .content ol { margin-bottom: 24px; padding-left: 24px; }
+            .content ul, .content ol { margin-bottom: 24px; padding-left: 20px; }
             .content li { margin-bottom: 12px; }
-            .content hr { border: none; border-top: 4px solid #000; margin: 48px 0; }
+            .content hr { border: none; border-top: 1px solid #e2e8f0; margin: 48px 0; }
+            
+            .cta-section {
+              padding: 0 40px 48px;
+            }
+            .cta-box {
+              background-color: #f8fafc;
+              border-radius: 12px;
+              padding: 32px;
+              border: 1px solid #e2e8f0;
+            }
+            .cta-box h3 {
+              margin: 0 0 12px 0;
+              color: #0f172a;
+              font-size: 18px;
+              font-weight: 700;
+            }
+            .cta-box p {
+              margin: 0;
+              font-size: 15px;
+              color: #64748b;
+              line-height: 1.5;
+            }
+            
+            .footer {
+              background-color: #f8fafc;
+              padding: 48px 40px;
+              border-top: 1px solid #e2e8f0;
+              text-align: center;
+            }
+            .footer-name {
+              color: #0f172a;
+              font-size: 18px;
+              font-weight: 700;
+              margin: 0 0 4px 0;
+            }
+            .footer-title {
+              color: #64748b;
+              font-size: 14px;
+              margin: 0 0 24px 0;
+            }
+            .social-links {
+              margin-bottom: 32px;
+            }
+            .social-link {
+              color: #3b82f6;
+              text-decoration: none;
+              font-weight: 600;
+              font-size: 14px;
+              margin: 0 12px;
+            }
+            .unsubscribe-info {
+              color: #94a3b8;
+              font-size: 12px;
+              line-height: 1.6;
+              max-width: 400px;
+              margin: 0 auto 24px;
+            }
+            .unsubscribe-link {
+              color: #64748b;
+              text-decoration: underline;
+              font-weight: 500;
+            }
+            
+            @media only screen and (max-width: 600px) {
+              .main { margin: 0 auto; border-radius: 0; }
+              .header, .content, .cta-section, .footer { padding-left: 24px; padding-right: 24px; }
+              h1 { font-size: 28px; }
+            }
           </style>
         </head>
-        <body style="margin: 0; padding: 0; background-color: #eaf6ff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-          <div style="background-color: #eaf6ff; padding: 40px 0;">
-            <!--[if mso]>
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #eaf6ff; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
-              
-              <!-- Header -->
-              <div class="header" style="background-color: #ffa400; padding: 48px 40px; border-bottom: 4px solid #000000;">
-                <p style="margin: 0 0 16px 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.1em; color: #000;">
-                  Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}
+        <body>
+          <div class="main">
+            <!-- Header -->
+            <div class="header">
+              <div style="margin-bottom: 32px;">
+                <img src="${baseUrl}/logo.png" alt="Logo" height="40" style="display: block; height: 40px; width: auto;">
+              </div>
+              <span class="issue-tag">Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}</span>
+              <h1>${subject}</h1>
+              <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
+                View in browser ↗
+              </a>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="content">
+              ${processedContent}
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-section">
+              <div class="cta-box">
+                <h3>Let's Chat</h3>
+                <p>
+                  I love hearing from readers. Hit reply to this email to share your thoughts, questions, or just to say hi. I read and respond to every single one.
                 </p>
-                <h1 style="margin: 0; font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; line-height: 0.9; color: #000;">
-                  ${subject}
-                </h1>
-                <div style="margin-top: 32px;">
-                  <a href="${baseUrl}/newsletter/archive/${slug}" style="display: inline-block; background-color: #eaf6ff; color: #000; text-decoration: none; font-size: 13px; font-weight: 900; padding: 10px 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; text-transform: uppercase;">
-                    View in Browser ↗
-                  </a>
-                </div>
-              </div>
-              
-              <!-- Main Content -->
-              <div class="content" style="padding: 48px 40px; color: #000000; font-size: 19px; line-height: 1.6;">
-                ${processedContent}
-              </div>
-
-              <!-- CTA / Interaction -->
-              <div style="padding: 0 40px 48px;">
-                <div style="border: 4px solid #000; padding: 32px; background-color: #009ffd; box-shadow: 8px 8px 0px #000;">
-                  <h3 style="margin: 0 0 12px 0; font-weight: 900; text-transform: uppercase; font-size: 20px; line-height: 1;">
-                    Let's Chat
-                  </h3>
-                  <p style="margin: 0; font-size: 16px; font-weight: 700; line-height: 1.4;">
-                    I love hearing from readers. Hit reply to this email to share your thoughts, questions, or just to say hi. I read and respond to every single one.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Footer -->
-              <div class="footer" style="background-color: #000000; color: #ffffff; padding: 48px 40px;">
-                <div style="margin-bottom: 32px;">
-                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #ffa400;">
-                    George Ongoro
-                  </h2>
-                  <p style="margin: 8px 0 0 0; font-weight: 700; font-size: 16px; color: #9ca3af;">
-                    Software Engineer & Maker
-                  </p>
-                </div>
-
-                <div style="margin-bottom: 40px;">
-                  <table border="0" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td style="padding-right: 20px;">
-                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">GitHub</a>
-                      </td>
-                      <td style="padding-right: 20px;">
-                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">Twitter/X</a>
-                      </td>
-                      <td>
-                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">LinkedIn</a>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <div style="border-top: 2px solid #374151; padding-top: 32px;">
-                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #ffa400; text-decoration: none;">code.geohack.top</a>. 
-                    If you're no longer interested, you can unsubscribe at any time.
-                  </p>
-                  <p style="margin: 24px 0 0 0;">
-                    <a href="${baseUrl}/unsubscribe" style="display: inline-block; color: #ef4444; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 12px; border: 2px solid #ef4444; padding: 6px 12px;">
-                      Unsubscribe
-                    </a>
-                  </p>
-                </div>
               </div>
             </div>
-            <!--[if mso]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
+
+            <!-- Footer -->
+            <div class="footer">
+              <p class="footer-name">George Ongoro</p>
+              <p class="footer-title">Software Engineer & Maker</p>
+
+              <div class="social-links">
+                <a href="https://github.com/004Ongoro" class="social-link">GitHub</a>
+                <a href="https://x.com/ongorogeorg_e" class="social-link">Twitter</a>
+                <a href="https://linkedin.com/in/georgeongoro2" class="social-link">LinkedIn</a>
+              </div>
+
+              <div class="unsubscribe-info">
+                You're receiving this because you subscribed to the newsletter on 
+                <a href="${baseUrl}" style="color: #64748b;">code.geohack.top</a>.<br>
+                If you no longer wish to receive these emails, you can 
+                <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">unsubscribe here</a>.
+              </div>
+            </div>
           </div>
         </body>
         </html>

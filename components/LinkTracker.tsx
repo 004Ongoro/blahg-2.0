@@ -36,6 +36,22 @@ export function LinkTracker() {
       return VIBRANT_COLORS[newIndex];
     };
 
+    // Initialize links with random colors
+    const initLinks = () => {
+      const links = document.querySelectorAll('.prose-brutal a');
+      links.forEach((link) => {
+        if (link instanceof HTMLElement) {
+          link.style.setProperty('--hover-color', getRandomColor());
+        }
+      });
+    };
+
+    // Run initialization
+    initLinks();
+
+    // Re-run after a short delay to catch any late-rendered content
+    const initTimeout = setTimeout(initLinks, 500);
+
     // Analytics tracking
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -50,7 +66,7 @@ export function LinkTracker() {
       }
     };
 
-    // Dynamic hover color
+    // Dynamic hover color - change to a NEW random color on every hover
     const handleLinkHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
@@ -74,6 +90,7 @@ export function LinkTracker() {
     window.addEventListener('toast', handleToastEvent);
     
     return () => {
+      clearTimeout(initTimeout);
       document.removeEventListener('click', handleLinkClick);
       document.removeEventListener('mouseenter', handleLinkHover, true);
       window.removeEventListener('toast', handleToastEvent);

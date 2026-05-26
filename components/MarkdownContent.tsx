@@ -113,6 +113,39 @@ function processLinks(html: string): string {
   })
 }
 
+// Wrap images in a designed frame with captions
+function processImages(html: string): string {
+  // Match images that are potentially wrapped in paragraphs (common in markdown)
+  // Group 1: full tag inside P, Group 2: attributes inside P
+  // Group 3: full standalone tag, Group 4: attributes standalone
+  const imgRegex = /<p>(<img\s+([^>]*?)>)<\/p>|(<img\s+([^>]*?)>)/g;
+  
+  return html.replace(imgRegex, (match, wrappedImg, wrappedAttrs, standaloneImg, standaloneAttrs) => {
+    const attrs = wrappedAttrs || standaloneAttrs;
+    
+    const srcMatch = attrs.match(/src="([^"]*)"/);
+    const altMatch = attrs.match(/alt="([^"]*)"/);
+    const titleMatch = attrs.match(/title="([^"]*)"/);
+    
+    const src = srcMatch ? srcMatch[1] : '';
+    const alt = altMatch ? altMatch[1] : '';
+    const title = titleMatch ? titleMatch[1] : '';
+    
+    // If no src, something is wrong, return original
+    if (!src) return match;
+    
+    const captionText = alt || title;
+    const caption = captionText ? `<figcaption class="image-caption">${captionText}</figcaption>` : '';
+    
+    return `<figure class="image-figure">
+      <div class="image-frame">
+        <img ${attrs}>
+        ${caption}
+      </div>
+    </figure>`;
+  });
+}
+
 // Implement custom syntax for highlights
 function processCustomSyntax(content: string): string {
   let processed = content.replace(/!!(.+?)!!/g, '<span class="definition-highlight">$1</span>')
@@ -180,6 +213,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
 
   // Post-process HTML
   let finalHtml = applySideNotes(String(result))
+  finalHtml = processImages(finalHtml)
   finalHtml = processCodeBlocks(finalHtml)
   finalHtml = processHeadings(finalHtml)
   finalHtml = processLinks(finalHtml)

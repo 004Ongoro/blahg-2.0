@@ -229,6 +229,27 @@
   box-shadow: 4px 4px 0 var(--foreground);
 }
 
+.image-figure {
+  @apply my-10 block;
+}
+
+.image-frame {
+  @apply border-[3px] border-foreground shadow-[6px_6px_0_var(--foreground)] bg-background overflow-hidden;
+}
+
+.image-frame img {
+  @apply w-full h-auto block m-0 !border-0 !shadow-none;
+}
+
+.image-caption {
+  @apply border-t-[3px] border-foreground p-3 text-[10px] font-black uppercase bg-secondary/80 text-foreground flex items-center justify-center gap-2 tracking-widest;
+}
+
+.image-caption::before {
+  content: '📷';
+  @apply text-sm not-italic;
+}
+
 .prose-brutal hr {
   @apply my-8;
   border: none;

@@ -151,14 +151,34 @@
 }
 
 .prose-brutal a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  color: var(--foreground);
+  text-decoration: none;
+  position: relative;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  z-index: 1;
+  padding: 0 2px;
+}
+
+.prose-brutal a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--accent);
+  z-index: -1;
+  transition: all 0.2s ease-in-out;
 }
 
 .prose-brutal a:hover {
-  background: var(--accent);
-  color: var(--background);
+  color: var(--accent-foreground);
+}
+
+.prose-brutal a:hover::after {
+  height: 100%;
+  bottom: 0;
 }
 
 .prose-brutal code {

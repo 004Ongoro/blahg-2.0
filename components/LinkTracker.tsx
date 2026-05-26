@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 
 declare global {
   interface Window {
@@ -10,6 +11,7 @@ declare global {
 
 export function LinkTracker() {
   useEffect(() => {
+    // Analytics tracking
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
@@ -23,8 +25,23 @@ export function LinkTracker() {
       }
     };
 
+    // Global toast listener for static content
+    const handleToastEvent = (e: any) => {
+      const { message, type = 'success' } = e.detail || {};
+      if (!message) return;
+
+      if (type === 'success') toast.success(message);
+      else if (type === 'error') toast.error(message);
+      else toast(message);
+    };
+
     document.addEventListener('click', handleLinkClick);
-    return () => document.removeEventListener('click', handleLinkClick);
+    window.addEventListener('toast', handleToastEvent);
+    
+    return () => {
+      document.removeEventListener('click', handleLinkClick);
+      window.removeEventListener('toast', handleToastEvent);
+    };
   }, []);
 
   return null

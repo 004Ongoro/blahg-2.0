@@ -61,7 +61,7 @@ function processCodeBlocks(html: string): string {
         ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" onclick="window.runCode(this)">Run</button>`
         : ''
       
-      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="${fullClass}">`
+      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Code copied!', type: 'success' } })); })">Copy</button></div><pre><code class="${fullClass}">`
     }
   ).replace(
     /<\/code><\/pre>/g,
@@ -77,8 +77,8 @@ function processHeadings(html: string): string {
       return `<${tag} id="${id}" class="group flex items-center gap-2">
         <span>${content}</span>
         <button 
-          onclick="const url = new URL(window.location.href); url.hash = '${id}'; navigator.clipboard.writeText(url.href);"
-          class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded text-muted-foreground inline-flex items-center justify-center"
+          onclick="const url = new URL(window.location.origin + window.location.pathname); url.hash = '${id}'; navigator.clipboard.writeText(url.href).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); });"
+          class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded text-muted-foreground inline-flex items-center justify-center cursor-pointer"
           title="Copy link to section"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>

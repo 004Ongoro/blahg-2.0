@@ -167,18 +167,19 @@
   bottom: 0;
   width: 100%;
   height: 4px;
-  background-color: var(--accent);
+  background-color: var(--hover-color, var(--accent));
   z-index: -1;
   transition: all 0.2s ease-in-out;
 }
 
 .prose-brutal a:hover {
-  color: var(--accent-foreground);
+  color: #fff; /* Ensure contrast on vibrant backgrounds */
 }
 
 .prose-brutal a:hover::after {
   height: 100%;
   bottom: 0;
+  background-color: var(--hover-color, var(--accent));
 }
 
 .prose-brutal code {

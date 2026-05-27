@@ -7,6 +7,7 @@ import Post from '@/models/Post'
 import Subscriber from '@/models/Subscriber'
 import { AdminHeader } from '@/components/admin/AdminHeader'
 import { PostList } from '@/components/admin/PostList'
+import { cn } from '@/lib/utils'
 import { PlusCircle, Database, LayoutDashboard, Activity, Users, FileText } from 'lucide-react'
 
 async function checkSetupRequired() {

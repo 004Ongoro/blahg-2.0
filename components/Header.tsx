@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from './ThemeToggle'
+import { ChevronRight } from 'lucide-react'
 
 const navLinks = [
   { name: 'posts', href: '/' },
@@ -14,58 +15,79 @@ const navLinks = [
 ]
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const [isScrolled, setIsScrolled] = useState(false)
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const pathPieces = pathname.split('/').filter(Boolean)
+  
   return (
-    <header className="sticky top-0 z-50 w-full border-b-2 border-foreground/10 bg-background/80 backdrop-blur-md">
-      <nav className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-xl font-black uppercase tracking-tighter hover:text-accent transition-colors">
-          george<span className="text-accent">.</span>2.0
-        </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
+      <div className="flex items-center gap-2 max-w-full">
+        
+        {/* Identity Pill */}
+        <div className={cn(
+          "pointer-events-auto h-10 px-4 flex items-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-500",
+          isScrolled ? "opacity-100 translate-y-0" : "opacity-100"
+        )}>
+          <Link href="/" className="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+            George <span className="text-accent">Ongoro</span>
+          </Link>
+        </div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className="text-sm font-bold hover:text-accent transition-colors">
-              {link.name}
-            </Link>
-          ))}
-          <div className="h-4 w-px bg-foreground/10" />
+        {/* Context & Navigation Pill */}
+        <div className="pointer-events-auto group relative flex items-center h-10 bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-300 hover:px-2">
+          {/* Breadcrumb View (Default) */}
+          <div className="flex items-center px-4 group-hover:hidden transition-all duration-300">
+            <span className="text-[10px] font-bold text-muted-foreground/40">GO</span>
+            <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[80px] sm:max-w-[150px]">
+              {pathPieces.length === 0 ? 'Home' : pathPieces[0]}
+            </span>
+            {pathPieces.length > 1 && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
+                <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[80px] hidden sm:inline">
+                  {pathPieces[pathPieces.length - 1].replace(/-/g, ' ')}
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Nav View (Hover) */}
+          <div className="hidden group-hover:flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+              return (
+                <Link 
+                  key={link.name} 
+                  href={link.href}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                    isActive 
+                      ? "bg-foreground text-background" 
+                      : "hover:bg-foreground/5 text-muted-foreground/60 hover:text-foreground"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Utility Pill */}
+        <div className="pointer-events-auto h-10 w-10 flex items-center justify-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm">
           <ThemeToggle />
         </div>
 
-        {/* Mobile Toggle */}
-        <div className="flex items-center gap-4 md:hidden">
-          <ThemeToggle />
-          <button 
-            className="p-2 hover:text-accent transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle Menu"
-          >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div
-        className={cn(
-          "absolute top-full left-0 w-full bg-background border-b-2 border-foreground/10 md:hidden overflow-hidden transition-all duration-300 ease-in-out z-40",
-          isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-        )}
-      >
-        <div className="flex flex-col p-6 gap-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="text-lg font-bold hover:text-accent flex items-center gap-2"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
       </div>
     </header>
   )

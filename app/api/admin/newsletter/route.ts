@@ -91,216 +91,200 @@ export async function POST(req: Request) {
           <title>${subject}</title>
           <style>
             body {
-              background-color: #f4f7f9;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-              color: #334155;
+              background-color: #ffffff;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+              color: #000000;
               margin: 0;
               padding: 0;
               -webkit-font-smoothing: antialiased;
             }
+            .wrapper {
+              padding: 20px;
+            }
             .main {
               max-width: 600px;
-              margin: 40px auto;
-              background-color: #ffffff;
-              border-radius: 8px;
-              overflow: hidden;
-              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+              margin: 0 auto;
+              border: 1px solid #eeeeee;
             }
             .header {
-              padding: 48px 40px 24px;
+              padding: 40px;
+              border-bottom: 1px solid #000000;
             }
-            .issue-tag {
-              display: inline-block;
-              background-color: #f1f5f9;
-              color: #64748b;
-              font-size: 12px;
-              font-weight: 600;
-              padding: 4px 12px;
-              border-radius: 9999px;
-              margin-bottom: 16px;
+            .identity {
+              font-size: 10px;
+              font-weight: 900;
               text-transform: uppercase;
-              letter-spacing: 0.05em;
+              letter-spacing: 0.3em;
+              margin-bottom: 40px;
+            }
+            .identity span { color: #ff3e00; }
+            .issue-meta {
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              color: #999999;
+              margin-bottom: 12px;
             }
             h1 {
-              color: #0f172a;
+              color: #000000;
               font-size: 32px;
-              font-weight: 800;
-              line-height: 1.2;
-              margin: 0 0 16px 0;
+              font-weight: 900;
+              line-height: 1.1;
+              margin: 0 0 24px 0;
+              text-transform: uppercase;
+              letter-spacing: -0.02em;
             }
             .view-online {
-              font-size: 13px;
-              color: #3b82f6;
+              font-size: 10px;
+              color: #ff3e00;
               text-decoration: none;
-              font-weight: 500;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
             }
             .content {
-              padding: 0 40px 48px;
-              font-size: 17px;
+              padding: 40px;
+              font-size: 15px;
               line-height: 1.6;
-              color: #334155;
+              color: #333333;
             }
             .content p { margin-bottom: 24px; }
             .content h1, .content h2, .content h3 { 
-              color: #1e293b;
-              margin-top: 40px; 
+              color: #000000;
+              margin-top: 48px; 
               margin-bottom: 16px; 
               line-height: 1.2;
+              text-transform: uppercase;
+              font-weight: 900;
             }
-            .content h1 { font-size: 28px; font-weight: 800; }
-            .content h2 { font-size: 24px; font-weight: 700; }
-            .content h3 { font-size: 20px; font-weight: 600; }
+            .content h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .content h3 { font-size: 18px; }
             .content img { 
               max-width: 100%; 
               height: auto; 
-              border-radius: 8px;
               margin: 32px 0;
               display: block;
+              border: 1px solid #eeeeee;
             }
             .content blockquote { 
-              border-left: 4px solid #3b82f6; 
+              border-left: 4px solid #ff3e00; 
               margin: 32px 0; 
-              padding: 8px 24px; 
-              background: #f8fafc; 
+              padding: 16px 32px; 
+              background: #f9f9f9; 
               font-style: italic;
-              color: #475569;
+              color: #555555;
             }
             .content code { 
-              background: #f1f5f9; 
+              background: #f1f1f1; 
               padding: 2px 6px; 
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+              font-family: inherit;
               font-size: 0.9em;
-              border-radius: 4px;
-              color: #0f172a;
+              color: #000000;
+              font-weight: 700;
             }
             .content pre {
-              background: #0f172a;
-              color: #f8fafc;
-              padding: 24px;
-              border-radius: 8px;
+              background: #000000;
+              color: #ffffff;
+              padding: 32px;
               overflow-x: auto;
               margin: 32px 0;
-              font-size: 14px;
+              font-size: 13px;
               line-height: 1.5;
             }
             .content ul, .content ol { margin-bottom: 24px; padding-left: 20px; }
             .content li { margin-bottom: 12px; }
-            .content hr { border: none; border-top: 1px solid #e2e8f0; margin: 48px 0; }
-            
-            .cta-section {
-              padding: 0 40px 48px;
-            }
-            .cta-box {
-              background-color: #f8fafc;
-              border-radius: 12px;
-              padding: 32px;
-              border: 1px solid #e2e8f0;
-            }
-            .cta-box h3 {
-              margin: 0 0 12px 0;
-              color: #0f172a;
-              font-size: 18px;
-              font-weight: 700;
-            }
-            .cta-box p {
-              margin: 0;
-              font-size: 15px;
-              color: #64748b;
-              line-height: 1.5;
-            }
+            .content hr { border: none; border-top: 1px solid #eeeeee; margin: 48px 0; }
             
             .footer {
-              background-color: #f8fafc;
-              padding: 48px 40px;
-              border-top: 1px solid #e2e8f0;
-              text-align: center;
+              background-color: #f9f9f9;
+              padding: 40px;
+              border-top: 1px solid #eeeeee;
+              text-align: left;
             }
-            .footer-name {
-              color: #0f172a;
-              font-size: 18px;
+            .footer-brand {
+              font-size: 12px;
+              font-weight: 900;
+              text-transform: uppercase;
+              letter-spacing: 0.2em;
+              margin-bottom: 8px;
+            }
+            .footer-sub {
+              font-size: 10px;
               font-weight: 700;
-              margin: 0 0 4px 0;
-            }
-            .footer-title {
-              color: #64748b;
-              font-size: 14px;
-              margin: 0 0 24px 0;
+              color: #999999;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              margin-bottom: 24px;
             }
             .social-links {
               margin-bottom: 32px;
             }
             .social-link {
-              color: #3b82f6;
+              color: #000000;
               text-decoration: none;
-              font-weight: 600;
-              font-size: 14px;
-              margin: 0 12px;
+              font-weight: 800;
+              font-size: 10px;
+              margin-right: 20px;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
             }
             .unsubscribe-info {
-              color: #94a3b8;
-              font-size: 12px;
-              line-height: 1.6;
-              max-width: 400px;
-              margin: 0 auto 24px;
+              color: #bbbbbb;
+              font-size: 10px;
+              line-height: 1.8;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              font-weight: 600;
             }
             .unsubscribe-link {
-              color: #64748b;
+              color: #999999;
               text-decoration: underline;
-              font-weight: 500;
             }
             
             @media only screen and (max-width: 600px) {
-              .main { margin: 0 auto; border-radius: 0; }
-              .header, .content, .cta-section, .footer { padding-left: 24px; padding-right: 24px; }
+              .main { border: none; }
+              .header, .content, .footer { padding: 24px; }
               h1 { font-size: 28px; }
             }
           </style>
         </head>
         <body>
-          <div class="main">
-            <!-- Header -->
-            <div class="header">
-              <div style="margin-bottom: 32px;">
-                <img src="${baseUrl}/logo.png" alt="Logo" height="40" style="display: block; height: 40px; width: auto;">
+          <div class="wrapper">
+            <div class="main">
+              <!-- Header -->
+              <div class="header">
+                <div class="identity">GEORGE<span>.</span>ONGORO</div>
+                <div class="issue-meta">Dispatch // Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}</div>
+                <h1>${subject}</h1>
+                <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
+                  Open in browser &rarr;
+                </a>
               </div>
-              <span class="issue-tag">Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}</span>
-              <h1>${subject}</h1>
-              <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
-                View in browser ↗
-              </a>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="content">
-              ${processedContent}
-            </div>
-
-            <!-- CTA -->
-            <div class="cta-section">
-              <div class="cta-box">
-                <h3>Let's Chat</h3>
-                <p>
-                  I love hearing from readers. Hit reply to this email to share your thoughts, questions, or just to say hi. I read and respond to every single one.
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="footer">
-              <p class="footer-name">George Ongoro</p>
-              <p class="footer-title">Software Engineer & Maker</p>
-
-              <div class="social-links">
-                <a href="https://github.com/004Ongoro" class="social-link">GitHub</a>
-                <a href="https://x.com/ongorogeorg_e" class="social-link">Twitter</a>
-                <a href="https://linkedin.com/in/georgeongoro2" class="social-link">LinkedIn</a>
+              
+              <!-- Main Content -->
+              <div class="content">
+                ${processedContent}
               </div>
 
-              <div class="unsubscribe-info">
-                You're receiving this because you subscribed to the newsletter on 
-                <a href="${baseUrl}" style="color: #64748b;">code.geohack.top</a>.<br>
-                If you no longer wish to receive these emails, you can 
-                <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">unsubscribe here</a>.
+              <!-- Footer -->
+              <div class="footer">
+                <div class="footer-brand">George Ongoro</div>
+                <div class="footer-sub">Software Engineer // Independent Maker</div>
+
+                <div class="social-links">
+                  <a href="https://github.com/004Ongoro" class="social-link">GitHub</a>
+                  <a href="https://x.com/ongorogeorg_e" class="social-link">Twitter</a>
+                  <a href="https://linkedin.com/in/georgeongoro2" class="social-link">LinkedIn</a>
+                </div>
+
+                <div class="unsubscribe-info">
+                  Sent to you because you joined the circle at 
+                  <a href="${baseUrl}" style="color: #999999;">george.blog</a>.<br>
+                  No longer interested? 
+                  <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">Unsubscribe here</a>.
+                </div>
               </div>
             </div>
           </div>

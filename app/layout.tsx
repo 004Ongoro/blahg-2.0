@@ -1,21 +1,11 @@
 import type { Metadata } from 'next'
-// import { JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { FloatingContactButton } from '@/components/FloatingContactButton'
 import { Toaster } from '@/components/ui/sonner'
-import { CommandMenu } from '@/components/CommandMenu'
 import { getBaseUrl } from '@/lib/utils'
 import './globals.css'
 
-/* 
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ['latin'],
-  variable: '--font-mono',
-})
-*/
 const jetbrainsMono = {
   variable: '--font-mono',
 }
@@ -94,9 +84,6 @@ export default function RootLayout({
           )}
 
           {children}
-          <CommandMenu />
-          <ThemeToggle />
-          <FloatingContactButton />
           <Toaster />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>

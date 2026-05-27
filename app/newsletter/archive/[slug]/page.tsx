@@ -6,7 +6,6 @@ import { MarkdownContent } from '@/components/MarkdownContent'
 import dbConnect from '@/lib/mongodb'
 import NewsletterIssue from '@/models/NewsletterIssue'
 import { FormattedDate } from '@/components/FormattedDate'
-import PostAnimations from '@/components/PostAnimations'
 import { SocialShare } from '@/components/SocialShare'
 import { Mail, ArrowLeft, Calendar, User } from 'lucide-react'
 
@@ -62,7 +61,6 @@ export default async function NewsletterIssuePage({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      <PostAnimations />
       <Header />
       
       <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">

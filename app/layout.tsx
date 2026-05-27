@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { ScrollProgress } from '@/components/ScrollProgress'
 import { getBaseUrl } from '@/lib/utils'
 import './globals.css'
 
@@ -85,6 +86,7 @@ export default function RootLayout({
 
           {children}
           <Toaster />
+          <ScrollProgress />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>
       </body>

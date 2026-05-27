@@ -9,7 +9,7 @@ import { Newsletter } from '@/components/Newsletter'
 import { LuckyButton } from '@/components/LuckyButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import { getBaseUrl } from '@/lib/utils'
+import { getBaseUrl, formatViews } from '@/lib/utils'
 import PostAnimations from '@/components/PostAnimations'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -210,8 +210,13 @@ export default async function PostPage({ params }: Props) {
               {post.views > 100 && (
                 <>
                   <span className="text-accent">|</span>
-                  <span className="flex items-center gap-1 bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow animate-pulse">
-                    <span>🔥</span> trending
+                  <span 
+                    title={`${post.views.toLocaleString()} views`}
+                    className="group flex items-center gap-1 bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow animate-pulse cursor-help"
+                  >
+                    <span>🔥</span> 
+                    <span className="group-hover:hidden">trending</span>
+                    <span className="hidden group-hover:inline">{formatViews(post.views)} views</span>
                   </span>
                 </>
               )}

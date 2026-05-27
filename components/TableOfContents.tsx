@@ -54,13 +54,15 @@ export function TableOfContents({ content }: { content: string }) {
   return (
     <div 
       className={cn(
-        "fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-end py-4 group pr-4 transition-all duration-300",
-        isOpen ? "bg-background/40 backdrop-blur-md p-6 -mr-0" : ""
+        "fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-end py-4 pr-0 transition-all duration-300",
+        isOpen ? "bg-background/40 backdrop-blur-md p-6 shadow-sm border-l border-foreground/5" : ""
       )}
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="flex flex-col items-end gap-4 border-r border-foreground/5 pr-4">
+      <div 
+        className="flex flex-col items-end gap-4 border-r border-foreground/5 pr-4 pl-8"
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+      >
         {headings.map((heading) => (
           <a
             key={heading.id}
@@ -75,7 +77,7 @@ export function TableOfContents({ content }: { content: string }) {
           >
             <span
               className={cn(
-                "mr-4 text-[10px] uppercase font-bold tracking-widest transition-all duration-300",
+                "mr-4 text-[10px] uppercase font-bold tracking-widest transition-all duration-300 whitespace-nowrap",
                 isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none",
                 activeId === heading.id ? "text-accent" : "text-muted-foreground/60"
               )}

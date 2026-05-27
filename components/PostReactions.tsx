@@ -26,7 +26,6 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
       setReacted(JSON.parse(stored))
     }
 
-    // Fetch latest reactions from API
     const controller = new AbortController()
     const fetchReactions = async () => {
       try {
@@ -45,7 +44,6 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
     }
 
     fetchReactions()
-
     return () => controller.abort()
   }, [slug])
 
@@ -76,21 +74,21 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
   }
 
   return (
-    <div className="brutal-border brutal-shadow bg-card p-6 mb-12">
+    <div className="border border-foreground/5 bg-card p-8 mb-16">
       <style jsx>{`
         @keyframes float-up {
           0% { transform: translateY(0) scale(1); opacity: 1; }
-          100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+          100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
         }
         .animate-float-up {
-          animation: float-up 1s ease-out forwards;
+          animation: float-up 0.8s ease-out forwards;
         }
       `}</style>
-      <h3 className="font-black uppercase text-sm mb-4 tracking-wider flex items-center gap-2">
-        <span className="text-accent">{'>'}</span> Enjoyed this post?
+      <h3 className="font-bold text-xs uppercase tracking-widest text-muted-foreground mb-6">
+        Enjoyed this?
       </h3>
       
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-3">
         {REACTION_TYPES.map((type) => {
           const Icon = type.icon
           const count = reactions[type.id] || 0
@@ -103,21 +101,21 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
               onClick={() => handleReact(type.id)}
               disabled={hasReacted}
               className={cn(
-                "group relative flex items-center gap-2 px-4 py-2 brutal-border font-bold transition-all",
+                "group relative flex items-center gap-2 px-4 py-2 border transition-all text-sm font-medium",
                 hasReacted 
-                  ? "bg-foreground text-background cursor-default" 
-                  : "bg-background hover:bg-accent hover:text-accent-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)] active:translate-x-[0] active:translate-y-[0] active:shadow-none"
+                  ? "bg-foreground text-background border-foreground cursor-default" 
+                  : "bg-background border-foreground/10 hover:border-accent hover:text-accent"
               )}
             >
-              <Icon className={cn("w-5 h-5", isAnimating && "animate-bounce")} />
-              <span className="text-sm uppercase">{type.label}</span>
-              <span className="ml-2 bg-foreground text-background px-1.5 py-0.5 text-xs brutal-border-sm group-hover:bg-background group-hover:text-foreground">
+              <Icon className={cn("w-4 h-4", isAnimating && "animate-bounce")} />
+              <span className="uppercase text-[10px] tracking-widest">{type.label}</span>
+              <span className="ml-1 opacity-40 tabular-nums">
                 {count}
               </span>
 
               {isAnimating && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <Icon className={cn("w-8 h-8 p-1 rounded-full brutal-border-sm text-white animate-float-up", type.color)} />
+                  <Icon className={cn("w-6 h-6 p-1 rounded-full text-white animate-float-up", type.color)} />
                 </div>
               )}
             </button>

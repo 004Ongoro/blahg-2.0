@@ -155,33 +155,33 @@ export default async function PostPage({ params }: Props) {
 
       <Header />
       
-      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">
         <article>
-          <header className="mb-12">
-            <div className="flex justify-between items-center mb-8">
+          <header className="mb-16">
+            <div className="flex justify-between items-center mb-12">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-accent text-sm font-bold uppercase tracking-widest"
+                className="text-muted-foreground hover:text-accent text-sm font-medium flex items-center gap-1 transition-colors"
               >
-                &larr; back to posts
+                <ChevronLeft className="h-4 w-4" /> posts
               </Link>
               <SocialShare title={post.title} slug={slug} />
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-black uppercase mb-6 tracking-tighter leading-none text-balance">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-8 leading-[1.1] text-balance">
               {post.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground/60">
               <FormattedDate date={post.createdAt} />
+              <span className="h-1 w-1 rounded-full bg-foreground/10" />
+              <span>{post.readTime} min read</span>
               {isUpdated && (
                 <>
-                  <span className="h-1 w-1 rounded-full bg-accent/30" />
-                  <span className="italic">Edited <FormattedDate date={post.updatedAt} /></span>
+                  <span className="h-1 w-1 rounded-full bg-foreground/10" />
+                  <span className="italic text-muted-foreground/40">Updated <FormattedDate date={post.updatedAt} /></span>
                 </>
               )}
-              <span className="h-1 w-1 rounded-full bg-accent/30" />
-              <span>{post.readTime} mins read</span>
             </div>
           </header>
 
@@ -193,22 +193,26 @@ export default async function PostPage({ params }: Props) {
             <Newsletter />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-16">
-            {nav.prev ? (
-              <Button asChild variant="outline" className="h-16 font-black uppercase tracking-tighter border-2">
-                <Link href={`/post/${nav.prev}`}>
-                  <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+          <div className="flex flex-col gap-8 py-12 border-y border-foreground/5 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {nav.prev ? (
+                <Link href={`/post/${nav.prev}`} className="group space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous</span>
+                  <p className="font-bold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
+                    <ChevronLeft className="h-4 w-4 shrink-0" /> {nav.prev.replace(/-/g, ' ')}
+                  </p>
                 </Link>
-              </Button>
-            ) : <div />}
+              ) : <div />}
 
-            {nav.next ? (
-              <Button asChild variant="outline" className="h-16 font-black uppercase tracking-tighter border-2">
-                <Link href={`/post/${nav.next}`}>
-                  Next <ChevronRight className="ml-2 h-4 w-4" />
+              {nav.next ? (
+                <Link href={`/post/${nav.next}`} className="group space-y-2 md:text-right">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next</span>
+                  <p className="font-bold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
+                    {nav.next.replace(/-/g, ' ')} <ChevronRight className="h-4 w-4 shrink-0" />
+                  </p>
                 </Link>
-              </Button>
-            ) : <div />}
+              ) : <div />}
+            </div>
           </div>
 
           <PostReactions 
@@ -221,16 +225,13 @@ export default async function PostPage({ params }: Props) {
           <GiscusComments />
 
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-16 pt-12 border-t border-foreground/5">
-              <h2 className="text-sm font-black uppercase tracking-widest mb-6 text-muted-foreground">
-                Related Topics
-              </h2>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-20 pt-12 border-t border-foreground/5">
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
                 {post.tags.map((tag: string) => (
                   <Link
                     key={tag}
                     href={`/tags/${tag}`}
-                    className="px-3 py-1.5 bg-foreground/5 text-foreground hover:bg-accent hover:text-accent-foreground text-[10px] font-black uppercase tracking-wider transition-colors"
+                    className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
                   >
                     #{tag}
                   </Link>

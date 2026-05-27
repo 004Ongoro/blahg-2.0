@@ -16,6 +16,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ViewCounter } from '@/components/ViewCounter'
 import { SeriesCard } from '@/components/SeriesCard'
 import { PostReactions } from '@/components/PostReactions'
+import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 
@@ -120,6 +121,24 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
+async function getRelatedPosts(tags: string[], currentSlug: string) {
+  try {
+    await dbConnect()
+    const posts = await Post.find({
+      slug: { $ne: currentSlug },
+      published: true,
+      tags: { $in: tags }
+    })
+    .select('title slug')
+    .limit(5)
+    .lean()
+    return JSON.parse(JSON.stringify(posts))
+  } catch (error) {
+    console.error('Error fetching related posts:', error)
+    return []
+  }
+}
+
 // Main component
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
@@ -128,6 +147,7 @@ export default async function PostPage({ params }: Props) {
   if (!post) notFound()
 
   const seriesPosts = post.series ? await getSeriesPosts(post.series) : []
+  const relatedPosts = await getRelatedPosts(post.tags || [], slug)
   const nav = await getNavigation(new Date(post.createdAt))
 
   const baseUrl = getBaseUrl()
@@ -252,6 +272,8 @@ export default async function PostPage({ params }: Props) {
             slug={slug} 
             initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
           />
+
+          <MoreLikeThis posts={relatedPosts} />
 
           <GiscusComments />
 

@@ -151,12 +151,12 @@ export default async function PostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <TableOfContents content={post.content} />
-
-      <Header />
       
+      <Header />
+
       <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">
         <article>
+          <TableOfContents content={post.content} />
           <header className="mb-16">
             <div className="flex justify-between items-center mb-12">
               <Link

@@ -17,10 +17,11 @@ import {
   Mail, 
   CheckSquare, 
   Square,
-  Terminal,
+  Search,
+  ArrowLeft,
   Activity,
-  Layers,
-  Search
+  Zap,
+  Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -110,7 +111,7 @@ export default function AdminNewsletter() {
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedSubscribers.length === 0) {
-      setStatus({ type: 'error', msg: 'Please select at least one recipient' })
+      setStatus({ type: 'error', msg: 'Select at least one recipient' })
       return
     }
     setSending(true)
@@ -130,7 +131,7 @@ export default function AdminNewsletter() {
       })
       const data = await res.json()
       if (res.ok) {
-        setStatus({ type: 'success', msg: `Broadcast successfully sent to ${selectedSubscribers.length} recipients!` })
+        setStatus({ type: 'success', msg: `Broadcast sent to ${selectedSubscribers.length} recipients!` })
         setSubject('')
         setContent('')
         fetchData() // Refresh list
@@ -145,7 +146,7 @@ export default function AdminNewsletter() {
   }
 
   const deleteIssue = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this issue from the public archive?')) return
+    if (!confirm('Permanently remove this issue?')) return
     try {
       const res = await fetch(`/api/admin/newsletter?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
@@ -160,141 +161,118 @@ export default function AdminNewsletter() {
     <div className="min-h-screen bg-background font-mono">
       <AdminHeader />
       
-      <main className="max-w-7xl mx-auto px-4 py-32 w-full">
-        {/* Header HUD Section */}
-        <header className="mb-12 relative">
-          <div className="absolute -top-10 left-0 flex items-center gap-3 opacity-30">
-            <div className="h-[1px] w-8 bg-foreground" />
-            <span className="text-[8px] font-black uppercase tracking-[0.3em]">Module: Broadcast_Center</span>
-          </div>
-
+      <main className="max-w-6xl mx-auto px-4 py-12 md:py-24 w-full">
+        {/* Header Section */}
+        <header className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center text-accent">
-                  <Mail size={20} />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Email_Dispatch</span>
+              <div className="bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase mb-4 inline-block brutal-border shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                Dispatch Studio
               </div>
-              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
-                Broadcast_<span className="text-accent italic">Studio</span>
+              <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8]">
+                Broad<span className="text-accent italic">cast</span>
               </h1>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-4">
               <Link 
                 href="/admin/newsletter/events"
-                className="h-10 px-6 flex items-center gap-2 bg-background/50 backdrop-blur-md border border-foreground/5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-foreground hover:text-background transition-all shadow-sm"
+                className="h-12 px-6 flex items-center gap-2 brutal-border bg-card font-black uppercase text-xs hover:bg-accent transition-all"
               >
-                <Activity size={14} /> View Events
+                <Activity size={16} /> View Events
               </Link>
               <Link 
                 href="/admin/newsletter/subscribers"
-                className="h-10 px-6 flex items-center gap-2 bg-background/50 backdrop-blur-md border border-foreground/5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-foreground hover:text-background transition-all shadow-sm"
+                className="h-12 px-6 flex items-center gap-2 brutal-border bg-card font-black uppercase text-xs hover:bg-accent transition-all"
               >
-                <Users size={14} /> Manage Audience
+                <Users size={16} /> Manage Audience
               </Link>
             </div>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
-          {/* Composer HUD Panel */}
+          {/* Composer Panel */}
           <div className={cn("lg:col-span-7 space-y-6", showPreviewMobile && "hidden lg:block")}>
             <form onSubmit={handleSend} className="space-y-6">
-              <div className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Message_Configuration</span>
-                </div>
-
+              <div className="brutal-border brutal-shadow bg-card p-8 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Email Subject</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Subject Line</label>
                   <input 
                     value={subject} 
                     onChange={e => setSubject(e.target.value)}
-                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 px-4 text-sm font-bold focus:ring-accent focus:border-accent transition-all"
-                    placeholder="Enter the subject line..."
+                    className="w-full brutal-border bg-background h-12 px-4 font-bold text-lg focus:ring-4 ring-accent outline-none border-black"
+                    placeholder="Enter subject..."
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center px-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Message Body</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Message Body</label>
                     <button 
                       type="button" 
                       onClick={() => setIsMarkdown(!isMarkdown)}
-                      className="text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-foreground/5 rounded-full hover:bg-accent hover:text-accent-foreground transition-all"
+                      className="text-[10px] font-black uppercase brutal-border px-3 py-1 bg-white hover:bg-accent transition-all"
                     >
-                      Format: {isMarkdown ? 'Markdown' : 'Plain Text'}
+                      {isMarkdown ? 'MARKDOWN' : 'PLAIN TEXT'}
                     </button>
                   </div>
                   <textarea 
                     value={content} 
                     onChange={e => setContent(e.target.value)}
                     rows={12}
-                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl p-6 font-mono text-sm focus:ring-accent focus:border-accent transition-all resize-none leading-relaxed"
-                    placeholder="Compose your message here..."
+                    className="w-full brutal-border bg-background p-6 font-mono text-sm focus:ring-4 ring-accent outline-none border-black resize-none leading-relaxed"
+                    placeholder="Compose message..."
                     required
                   />
                 </div>
 
-                <div className="flex items-center gap-3 px-1">
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className={cn(
-                      "w-10 h-6 rounded-full p-1 transition-all",
-                      publishToArchive ? "bg-accent" : "bg-foreground/10"
-                    )}>
-                      <div className={cn(
-                        "h-4 w-4 rounded-full bg-background transition-all shadow-sm",
-                        publishToArchive ? "translate-x-4" : "translate-x-0"
-                      )} />
-                    </div>
+                <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                  <div className="relative">
                     <input 
                       type="checkbox" 
                       checked={publishToArchive}
                       onChange={e => setPublishToArchive(e.target.checked)}
-                      className="hidden"
+                      className="sr-only peer"
                     />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 group-hover:text-foreground">
-                      Public Archive Mirror
-                    </span>
-                  </label>
-                </div>
+                    <div className="w-10 h-5 bg-muted brutal-border border-black peer-checked:bg-accent transition-colors" />
+                    <div className="absolute left-0.5 top-0.5 w-3 h-3 bg-foreground brutal-border border-black peer-checked:translate-x-5 transition-all" />
+                  </div>
+                  <span className="text-xs font-black uppercase tracking-widest">Public Archive Mirror</span>
+                </label>
               </div>
 
-              {/* Recipient Selection HUD */}
-              <div className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-4">
-                <div className="flex justify-between items-center px-1">
-                  <div className="flex items-center gap-2">
-                    <Users size={14} className="text-accent" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Recipient_Selector</span>
-                  </div>
+              {/* Recipient Selection */}
+              <div className="brutal-border brutal-shadow bg-card p-8 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-black uppercase italic flex items-center gap-2">
+                    <Users size={20} className="text-accent" /> Recipient Selector
+                  </h2>
                   <button 
                     type="button"
                     onClick={toggleSelectAll}
-                    className="text-[9px] font-black uppercase tracking-widest bg-foreground/5 px-3 py-1 rounded-full hover:bg-foreground hover:text-background transition-all"
+                    className="text-[10px] font-black uppercase underline hover:text-accent"
                   >
-                    {selectedSubscribers.length === subscribers.length ? 'Clear Selection' : 'Select All'}
+                    {selectedSubscribers.length === subscribers.length ? 'Clear Selection' : 'Select All Active'}
                   </button>
                 </div>
 
-                <div className="relative mb-4">
-                  <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+                <div className="relative">
+                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input 
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Filter audience..."
-                    className="w-full bg-background/30 border border-foreground/5 rounded-xl h-10 pl-10 pr-4 text-xs font-medium focus:ring-accent transition-all"
+                    placeholder="Filter audience by email..."
+                    className="w-full brutal-border bg-background h-12 pl-12 pr-4 font-bold text-sm focus:ring-4 ring-accent outline-none border-black"
                   />
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                   {filteredSubscribers.length === 0 ? (
-                    <div className="col-span-full py-10 text-center opacity-20">
-                      <p className="text-[10px] font-black uppercase tracking-widest">No matching records</p>
+                    <div className="col-span-full py-10 text-center opacity-40">
+                      <p className="text-xs font-black uppercase tracking-widest">No matching records</p>
                     </div>
                   ) : (
                     filteredSubscribers.map((sub) => (
@@ -303,192 +281,146 @@ export default function AdminNewsletter() {
                         type="button"
                         onClick={() => toggleSubscriber(sub.email)}
                         className={cn(
-                          "flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
+                          "flex items-center gap-3 p-3 brutal-border transition-all text-left",
                           selectedSubscribers.includes(sub.email) 
-                            ? "bg-accent/10 border-accent/20 text-accent shadow-sm shadow-accent/5" 
-                            : "bg-background/20 border-foreground/5 text-muted-foreground hover:border-foreground/20"
+                            ? "bg-accent/20 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" 
+                            : "bg-background border-black/10 hover:border-black"
                         )}
                       >
                         {selectedSubscribers.includes(sub.email) 
-                          ? <CheckSquare size={14} /> 
-                          : <Square size={14} className="opacity-40" />
+                          ? <CheckSquare size={16} className="text-accent" /> 
+                          : <Square size={16} className="opacity-20" />
                         }
-                        <span className="text-[10px] font-bold truncate tracking-tight">{sub.email}</span>
+                        <span className="text-xs font-bold truncate tracking-tight">{sub.email}</span>
                       </button>
                     ))
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-foreground/5 flex items-center justify-between">
-                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                    Total_Selected: {selectedSubscribers.length} / {subscribers.length}
+                <div className="pt-6 border-t-2 border-foreground/10 flex items-center justify-between opacity-60">
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    Selected: {selectedSubscribers.length} / {subscribers.length} Nodes
                   </span>
-                  <div className="flex gap-1">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-1 w-1 rounded-full bg-accent/20" />
-                    ))}
-                  </div>
                 </div>
               </div>
 
               <button 
                 disabled={sending}
-                className="w-full h-14 bg-foreground text-background rounded-full font-black uppercase text-xs tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
+                className="w-full brutal-btn py-5 bg-accent text-accent-foreground font-black uppercase text-2xl flex items-center justify-center gap-3 disabled:opacity-50 transition-all"
               >
                 {sending ? (
-                  <Loader2 className="animate-spin" size={18} />
+                  <Loader2 className="animate-spin" size={24} />
                 ) : (
                   <>
-                    <Send size={18} /> 
-                    Blast_Dispatch
+                    <Send size={24} /> 
+                    Blast Dispatch
                   </>
                 )}
               </button>
 
               {status.msg && (
                 <div className={cn(
-                  "p-4 rounded-2xl flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] border animate-in fade-in slide-in-from-top-2",
-                  status.type === 'success' ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-destructive/10 text-destructive border-destructive/20"
+                  "p-4 brutal-border flex items-center gap-3 text-sm font-black uppercase tracking-widest",
+                  status.type === 'success' ? "bg-green-200 text-green-900" : "bg-red-200 text-red-900"
                 )}>
-                  {status.type === 'success' ? <CheckCircle2 size={16}/> : <AlertTriangle size={16}/>}
+                  {status.type === 'success' ? <CheckCircle2 size={20}/> : <AlertTriangle size={20}/>}
                   {status.msg}
                 </div>
               )}
             </form>
           </div>
 
-          {/* Preview HUD Panel */}
+          {/* Preview Panel */}
           <div className={cn("lg:col-span-5 space-y-4", !showPreviewMobile && "hidden lg:block")}>
-            <div className="flex items-center justify-between px-4">
-              <div className="flex items-center gap-2">
-                <Eye size={14} className="text-accent" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Visual_Preview</span>
-              </div>
+            <div className="flex items-center justify-between px-2">
+              <h2 className="text-xl font-black uppercase italic flex items-center gap-2">
+                <Eye size={20} className="text-accent" /> Preview
+              </h2>
               <button 
                 onClick={() => setShowPreviewMobile(false)}
-                className="lg:hidden text-[9px] font-black uppercase tracking-widest text-accent hover:underline"
+                className="lg:hidden brutal-btn bg-accent text-accent-foreground px-4 py-1 text-xs font-black uppercase"
               >
-                Return_to_Composer
+                Back to Edit
               </button>
             </div>
 
-            <div className="bg-background/30 backdrop-blur-md border border-foreground/5 rounded-[2.5rem] p-0 shadow-2xl overflow-hidden min-h-[500px] flex flex-col">
-              <div className="p-8 bg-accent text-accent-foreground border-b border-foreground/5">
-                <div className="flex items-center gap-2 mb-4 opacity-60">
-                  <Terminal size={12} />
-                  <span className="text-[8px] font-black uppercase tracking-widest">Header_Module</span>
-                </div>
-                <h1 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-tight m-0">
-                  {subject || 'No Subject Defined'}
+            <div className="brutal-border brutal-shadow bg-white p-0 overflow-hidden min-h-[600px] flex flex-col text-black">
+              <div className="p-8 bg-accent border-b-4 border-black">
+                <h1 className="text-2xl font-black uppercase tracking-tighter leading-tight m-0">
+                  {subject || 'SUBJECT PREVIEW'}
                 </h1>
               </div>
 
-              <div className="p-8 bg-white flex-1 text-black">
+              <div className="p-8 flex-1">
                 <div 
-                  className="prose prose-neutral max-w-none text-sm leading-relaxed" 
-                  dangerouslySetInnerHTML={{ __html: previewHtml || '<p class="text-gray-400 italic">Transmission content will appear here...</p>' }} 
+                  className="prose prose-neutral max-w-none text-base leading-relaxed" 
+                  dangerouslySetInnerHTML={{ __html: previewHtml || '<p class="text-gray-400 italic">Body content will appear here...</p>' }} 
                 />
               </div>
 
-              <div className="p-6 bg-foreground/[0.02] border-t border-foreground/5">
-                <div className="flex items-center justify-between opacity-30">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-foreground">Footer_Module</span>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-foreground">v2.1.0</span>
-                </div>
+              <div className="p-6 bg-gray-100 border-t-4 border-black text-[10px] font-black uppercase opacity-60">
+                Reply directly to this email • George Ongoro
               </div>
             </div>
           </div>
         </div>
 
-        {/* History / Archive Section */}
-        <section className="relative">
-          <div className="flex items-center justify-between mb-8 px-2">
-            <div className="flex items-center gap-3">
-              <History size={16} className="text-accent" />
-              <h2 className="text-xs font-black uppercase tracking-[0.2em]">Transmission_Log</h2>
-            </div>
-            <div className="flex gap-1">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-1 w-6 bg-foreground/10 rounded-full" />
-              ))}
-            </div>
+        {/* History Section */}
+        <section>
+          <div className="flex items-center gap-4 mb-8">
+            <History size={24} className="text-accent" />
+            <h2 className="text-3xl font-black uppercase italic">Sent History</h2>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             {issues.length === 0 ? (
-              <div className="py-20 text-center bg-background/20 rounded-[2.5rem] border border-dashed border-foreground/10 opacity-40">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Log is currently empty</p>
+              <div className="py-20 text-center brutal-border border-dashed bg-muted/30 opacity-60">
+                <p className="text-xl font-black uppercase tracking-widest">No transmissions logged</p>
               </div>
             ) : (
               issues.map((issue) => (
                 <div 
                   key={issue._id} 
-                  className="group flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 bg-background/40 border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300"
+                  className="group flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 brutal-border bg-card transition-all hover:bg-muted/10"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "h-1.5 w-1.5 rounded-full",
-                        issue.published ? "bg-accent" : "bg-muted-foreground/30"
-                      )} />
-                      <h3 className="text-sm font-black uppercase tracking-tight group-hover:text-accent transition-colors">
-                        {issue.subject}
-                      </h3>
-                    </div>
-                    <div className="flex items-center gap-3 text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest px-4">
-                      <span>{new Date(issue.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                      <span className="h-1 w-1 rounded-full bg-foreground/10" />
-                      <span className={cn(issue.published ? "text-accent/60" : "text-muted-foreground/30")}>
-                        {issue.published ? "Live_Archive" : "Internal_Draft"}
+                  <div>
+                    <h3 className="text-xl font-black uppercase tracking-tight mb-2 group-hover:text-accent transition-colors">
+                      {issue.subject}
+                    </h3>
+                    <div className="flex items-center gap-3 text-[10px] font-black uppercase text-muted-foreground tracking-widest">
+                      <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
+                      <span className="h-1 w-1 bg-foreground/20 rounded-full" />
+                      <span className={cn(issue.published ? "text-green-600" : "text-yellow-600")}>
+                        {issue.published ? "Live Archive" : "Internal Test"}
                       </span>
                     </div>
                   </div>
                   
                   <button 
                     onClick={() => deleteIssue(issue._id)}
-                    className="h-10 w-10 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
+                    className="h-12 w-12 flex items-center justify-center brutal-border bg-destructive text-destructive-foreground hover:bg-red-700 transition-all"
                     title="Delete Entry"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={20} />
                   </button>
                 </div>
               ))
             )}
           </div>
         </section>
-
-        {/* System Metadata Footer */}
-        <div className="mt-20 pt-12 border-t border-foreground/5 flex flex-col md:flex-row items-center justify-between gap-8 opacity-20">
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest">Protocol</span>
-              <span className="text-[10px] font-bold">DISPATCH_v1.4</span>
-            </div>
-            <div className="h-8 w-px bg-foreground/20" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest">Security</span>
-              <span className="text-[10px] font-bold">AES_256_GCM</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-8 w-1 bg-foreground/10 rounded-full" />
-            ))}
-          </div>
-        </div>
       </main>
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0,0,0,0.05);
-          border-radius: 10px;
+          background: #f1f1f1;
+          border-left: 2px solid black;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: var(--accent);
-          border-radius: 10px;
+          border: 2px solid black;
         }
       `}</style>
     </div>

@@ -46,9 +46,9 @@ export function PostList({ posts }: PostListProps) {
 
   if (posts.length === 0) {
     return (
-      <div className="py-20 text-center opacity-40">
-        <p className="text-xs font-black uppercase tracking-[0.3em] mb-4">No records found in buffer</p>
-        <Link href="/admin/new" className="text-[10px] font-bold uppercase tracking-widest text-accent hover:underline">
+      <div className="py-20 text-center brutal-border border-dashed bg-muted/30">
+        <p className="text-xl font-black uppercase tracking-widest mb-4">No records found</p>
+        <Link href="/admin/new" className="text-accent font-black uppercase underline hover:no-underline">
           Initialize first entry &rarr;
         </Link>
       </div>
@@ -56,50 +56,43 @@ export function PostList({ posts }: PostListProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {posts.map((post) => (
         <div
           key={post._id}
-          className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 bg-background/50 border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden"
+          className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 brutal-border bg-background transition-all hover:bg-muted/10"
         >
-          {/* Status Indicator Bar */}
-          <div className={cn(
-            "absolute left-0 top-0 bottom-0 w-1 transition-all",
-            post.published ? "bg-accent" : "bg-muted-foreground/20 group-hover:bg-muted-foreground/40"
-          )} />
-
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-center gap-3">
               <div className={cn(
-                "px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1",
+                "px-3 py-1 brutal-border text-[10px] font-black uppercase tracking-widest flex items-center gap-2",
                 post.published 
-                  ? "bg-accent/10 text-accent border border-accent/20" 
-                  : "bg-foreground/5 text-muted-foreground border border-foreground/5"
+                  ? "bg-green-100 text-green-800" 
+                  : "bg-yellow-100 text-yellow-800"
               )}>
-                {post.published ? <CheckCircle2 size={8} /> : <Circle size={8} />}
-                {post.published ? 'LIVE' : 'DRAFT'}
+                {post.published ? 'Live' : 'Draft'}
               </div>
-              <h3 className="text-sm font-black uppercase tracking-tight truncate group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-black uppercase tracking-tight truncate leading-none">
                 {post.title}
               </h3>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60">
-                <Clock size={12} className="opacity-40" />
-                <span>{formatDate(post.createdAt)}</span>
-              </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-bold text-muted-foreground uppercase">
+              <span className="flex items-center gap-2">
+                <Clock size={14} />
+                {formatDate(post.createdAt)}
+              </span>
               
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60">
-                <Hash size={12} className="opacity-40" />
-                <span>{post.readTime} MIN_READ</span>
-              </div>
+              <span className="flex items-center gap-2">
+                <Hash size={14} />
+                {post.readTime} Min
+              </span>
 
               {post.series && (
-                <div className="flex items-center gap-1.5 text-[10px] font-black text-accent/60 uppercase">
-                  <Layers size={12} className="opacity-40" />
-                  <span>{post.series} <span className="opacity-40">[{post.seriesOrder}]</span></span>
-                </div>
+                <span className="flex items-center gap-2 text-accent">
+                  <Layers size={14} />
+                  {post.series} [{post.seriesOrder}]
+                </span>
               )}
             </div>
           </div>
@@ -109,28 +102,28 @@ export function PostList({ posts }: PostListProps) {
               <Link
                 href={`/post/${post.slug}`}
                 target="_blank"
-                className="h-10 w-10 flex items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground hover:text-background transition-all"
+                className="h-12 w-12 flex items-center justify-center brutal-border bg-white hover:bg-accent hover:text-accent-foreground transition-all"
                 title="View Live"
               >
-                <Eye size={16} />
+                <Eye size={20} />
               </Link>
             )}
             
             <Link
               href={`/admin/edit/${post.slug}`}
-              className="h-10 px-6 flex items-center gap-2 rounded-full bg-foreground text-background text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-accent-foreground transition-all"
+              className="h-12 px-6 flex items-center gap-2 brutal-border bg-white font-black uppercase text-sm hover:bg-foreground hover:text-background transition-all"
             >
-              <Edit3 size={14} />
-              Edit_Log
+              <Edit3 size={18} />
+              Edit
             </Link>
 
             <button
               onClick={() => handleDelete(post.slug)}
               disabled={deletingSlug === post.slug}
-              className="h-10 w-10 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all disabled:opacity-50"
+              className="h-12 w-12 flex items-center justify-center brutal-border bg-destructive text-destructive-foreground hover:bg-red-700 transition-all disabled:opacity-50"
               title="Delete Record"
             >
-              {deletingSlug === post.slug ? '...' : <Trash2 size={16} />}
+              {deletingSlug === post.slug ? '...' : <Trash2 size={20} />}
             </button>
           </div>
         </div>

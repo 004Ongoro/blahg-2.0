@@ -147,78 +147,72 @@ export function PostEditor({ post }: PostEditorProps) {
         
         {/* Editor Side */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-6 will-change-transform">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-2 w-2 rounded-full bg-accent" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Metadata_Config</span>
-            </div>
+          <div className="brutal-border brutal-shadow bg-card p-8 space-y-6">
+            <h2 className="text-xl font-black uppercase tracking-tight mb-8 italic">Metadata Configuration</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Identity</label>
+                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Record Title"
-                  className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 px-4 text-sm focus:ring-accent focus:border-accent transition-all"
+                  placeholder="Enter title..."
+                  className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Slug_Handle</label>
+                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Slug (Handle)</label>
                 <input
                   type="text"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 px-4 text-sm focus:ring-accent focus:border-accent transition-all opacity-80"
+                  className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black opacity-80"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Brief_Description</label>
+              <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Excerpt</label>
               <textarea
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 rows={2}
                 maxLength={300}
-                placeholder="Post summary for the preview modules..."
-                className="w-full bg-background/50 border border-foreground/5 rounded-2xl p-4 text-sm focus:ring-accent focus:border-accent transition-all resize-none"
+                placeholder="Short summary..."
+                className="w-full brutal-border bg-background p-4 font-bold focus:ring-4 ring-accent outline-none border-black resize-none"
                 required
               />
-              <div className="flex justify-end px-1">
-                <span className="text-[8px] font-bold text-muted-foreground/30 uppercase tracking-widest">{excerpt.length}/300 BYTES</span>
+              <div className="flex justify-end">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">{excerpt.length}/300 Chars</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Tag_Array</label>
-                <div className="relative">
-                  <Hash size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
-                  <input
-                    type="text"
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
-                    placeholder="comma, separated, tags"
-                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 pl-10 pr-4 text-sm focus:ring-accent focus:border-accent transition-all"
-                  />
-                </div>
+                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Tags (comma separated)</label>
+                <input
+                  type="text"
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  placeholder="tag1, tag2..."
+                  className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Series_Link</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Series</label>
                   <input
                     type="text"
                     value={series}
                     onChange={(e) => setSeries(e.target.value)}
                     list="series-list"
-                    placeholder="Collection"
-                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 px-4 text-sm focus:ring-accent focus:border-accent transition-all"
+                    placeholder="None"
+                    className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black"
                   />
                   <datalist id="series-list">
                     {allSeries.map((s) => (
@@ -227,62 +221,55 @@ export function PostEditor({ post }: PostEditorProps) {
                   </datalist>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Seq_Index</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Order</label>
                   <input
                     type="number"
                     value={seriesOrder}
                     onChange={(e) => setSeriesOrder(e.target.value)}
-                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl h-12 px-4 text-sm focus:ring-accent focus:border-accent transition-all"
+                    className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-4 will-change-transform">
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Payload_Editor</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-foreground/5 rounded-full text-[8px] font-black tracking-widest text-muted-foreground">
-                  <Clock size={10} />
-                  ~{readTime} MIN_READ
-                </div>
+          <div className="brutal-border brutal-shadow bg-card p-8 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-black uppercase tracking-tight italic">Content (Markdown)</h2>
+              <div className="bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase flex items-center gap-2">
+                <Clock size={12} /> ~{readTime} Min Read
               </div>
             </div>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full bg-background/20 border border-foreground/5 rounded-2xl p-6 text-sm focus:ring-accent focus:border-accent transition-all resize-none font-mono min-h-[500px] leading-relaxed"
-              placeholder="# Start writing your transmission..."
+              className="w-full brutal-border bg-background p-6 font-mono text-base focus:ring-4 ring-accent outline-none border-black min-h-[600px] leading-relaxed"
+              placeholder="# Start writing..."
               required
             />
           </div>
         </div>
 
         {/* Preview Side */}
-        <div className="lg:col-span-5 relative">
-          <div className="sticky top-32 space-y-6">
-            <div className="flex items-center justify-between px-4 mb-2">
-              <div className="flex items-center gap-2">
-                <Monitor size={14} className="text-accent" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">System_Preview</span>
-              </div>
+        <div className="lg:col-span-5">
+          <div className="sticky top-24 space-y-8">
+            <div className="flex items-center justify-between px-2">
+              <h2 className="text-xl font-black uppercase tracking-tight italic flex items-center gap-2">
+                <Monitor size={20} className="text-accent" /> Live Preview
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="text-[9px] font-black uppercase tracking-widest text-accent hover:underline lg:hidden"
+                className="lg:hidden brutal-btn bg-accent text-accent-foreground px-4 py-1 text-xs font-black uppercase"
               >
-                {showPreview ? 'Close_Preview' : 'Launch_Preview'}
+                {showPreview ? 'Close' : 'Launch'}
               </button>
             </div>
 
             <div
               className={cn(
-                "bg-background/30 backdrop-blur-md border border-foreground/5 rounded-[2.5rem] p-8 overflow-auto transition-all",
-                showPreview ? "fixed inset-4 z-[100] bg-background lg:relative lg:inset-auto lg:h-[calc(100vh-400px)]" : "hidden lg:block lg:h-[calc(100vh-400px)]"
+                "brutal-border bg-card p-8 overflow-auto transition-all",
+                showPreview ? "fixed inset-4 z-[100] bg-background lg:relative lg:inset-auto lg:h-[calc(100vh-300px)]" : "hidden lg:block lg:h-[calc(100vh-300px)]"
               )}
             >
               {content ? (
@@ -291,29 +278,27 @@ export function PostEditor({ post }: PostEditorProps) {
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
                 />
               ) : (
-                <div className="flex flex-col items-center justify-center h-full opacity-20 gap-4">
+                <div className="flex flex-col items-center justify-center h-full opacity-20 gap-4 py-20 border-4 border-dashed border-foreground/10">
                   <Eye size={48} />
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em]">No data to render</p>
+                  <p className="text-lg font-black uppercase tracking-widest">Buffer Empty</p>
                 </div>
               )}
             </div>
 
-            {/* Admin Quick Info Pill */}
-            <div className="bg-foreground/5 border border-foreground/5 rounded-3xl p-6 hidden lg:block">
-              <div className="flex items-center gap-4 mb-4">
-                <Settings size={14} className="opacity-40" />
-                <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Session_Metadata</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Status</span>
-                  <span className={cn("text-[10px] font-bold uppercase", published ? "text-accent" : "text-muted-foreground")}>
-                    {published ? 'Live_Public' : 'Staged_Draft'}
+            <div className="bg-foreground text-background p-6 brutal-border shadow-[4px_4px_0px_0px_var(--color-accent)] hidden lg:block">
+              <h3 className="text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Settings size={14} className="text-accent" /> System Metadata
+              </h3>
+              <div className="grid grid-cols-2 gap-8 font-black uppercase text-[10px]">
+                <div>
+                  <span className="text-muted-foreground block mb-1">Status</span>
+                  <span className={cn(published ? "text-accent" : "text-yellow-400")}>
+                    {published ? 'Live Public' : 'Draft Mode'}
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">Environment</span>
-                  <span className="text-[10px] font-bold uppercase">Production</span>
+                <div>
+                  <span className="text-muted-foreground block mb-1">Target</span>
+                  <span>Production</span>
                 </div>
               </div>
             </div>
@@ -321,51 +306,45 @@ export function PostEditor({ post }: PostEditorProps) {
         </div>
       </div>
 
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-4xl px-4 will-change-transform">
-        <div className="bg-background/90 backdrop-blur-sm border border-foreground/10 rounded-full p-2 shadow-2xl flex items-center justify-between">
-          <div className="flex items-center gap-2 px-6">
+      {/* Action Bar */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-5xl px-4">
+        <div className="bg-background brutal-border p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-6">
             <Link
               href="/admin"
-              className="h-10 w-10 flex items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground hover:text-background transition-all"
+              className="h-12 w-12 flex items-center justify-center brutal-border bg-white hover:bg-accent transition-all"
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={20} />
             </Link>
-            <div className="h-6 w-px bg-foreground/5" />
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className={cn(
-                "w-10 h-6 rounded-full p-1 transition-all",
-                published ? "bg-accent" : "bg-foreground/10"
-              )}>
-                <div className={cn(
-                  "h-4 w-4 rounded-full bg-background transition-all shadow-sm",
-                  published ? "translate-x-4" : "translate-x-0"
-                )} />
+            
+            <label className="flex items-center gap-4 cursor-pointer group">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={published}
+                  onChange={(e) => setPublished(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-14 h-7 bg-muted brutal-border border-black peer-checked:bg-accent transition-colors" />
+                <div className="absolute left-1 top-1 w-5 h-5 bg-foreground brutal-border border-black peer-checked:translate-x-7 transition-all" />
               </div>
-              <input
-                type="checkbox"
-                checked={published}
-                onChange={(e) => setPublished(e.target.checked)}
-                className="hidden"
-              />
-              <span className="text-[9px] font-black uppercase tracking-widest group-hover:text-foreground transition-colors">
-                Live_Switch
-              </span>
+              <span className="text-xs font-black uppercase tracking-widest">Publish Live</span>
             </label>
           </div>
 
-          <div className="flex items-center gap-3 pr-2">
-            {error && <span className="text-destructive text-[9px] font-bold uppercase tracking-widest mr-4">{error}</span>}
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            {error && <span className="text-destructive text-[10px] font-black uppercase mr-4">{error}</span>}
             <button
               type="submit"
               disabled={loading}
-              className="h-12 px-8 bg-foreground text-background rounded-full font-black uppercase text-xs tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
+              className="flex-1 sm:flex-none brutal-btn bg-accent text-accent-foreground px-12 py-4 font-black uppercase text-xl transition-all disabled:opacity-50 flex items-center justify-center gap-3"
             >
               {loading ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 className="animate-spin" />
               ) : (
                 <>
-                  <Send size={14} />
-                  {isEditing ? 'Commit_Changes' : 'Initialize_Record'}
+                  <Send size={24} />
+                  {isEditing ? 'Update Post' : 'Create Post'}
                 </>
               )}
             </button>

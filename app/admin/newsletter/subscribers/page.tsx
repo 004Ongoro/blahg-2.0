@@ -11,11 +11,8 @@ import {
   Calendar, 
   ArrowLeft, 
   Users, 
-  ShieldCheck, 
   Activity, 
   Filter,
-  CheckCircle2,
-  Circle,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
@@ -82,7 +79,7 @@ export default function SubscribersPage() {
   }
 
   const deleteSubscriber = async (id: string) => {
-    if (!confirm('Permanently remove this subscriber from the database?')) return
+    if (!confirm('Permanently remove this subscriber?')) return
     try {
       const res = await fetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
@@ -97,71 +94,57 @@ export default function SubscribersPage() {
     <div className="min-h-screen bg-background font-mono pb-20">
       <AdminHeader />
       
-      <main className="max-w-7xl mx-auto px-4 py-32 w-full">
-        {/* Header HUD Section */}
-        <header className="mb-20 relative">
-          <div className="absolute -top-10 left-0 flex items-center gap-3 opacity-30">
-            <div className="h-[1px] w-8 bg-foreground" />
-            <span className="text-[8px] font-black uppercase tracking-[0.3em]">Module: Audience_Management</span>
-          </div>
-
+      <main className="max-w-6xl mx-auto px-4 py-12 md:py-24 w-full">
+        {/* Header Section */}
+        <header className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-4">
               <Link 
                 href="/admin/newsletter"
-                className="group inline-flex items-center gap-2 px-4 py-2 bg-background/50 backdrop-blur-md border border-foreground/5 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-foreground hover:text-background transition-all"
+                className="group inline-flex items-center gap-2 px-3 py-1 brutal-border bg-card font-black uppercase text-[10px] hover:bg-accent transition-all"
               >
-                <ArrowLeft size={10} className="group-hover:-translate-x-1 transition-transform" />
-                Return_to_Broadcast
+                <ArrowLeft size={12} /> Back
               </Link>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-accent/10 border border-accent/20 rounded-2xl flex items-center justify-center text-accent">
-                  <Users size={24} />
+              <div>
+                <div className="bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase mb-4 inline-block brutal-border">
+                  Audience Database
                 </div>
-                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
-                  Audience_<span className="text-accent italic">Database</span>
+                <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8]">
+                  Subscri<span className="text-accent italic">bers</span>
                 </h1>
               </div>
             </div>
 
-            <div className="relative w-full md:w-96 group">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted-foreground/40 group-focus-within:text-accent transition-colors">
-                <Search size={16} />
-              </div>
+            <div className="relative w-full md:w-96">
+              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search emails or handles..."
+                placeholder="Search database..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-full pl-12 pr-6 py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all shadow-lg"
+                className="w-full brutal-border bg-background pl-12 pr-4 h-14 font-bold text-lg focus:ring-4 ring-accent outline-none border-black"
               />
             </div>
           </div>
         </header>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {[
-            { label: 'Total_Subscribers', value: stats.total, icon: <Users size={16} />, color: 'accent' },
-            { label: 'Active_Nodes', value: stats.active, icon: <Activity size={16} />, color: 'green-500', pulse: true },
-            { label: 'Search_Results', value: pagination.total, icon: <Filter size={16} />, color: 'blue-500', subValue: search ? `Filtering: "${search}"` : 'Global_View' }
+            { label: 'Total Audience', value: stats.total, icon: <Users size={20} />, color: 'bg-card' },
+            { label: 'Active Nodes', value: stats.active, icon: <Activity size={20} />, color: 'bg-green-100' },
+            { label: 'Filtered', value: pagination.total, icon: <Filter size={20} />, color: 'bg-blue-100' }
           ].map((stat, i) => (
-            <div key={i} className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-6 relative overflow-hidden group will-change-transform">
-              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                {stat.icon}
+            <div key={i} className={cn("brutal-border brutal-shadow p-8 flex flex-col gap-6", stat.color)}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">{stat.label}</span>
+                <div className="bg-foreground text-background p-2 brutal-border">
+                  {stat.icon}
+                </div>
               </div>
-              <div className="relative z-10 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-1.5 w-1.5 rounded-full", `bg-${stat.color}`, stat.pulse && "animate-pulse")} />
-                  <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60">{stat.label}</span>
-                </div>
-                <div className="flex items-end gap-2">
-                  <span className="text-3xl font-black tracking-tighter leading-none">{stat.value}</span>
-                  <span className="text-[8px] font-bold text-muted-foreground/30 uppercase mb-1">units</span>
-                </div>
-                {stat.subValue && (
-                  <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest truncate">{stat.subValue}</p>
-                )}
+              <div className="flex items-end gap-2">
+                <span className="text-6xl font-black tracking-tighter leading-none">{stat.value}</span>
+                <span className="text-xs font-bold uppercase mb-1">Nodes</span>
               </div>
             </div>
           ))}
@@ -169,74 +152,52 @@ export default function SubscribersPage() {
 
         {/* List Section */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between mb-6 px-4">
-            <div className="flex items-center gap-3">
-              <ShieldCheck size={14} className="text-accent" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verified_Registry</span>
-            </div>
-            <div className="flex gap-1">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-1 w-4 bg-foreground/5 rounded-full" />
-              ))}
-            </div>
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="text-3xl font-black uppercase italic">Verified Registry</h2>
+            <div className="flex-1 h-1 bg-foreground opacity-10" />
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {loading && subscribers.length === 0 ? (
               [...Array(5)].map((_, i) => (
-                <div key={i} className="h-20 bg-foreground/5 rounded-2xl animate-pulse" />
+                <div key={i} className="h-24 brutal-border bg-muted animate-pulse" />
               ))
             ) : subscribers.length === 0 ? (
-              <div className="py-20 text-center bg-background/20 rounded-[2.5rem] border border-dashed border-foreground/10 opacity-40">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em]">No records found in current sector</p>
+              <div className="py-20 text-center brutal-border border-dashed bg-muted/30 opacity-60">
+                <p className="text-xl font-black uppercase tracking-widest">No records found</p>
               </div>
             ) : (
               subscribers.map((sub) => (
                 <div 
                   key={sub._id} 
-                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden will-change-transform"
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 brutal-border bg-card transition-all hover:bg-muted/10"
                 >
-                  <div className={cn(
-                    "absolute left-0 top-0 bottom-0 w-1 transition-all",
-                    sub.active ? "bg-accent" : "bg-muted-foreground/20"
-                  )} />
-
-                  <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-6">
+                  <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-8">
                     <div className="flex items-center gap-4 min-w-0 max-w-md">
-                      <div className="h-10 w-10 shrink-0 rounded-xl bg-foreground/5 flex items-center justify-center text-muted-foreground/40 group-hover:text-accent transition-colors">
-                        <Mail size={18} />
+                      <div className="h-12 w-12 shrink-0 bg-accent brutal-border flex items-center justify-center text-accent-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <Mail size={24} />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-sm font-black uppercase tracking-tight truncate">
+                        <h3 className="text-xl font-black uppercase tracking-tight truncate leading-none mb-2">
                           {sub.email}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className={cn(
-                            "px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border",
-                            sub.active 
-                              ? "bg-accent/10 text-accent border-accent/20" 
-                              : "bg-foreground/5 text-muted-foreground border-foreground/10"
-                          )}>
-                            {sub.active ? 'ACTIVE_SESSION' : 'INACTIVE_NODE'}
-                          </div>
+                        <div className={cn(
+                          "inline-block px-2 py-0.5 brutal-border text-[8px] font-black uppercase tracking-widest",
+                          sub.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                        )}>
+                          {sub.active ? 'Active Node' : 'Inactive'}
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-6">
+                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40 flex items-center gap-1">
-                          <Calendar size={8} /> Onboarding_Date
-                        </span>
-                        <span className="text-[10px] font-bold uppercase">
-                          {new Date(sub.subscribedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
+                        <span className="opacity-40">Joined</span>
+                        <span className="text-foreground">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Object_ID</span>
-                        <span className="text-[10px] font-bold uppercase opacity-30">
-                          {sub._id.slice(-8)}
-                        </span>
+                        <span className="opacity-40">Node ID</span>
+                        <span className="text-foreground opacity-30">{sub._id.slice(-8)}</span>
                       </div>
                     </div>
                   </div>
@@ -245,24 +206,18 @@ export default function SubscribersPage() {
                     <button 
                       onClick={() => toggleStatus(sub._id, sub.active)}
                       className={cn(
-                        "h-10 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
-                        sub.active 
-                          ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
-                          : "bg-accent text-accent-foreground shadow-lg active:scale-95"
+                        "h-12 px-6 brutal-border font-black uppercase text-xs transition-all",
+                        sub.active ? "bg-white hover:bg-destructive hover:text-white" : "bg-accent hover:bg-accent/80"
                       )}
                     >
-                      {sub.active ? (
-                        <><UserX size={14} /> Deactivate_Link</>
-                      ) : (
-                        <><UserCheck size={14} /> Restore_Link</>
-                      )}
+                      {sub.active ? 'Deactivate' : 'Restore'}
                     </button>
                     <button 
                       onClick={() => deleteSubscriber(sub._id)}
-                      className="h-10 w-10 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
+                      className="h-12 w-12 flex items-center justify-center brutal-border bg-destructive text-destructive-foreground hover:bg-red-700 transition-all"
                       title="Purge Record"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={20} />
                     </button>
                   </div>
                 </div>
@@ -270,19 +225,19 @@ export default function SubscribersPage() {
             )}
           </div>
 
-          {/* Pagination HUD */}
+          {/* Pagination */}
           {pagination.pages > 1 && (
             <div className="mt-12 flex justify-center">
-              <div className="flex items-center gap-1 p-1 bg-background/50 backdrop-blur-md border border-foreground/5 rounded-full shadow-lg">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => fetchSubscribers(pagination.page - 1, search)}
                   disabled={pagination.page === 1}
-                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all flex items-center gap-2"
+                  className="h-12 px-6 brutal-border bg-card font-black uppercase text-xs hover:bg-accent disabled:opacity-30 transition-all"
                 >
-                  <ChevronLeft size={12} /> PREV
+                  Prev
                 </button>
                 
-                <div className="flex gap-1 px-2 border-x border-foreground/5">
+                <div className="flex gap-2">
                   {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(p => {
                     const isActive = pagination.page === p
                     if (
@@ -295,18 +250,13 @@ export default function SubscribersPage() {
                           key={p}
                           onClick={() => fetchSubscribers(p, search)}
                           className={cn(
-                            "w-9 h-9 rounded-full text-[10px] font-black transition-all",
-                            isActive ? "bg-foreground text-background shadow-md" : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                            "w-12 h-12 brutal-border font-black text-sm transition-all",
+                            isActive ? "bg-accent" : "bg-card hover:bg-accent/50"
                           )}
                         >
-                          {p.toString().padStart(2, '0')}
+                          {p}
                         </button>
                       )
-                    } else if (
-                      p === pagination.page - 2 || 
-                      p === pagination.page + 2
-                    ) {
-                      return <span key={p} className="w-4 flex items-center justify-center text-[10px] opacity-20">.</span>
                     }
                     return null
                   })}
@@ -315,47 +265,27 @@ export default function SubscribersPage() {
                 <button
                   onClick={() => fetchSubscribers(pagination.page + 1, search)}
                   disabled={pagination.page === pagination.pages}
-                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all flex items-center gap-2"
+                  className="h-12 px-6 brutal-border bg-card font-black uppercase text-xs hover:bg-accent disabled:opacity-30 transition-all"
                 >
-                  NEXT <ChevronRight size={12} />
+                  Next
                 </button>
               </div>
             </div>
           )}
         </section>
-
-        {/* System Metadata Footer */}
-        <div className="mt-20 pt-12 border-t border-foreground/5 flex flex-col md:flex-row items-center justify-between gap-8 opacity-20">
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest">Registry_V</span>
-              <span className="text-[10px] font-bold">STABLE_3.4.1</span>
-            </div>
-            <div className="h-8 w-px bg-foreground/20" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-widest">Auth_Token</span>
-              <span className="text-[10px] font-bold">SESSION_JWT_HS256</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-1 w-4 bg-foreground/10 rounded-full" />
-            ))}
-          </div>
-        </div>
       </main>
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0,0,0,0.05);
-          border-radius: 10px;
+          background: #f1f1f1;
+          border-left: 2px solid black;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: var(--accent);
-          border-radius: 10px;
+          border: 2px solid black;
         }
       `}</style>
     </div>

@@ -60,6 +60,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+        {/* Google Analytics - Moved outside ThemeProvider to prevent hydration script tag issues */}
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
+
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -67,24 +85,6 @@ export default function RootLayout({
           enableColorScheme={false}
           disableTransitionOnChange
         >
-          {/* Google Analytics */}
-          {gaId && (
-            <>
-              <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-                strategy="afterInteractive"
-              />
-              <Script id="google-analytics" strategy="afterInteractive">
-                {`
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${gaId}');
-                `}
-              </Script>
-            </>
-          )}
-
           {children}
           <Toaster />
           <ScrollProgress />

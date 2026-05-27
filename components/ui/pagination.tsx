@@ -7,7 +7,6 @@ import {
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { Button, buttonVariants } from '@/components/ui/button'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
@@ -28,7 +27,10 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn('flex flex-row items-center gap-1', className)}
+      className={cn(
+        'flex flex-row items-center gap-1 p-1 bg-background/50 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm',
+        className
+      )}
       {...props}
     />
   )
@@ -40,8 +42,7 @@ function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, 'size'> &
-  React.ComponentProps<typeof Link>
+} & { size?: 'default' | 'icon' } & React.ComponentProps<typeof Link>
 
 function PaginationLink({
   className,
@@ -55,11 +56,11 @@ function PaginationLink({
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
-        "flex items-center justify-center transition-all brutal-border",
-        size === 'icon' ? "size-10" : "px-4 py-2 text-sm font-bold uppercase",
+        "flex items-center justify-center rounded-full transition-all text-[10px] font-black uppercase tracking-widest",
+        size === 'icon' ? "size-9" : "h-9 px-4",
         isActive 
-          ? "bg-accent text-accent-foreground brutal-shadow shadow-foreground" 
-          : "bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)]",
+          ? "bg-foreground text-background shadow-md" 
+          : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5",
         className,
       )}
       {...props}
@@ -78,7 +79,7 @@ function PaginationPrevious({
       className={cn('gap-1', className)}
       {...props}
     >
-      <ChevronLeftIcon className="size-4" />
+      <ChevronLeftIcon className="size-3" />
       <span className="hidden sm:block">PREV</span>
     </PaginationLink>
   )
@@ -96,7 +97,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">NEXT</span>
-      <ChevronRightIcon className="size-4" />
+      <ChevronRightIcon className="size-3" />
     </PaginationLink>
   )
 }
@@ -109,7 +110,7 @@ function PaginationEllipsis({
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn('flex size-10 items-center justify-center brutal-border bg-muted/30', className)}
+      className={cn('flex size-9 items-center justify-center text-muted-foreground/30', className)}
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />

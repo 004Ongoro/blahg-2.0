@@ -1,78 +1,49 @@
-import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { TagLibrary } from '@/components/TagLibrary'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 
 export const dynamic = 'force-static'
 export const revalidate = false
 
-async function getTags() {
+async function getAllPosts() {
   try {
     await dbConnect()
-    const tags = await Post.aggregate([
-      { $match: { published: true } },
-      { $unwind: '$tags' },
-      {
-        $group: {
-          _id: '$tags',
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { count: -1 } },
-    ])
+    const posts = await Post.find({ published: true })
+      .sort({ createdAt: -1 })
+      .select('title slug excerpt createdAt readTime tags')
+      .lean()
 
-    return tags.map((tag) => ({
-      name: tag._id,
-      count: tag.count,
-    }))
+    return JSON.parse(JSON.stringify(posts))
   } catch (error) {
-    console.error('Error fetching tags:', error)
+    console.error('Error fetching posts for tag library:', error)
     return []
   }
 }
 
 export const metadata = {
-  title: 'Tags | George Ongoro',
-  description: 'Browse posts by topic',
+  title: 'Library | George Ongoro',
+  description: 'A categorized index of all posts and topics.',
 }
 
 export default async function TagsPage() {
-  const tags = await getTags()
+  const posts = await getAllPosts()
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">
-        <header className="mb-16">
-          <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 tracking-tighter">
-            Tags
+      <main className="flex-1 max-w-4xl mx-auto px-4 py-12 md:py-32 w-full">
+        <header className="mb-24 space-y-4">
+          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">
+            Tag <span className="text-accent italic">Library</span>
           </h1>
-          <p className="text-muted-foreground font-medium">
-            Browse content by topic.
+          <p className="text-muted-foreground font-medium text-lg max-w-md">
+            A high-density index of every topic, thought, and technical deep-dive.
           </p>
         </header>
 
-        {tags.length === 0 ? (
-          <div className="border-2 border-dashed border-foreground/10 p-12 text-center rounded-lg">
-            <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">no tags yet.</p>
-          </div>
-        ) : (
-          <div className="flex flex-wrap gap-x-8 gap-y-6">
-            {tags.map((tag) => (
-              <Link
-                key={tag.name}
-                href={`/tags/${tag.name}`}
-                className="group flex items-baseline gap-2"
-              >
-                <span className="text-xl font-bold group-hover:text-accent transition-colors">#{tag.name}</span>
-                <span className="text-xs font-bold text-muted-foreground/30 group-hover:text-accent/50 transition-colors tabular-nums">
-                  {tag.count}
-                </span>
-              </Link>
-            ))}
-          </div>
-        )}
+        <TagLibrary posts={posts} />
       </main>
       <Footer />
     </div>

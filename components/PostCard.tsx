@@ -44,7 +44,7 @@ export function PostCard({
             {tags.slice(0, 3).map((tag) => (
               <Link
                 key={tag}
-                href={`/tags/${tag}`}
+                href={`/tags?tag=${encodeURIComponent(tag)}`}
                 className="text-[10px] font-bold uppercase tracking-wider text-accent/60 hover:text-accent transition-colors"
               >
                 #{tag}

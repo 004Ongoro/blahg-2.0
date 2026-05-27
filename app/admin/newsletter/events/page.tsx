@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { AdminHeader } from '@/components/admin/AdminHeader'
-import { History, Mail, Calendar, Info, RefreshCcw } from 'lucide-react'
+import { History, Mail, Calendar, Info, RefreshCcw, BarChart3, TrendingUp, Users, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
 export default function EmailEventsPage() {
@@ -27,6 +27,40 @@ export default function EmailEventsPage() {
   useEffect(() => {
     fetchEvents()
   }, [])
+
+  const statsBySubject = useMemo(() => {
+    const stats: Record<string, { sent: number; opened: Set<string>; delivered: number; bounced: number }> = {}
+
+    events.forEach(event => {
+      const subj = event.subject || 'No Subject'
+      if (!stats[subj]) {
+        stats[subj] = { sent: 0, opened: new Set(), delivered: 0, bounced: 0 }
+      }
+
+      if (event.type === 'email.sent') stats[subj].sent++
+      if (event.type === 'email.delivered') stats[subj].delivered++
+      if (event.type === 'email.bounced') stats[subj].bounced++
+      if (event.type === 'email.opened') {
+        event.to.forEach((recipient: string) => stats[subj].opened.add(recipient))
+      }
+    })
+
+    return Object.entries(stats)
+      .filter(([subj]) => subj !== 'No Subject')
+      .map(([subject, data]) => {
+        const totalSent = data.sent || data.delivered // fallback to delivered if sent is not tracked
+        const uniqueOpens = data.opened.size
+        const openRate = totalSent > 0 ? (uniqueOpens / totalSent) * 100 : 0
+        return {
+          subject,
+          sent: totalSent,
+          opened: uniqueOpens,
+          openRate: openRate.toFixed(1),
+          bounced: data.bounced
+        }
+      })
+      .sort((a, b) => b.sent - a.sent)
+  }, [events])
 
   const getStatusColor = (type: string) => {
     switch (type) {
@@ -67,6 +101,52 @@ export default function EmailEventsPage() {
                 These events are received via webhooks from Resend.
             </p>
         </div>
+
+        {/* performance summary */}
+        {statsBySubject.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-black uppercase mb-6 italic flex items-center gap-3">
+              <BarChart3 size={28} className="text-accent" /> Issue <span className="text-accent">Performance</span>
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {statsBySubject.map((stat, idx) => (
+                <div key={idx} className="brutal-border bg-white p-6 brutal-shadow-sm flex flex-col gap-4">
+                  <div>
+                    <h3 className="font-black uppercase text-base truncate" title={stat.subject}>
+                      {stat.subject}
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-1">
+                        <Mail size={10} /> Sent
+                      </span>
+                      <span className="text-xl font-black">{stat.sent}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-accent flex items-center gap-1">
+                        <TrendingUp size={10} /> Open Rate
+                      </span>
+                      <span className="text-xl font-black text-accent">{stat.openRate}%</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-1">
+                        <Users size={10} /> Opened
+                      </span>
+                      <span className="text-xl font-black">{stat.opened}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase text-destructive flex items-center gap-1">
+                        <XCircle size={10} /> Bounced
+                      </span>
+                      <span className="text-xl font-black">{stat.bounced}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="grid gap-4">
           {loading && events.length === 0 ? (

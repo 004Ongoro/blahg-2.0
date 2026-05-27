@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     await dbConnect()
-    const events = await EmailEvent.find({}).sort({ createdAt: -1 }).limit(100).lean()
+    const events = await EmailEvent.find({}).sort({ createdAt: -1 }).limit(1000).lean()
     
     return NextResponse.json(events)
   } catch (error) {

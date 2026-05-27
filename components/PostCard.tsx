@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn, formatViews } from '@/lib/utils'
 import { FormattedDate } from './FormattedDate'
 
 interface PostCardProps {
@@ -51,8 +51,13 @@ export function PostCard({
             </Link>
           )}
           {views > 100 && (
-            <div className="bg-accent text-accent-foreground px-2 py-1 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 animate-pulse">
-              <span>🔥</span> trending
+            <div 
+              title={`${views.toLocaleString()} views`}
+              className="group bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 animate-pulse cursor-help"
+            >
+              <span>🔥</span> 
+              <span className="group-hover:hidden">trending</span>
+              <span className="hidden group-hover:inline">{formatViews(views)} views</span>
             </div>
           )}
         </div>

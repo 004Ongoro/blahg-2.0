@@ -4,7 +4,22 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter, ArrowRight, Mail } from 'lucide-react'
+import { 
+  CheckCircle2, 
+  XCircle, 
+  Send, 
+  Loader2, 
+  Zap, 
+  Shield, 
+  Sparkles, 
+  Quote, 
+  ArrowRight, 
+  Mail, 
+  Terminal,
+  Layers,
+  Activity
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Mode = 'subscribe' | 'unsubscribe'
 
@@ -13,19 +28,16 @@ const testimonials = [
     name: "Paul Marc",
     handle: "@paulmarc",
     text: "I keep learning new things, I like it ;)",
-    color: "bg-yellow-200"
   },
   {
     name: "Isaac de Andrade",
     handle: "@andradei",
     text: "Good read. Short and to the point.",
-    color: "bg-blue-200"
   },
   {
     name: "Rafael",
     handle: "@rafaelnacle",
-    text: "Nice!",
-    color: "bg-green-200"
+    text: "Quality content every single time.",
   }
 ]
 
@@ -56,8 +68,8 @@ export default function NewsletterPage() {
         setStatus({
           type: 'success',
           msg: mode === 'subscribe' 
-            ? "Welcome to the inner circle! Check your inbox." 
-            : "You've been removed. Sorry to see you go."
+            ? "Successfully subscribed. Check your inbox!" 
+            : "Successfully unsubscribed. We'll miss you."
         })
         setEmail('')
       } else {
@@ -71,185 +83,230 @@ export default function NewsletterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.5s ease-out forwards;
-        }
-      `}</style>
+    <div className="min-h-screen flex flex-col font-mono overflow-x-hidden">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center p-4 py-12 md:py-20">
+      
+      <main className="flex-1 max-w-5xl mx-auto px-4 py-20 md:py-32 w-full">
         
-        {/* Main Hero Card */}
-        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 brutal-border brutal-shadow bg-card overflow-hidden mb-16">
-          
-          {/* Left Column: Benefits/Hype */}
-          <div className="bg-accent text-accent-foreground p-8 md:p-12 flex flex-col justify-center border-b-4 md:border-b-0 md:border-r-4 border-foreground">
-            <div className="inline-block bg-foreground text-background px-3 py-1 text-xs font-black uppercase mb-6 self-start">
-              Weekly Insights
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase italic mb-6 leading-[0.8] tracking-tighter">
-              The <span className="text-white block sm:inline">Underground</span> Dev
-            </h1>
-            <p className="text-lg font-bold mb-8 opacity-90 leading-tight">
-              Deep dives into high-performance web architecture, building profitable side projects, and the unvarnished truth about tech.
-            </p>
-            
-            <ul className="space-y-4">
-              {[
-                { icon: <Zap size={20} />, text: "Zero Fluff. Just Code." },
-                { icon: <Shield size={20} />, text: "No Spam. Ever." },
-                { icon: <Sparkles size={20} />, text: "Exclusive Early Access." }
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 font-black uppercase text-sm">
-                  <span className="bg-foreground text-background p-1">{item.icon}</span>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
+        {/* Header HUD */}
+        <header className="mb-20 relative text-center flex flex-col items-center">
+          <div className="mb-6 flex items-center gap-3 opacity-30">
+            <div className="h-[1px] w-8 bg-foreground" />
+            <span className="text-[8px] font-black uppercase tracking-[0.3em]">Module: Dispatch_Center</span>
+            <div className="h-[1px] w-8 bg-foreground" />
           </div>
 
-          {/* Right Column: Form */}
-          <div className="p-8 md:p-12 bg-background flex flex-col justify-center">
-             {/* Mode Toggle */}
-            <div className="flex brutal-border mb-8 bg-muted overflow-hidden">
-              <button
-                onClick={() => { setMode('subscribe'); setStatus(null); }}
-                className={`flex-1 py-3 font-black uppercase text-xs tracking-tighter transition-colors ${
-                  mode === 'subscribe' ? 'bg-foreground text-background' : 'hover:bg-foreground/10'
-                }`}
-              >
-                Join Now
-              </button>
-              <button
-                onClick={() => { setMode('unsubscribe'); setStatus(null); }}
-                className={`flex-1 py-3 font-black uppercase text-xs tracking-tighter transition-colors ${
-                  mode === 'unsubscribe' ? 'bg-destructive text-destructive-foreground' : 'hover:bg-destructive/10'
-                }`}
-              >
-                Leave
-              </button>
+          <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 leading-none">
+            The <span className="text-accent italic">Dispatch</span>
+          </h1>
+          <p className="text-muted-foreground font-medium text-sm md:text-base max-w-lg leading-relaxed text-balance">
+            Weekly thoughts on software, design, and building in the open. 
+            No spam, just pure signal delivered to your inbox.
+          </p>
+        </header>
+
+        {/* Main Subscription Card */}
+        <div className="relative mb-32">
+          {/* Background Decoration */}
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-[2.5rem] shadow-2xl overflow-hidden relative z-10 grid grid-cols-1 md:grid-cols-12">
+            
+            {/* Left Column: Perks */}
+            <div className="md:col-span-5 p-8 md:p-12 border-b md:border-b-0 md:border-r border-foreground/5 bg-foreground/[0.02]">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Membership Benefits</h2>
+              </div>
+
+              <div className="space-y-8">
+                {[
+                  { icon: <Zap size={18} className="text-accent" />, title: "Technical Deep Dives", desc: "Complex concepts explained simply." },
+                  { icon: <Shield size={18} className="text-accent" />, title: "Privacy First", desc: "Your data is never shared or sold." },
+                  { icon: <Sparkles size={18} className="text-accent" />, title: "Early Access", desc: "First looks at new projects and tools." }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="h-10 w-10 shrink-0 rounded-2xl bg-background border border-foreground/5 flex items-center justify-center shadow-sm">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black uppercase tracking-widest mb-1">{item.title}</h3>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-12 pt-8 border-t border-foreground/5 opacity-40">
+                <div className="flex items-center gap-3">
+                  <Activity size={12} />
+                  <span className="text-[8px] font-bold uppercase tracking-[0.2em]">Uptime: 99.9% Reliable</span>
+                </div>
+              </div>
             </div>
 
-            <h2 className="text-2xl font-black uppercase mb-6">
-              {mode === 'subscribe' ? 'Ready to level up?' : 'Goodbye, friend.'}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@geohack.top"
-                  required
-                  className="w-full brutal-border bg-background px-4 py-4 text-lg font-bold focus:ring-4 ring-accent outline-none placeholder:opacity-30 border-black"
-                />
+            {/* Right Column: Interaction */}
+            <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-background/20">
+              {/* Pill Switcher */}
+              <div className="inline-flex p-1 bg-foreground/5 rounded-full mb-10 self-center md:self-start">
+                <button
+                  onClick={() => { setMode('subscribe'); setStatus(null); }}
+                  className={cn(
+                    "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                    mode === 'subscribe' ? "bg-foreground text-background shadow-lg" : "text-muted-foreground/60 hover:text-foreground"
+                  )}
+                >
+                  Subscribe
+                </button>
+                <button
+                  onClick={() => { setMode('unsubscribe'); setStatus(null); }}
+                  className={cn(
+                    "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                    mode === 'unsubscribe' ? "bg-destructive text-destructive-foreground shadow-lg" : "text-muted-foreground/60 hover:text-foreground"
+                  )}
+                >
+                  Unsubscribe
+                </button>
               </div>
 
-              <button
-                disabled={loading}
-                className={`brutal-btn py-4 text-xl font-black uppercase flex items-center justify-center gap-3 disabled:opacity-50 ${
-                  mode === 'subscribe' ? 'bg-accent text-accent-foreground' : 'bg-destructive text-destructive-foreground'
-                }`}
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <>
-                    {mode === 'subscribe' ? <Send size={24} /> : <XCircle size={24} />}
-                    {mode === 'subscribe' ? 'Get the newsletter' : 'Unsubscribe'}
-                  </>
-                )}
-              </button>
-            </form>
+              <h2 className="text-2xl font-black uppercase tracking-tight mb-8">
+                {mode === 'subscribe' ? 'Join the community' : 'Manage your subscription'}
+              </h2>
 
-            {status && (
-              <div className={`mt-8 p-4 brutal-border flex items-center gap-3 font-black uppercase text-sm ${
-                status.type === 'success' ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'
-              }`}>
-                {status.type === 'success' ? <CheckCircle2 /> : <XCircle />}
-                {status.msg}
-              </div>
-            )}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-muted-foreground/40 group-focus-within:text-accent transition-colors">
+                    <Mail size={18} />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address..."
+                    required
+                    className="w-full bg-background/50 border border-foreground/5 rounded-2xl pl-12 pr-6 py-5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all shadow-inner"
+                  />
+                </div>
 
-            <p className="mt-8 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">
-              Joined by developers worldwide.
-            </p>
+                <button
+                  disabled={loading}
+                  className={cn(
+                    "w-full py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-xl",
+                    mode === 'subscribe' ? "bg-foreground text-background hover:bg-accent hover:text-accent-foreground" : "bg-destructive text-destructive-foreground opacity-90 hover:opacity-100"
+                  )}
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <>
+                      {mode === 'subscribe' ? 'Start Receiving' : 'Remove Email'}
+                      {mode === 'subscribe' && <Send size={14} />}
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {status && (
+                <div className={cn(
+                  "mt-8 p-4 rounded-2xl flex items-center gap-3 text-xs font-bold uppercase tracking-widest border animate-in fade-in slide-in-from-top-2",
+                  status.type === 'success' ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-destructive/10 text-destructive border-destructive/20"
+                )}>
+                  {status.type === 'success' ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                  {status.msg}
+                </div>
+              )}
+
+              <p className="mt-8 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-[0.3em] text-center md:text-left">
+                Trusted by developers globally.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Testimonials Section */}
-        <div className="max-w-6xl w-full mb-20 px-4">
-          <h3 className="text-3xl font-black uppercase italic text-center mb-12">
-            What <span className="text-accent underline decoration-4 underline-offset-4">Developers</span> Are Saying
-          </h3>
+        {/* Testimonials */}
+        <section className="mb-32">
+          <div className="flex items-center gap-4 mb-12 px-2">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em]">What readers are saying</h3>
+            <div className="h-px flex-1 bg-foreground/5" />
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className={`p-6 brutal-border brutal-shadow ${t.color} flex flex-col justify-between min-h-[180px] relative group cursor-default transition-all duration-300 hover:scale-105 hover:rotate-0 z-0 hover:z-10 animate-fade-in-up`}
-                style={{ 
-                  animationDelay: `${i * 100}ms`,
-                  transform: i % 2 === 0 ? 'rotate(-2deg)' : 'rotate(2deg)'
-                }}
+                className="bg-background/30 backdrop-blur-sm border border-foreground/5 p-8 rounded-[2rem] relative group"
               >
-                <Quote className="absolute top-2 right-2 opacity-10 group-hover:opacity-20 transition-opacity" size={40} />
-                <p className="text-lg font-black leading-tight mb-6">"{t.text}"</p>
-                <div>
-                  <div className="font-black uppercase text-sm">{t.name}</div>
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase">
-                    <Twitter size={10} /> {t.handle}
+                <Quote className="absolute top-6 right-8 text-accent/10 group-hover:text-accent/20 transition-colors" size={32} />
+                <p className="text-sm font-medium leading-relaxed mb-8 relative z-10 italic">"{t.text}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-foreground/5 flex items-center justify-center text-[10px] font-black uppercase">
+                    {t.name.slice(0, 2)}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-widest">{t.name}</div>
+                    <div className="text-[9px] font-bold text-muted-foreground/40">{t.handle}</div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
         
-        {/* Infinite Marquee Tech Stack */}
-        <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground mb-20">
-          <div className="flex gap-12 whitespace-nowrap min-w-full animate-marquee">
-            {[...techStack, ...techStack, ...techStack, ...techStack].map((tech, i) => (
-              <span key={i} className="text-3xl md:text-5xl font-black uppercase italic text-background tracking-tighter">
-                {tech} <span className="text-accent ml-8">///</span>
-              </span>
+        {/* Tech Marquee */}
+        <div className="w-screen relative left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] bg-foreground/5 py-8 overflow-hidden mb-32 rotate-[-1deg]">
+          <div className="flex gap-16 whitespace-nowrap animate-marquee">
+            {[...techStack, ...techStack, ...techStack].map((tech, i) => (
+              <div key={i} className="flex items-center gap-8">
+                <span className="text-2xl md:text-4xl font-black uppercase tracking-tighter opacity-20">
+                  {tech}
+                </span>
+                <div className="h-2 w-2 rounded-full bg-accent opacity-40" />
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Link to Archive */}
-        <div className="max-w-4xl w-full text-center px-4">
-          <div className="brutal-border p-12 bg-card brutal-shadow relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Mail size={160} />
+        {/* Archive Hook */}
+        <div className="max-w-3xl mx-auto">
+          <Link 
+            href="/newsletter/archive"
+            className="group block bg-background/50 backdrop-blur-md border border-foreground/5 p-12 rounded-[2.5rem] text-center hover:border-accent/40 transition-all duration-300 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Mail size={120} />
             </div>
-            <h3 className="text-3xl md:text-4xl font-black uppercase italic mb-4">Want to see what you're missing?</h3>
-            <p className="text-xl font-bold text-muted-foreground mb-8">
-              Explore our full catalog of past issues and deep dives.
-            </p>
-            <Link 
-              href="/newsletter/archive"
-              className="brutal-btn bg-background text-foreground px-8 py-4 font-black uppercase inline-flex items-center gap-2 text-xl hover:bg-accent hover:text-accent-foreground"
-            >
-              Browse Archive <ArrowRight size={24} />
-            </Link>
-          </div>
+            
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 rounded-full mb-6">
+                <Layers size={12} className="text-accent" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-accent">Knowledge Base</span>
+              </div>
+              
+              <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">Want to see past issues?</h3>
+              <p className="text-sm font-medium text-muted-foreground mb-8 max-w-sm mx-auto">
+                Explore our full catalog of deep dives into code and architecture.
+              </p>
+              
+              <div className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.2em] group-hover:text-accent transition-colors">
+                Browse Archive <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+              </div>
+            </div>
+          </Link>
         </div>
 
       </main>
+
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.33%); }
+        }
+        .animate-marquee {
+          animation: marquee 40s linear infinite;
+        }
+      `}</style>
+      
       <Footer />
     </div>
   )

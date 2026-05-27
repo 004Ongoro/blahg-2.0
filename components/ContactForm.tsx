@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { sendContactEmail } from '@/lib/actions'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 const contactSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -50,76 +51,81 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
     }
   }
 
+  const inputClasses = "w-full bg-transparent border-b border-foreground/10 py-3 text-sm font-medium focus:border-accent outline-none placeholder:text-muted-foreground/20 transition-all"
+  const labelClasses = "text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 block mb-1"
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-1">
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-bold uppercase tracking-wider">
-          Name
-        </label>
-        <input
-          id="name"
-          {...register('name')}
-          placeholder="your name"
-          className="w-full brutal-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        {errors.name && (
-          <p className="text-xs text-destructive font-bold">{errors.name.message}</p>
-        )}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 py-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="space-y-1">
+          <label htmlFor="name" className={labelClasses}>
+            Your Identity
+          </label>
+          <input
+            id="name"
+            {...register('name')}
+            placeholder="John Doe"
+            className={inputClasses}
+          />
+          {errors.name && (
+            <p className="text-[10px] text-destructive font-bold uppercase tracking-tighter pt-1">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="email" className={labelClasses}>
+            Contact Frequency
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register('email')}
+            placeholder="john@example.com"
+            className={inputClasses}
+          />
+          {errors.email && (
+            <p className="text-[10px] text-destructive font-bold uppercase tracking-tighter pt-1">{errors.email.message}</p>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-bold uppercase tracking-wider">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          {...register('email')}
-          placeholder="your@email.com"
-          className="w-full brutal-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        {errors.email && (
-          <p className="text-xs text-destructive font-bold">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="subject" className="text-sm font-bold uppercase tracking-wider">
-          Subject
+      <div className="space-y-1">
+        <label htmlFor="subject" className={labelClasses}>
+          Subject Header
         </label>
         <input
           id="subject"
           {...register('subject')}
-          placeholder="what's this about?"
-          className="w-full brutal-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          placeholder="A briefly detailed inquiry"
+          className={inputClasses}
         />
         {errors.subject && (
-          <p className="text-xs text-destructive font-bold">{errors.subject.message}</p>
+          <p className="text-[10px] text-destructive font-bold uppercase tracking-tighter pt-1">{errors.subject.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-bold uppercase tracking-wider">
-          Message
+      <div className="space-y-1">
+        <label htmlFor="message" className={labelClasses}>
+          The Full Content
         </label>
         <textarea
           id="message"
           rows={4}
           {...register('message')}
-          placeholder="your message here..."
-          className="w-full brutal-border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+          placeholder="What's on your mind?"
+          className={cn(inputClasses, "resize-none min-h-[120px]")}
         />
         {errors.message && (
-          <p className="text-xs text-destructive font-bold">{errors.message.message}</p>
+          <p className="text-[10px] text-destructive font-bold uppercase tracking-tighter pt-1">{errors.message.message}</p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full brutal-btn bg-accent text-accent-foreground py-3 font-black uppercase tracking-tighter text-lg disabled:opacity-50 mt-2"
+        className="w-full bg-foreground text-background py-4 font-black uppercase tracking-[0.2em] text-xs hover:bg-accent hover:text-accent-foreground transition-all disabled:opacity-50 mt-4 rounded-xl"
       >
-        {isSubmitting ? 'sending...' : 'send message'}
+        {isSubmitting ? 'Transmitting...' : 'Dispatch Message'}
       </button>
     </form>
   )

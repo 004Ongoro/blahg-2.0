@@ -23,10 +23,12 @@ export function ContactDialog({ trigger }: ContactDialogProps) {
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="brutal-border brutal-shadow-lg sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Get in touch</DialogTitle>
-          <DialogDescription className="font-bold">
+      <DialogContent className="sm:max-w-xl border-foreground/5 bg-background/95 backdrop-blur-2xl rounded-3xl p-8">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="text-3xl font-black uppercase tracking-tighter leading-none">
+            Get in <span className="text-accent italic">Touch</span>
+          </DialogTitle>
+          <DialogDescription className="font-medium text-muted-foreground/60">
             Have a question or just want to say hi? Send me a message below.
           </DialogDescription>
         </DialogHeader>

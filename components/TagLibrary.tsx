@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useState, useMemo, useEffect, Suspense, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { PostCard } from './PostCard'
 import { cn } from '@/lib/utils'
@@ -23,6 +23,7 @@ function TagLibraryContent({ posts }: TagLibraryProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const selectedTag = searchParams.get('tag')
+  const feedRef = useRef<HTMLDivElement>(null)
 
   // Calculate tag counts and alphabetical groups
   const tagGroups = useMemo(() => {
@@ -55,6 +56,20 @@ function TagLibraryContent({ posts }: TagLibraryProps) {
       router.push('/tags', { scroll: false })
     } else {
       router.push(`/tags?tag=${encodeURIComponent(tag)}`, { scroll: false })
+      
+      // Scroll to feed after a tiny delay to allow the filter to register
+      setTimeout(() => {
+        if (feedRef.current) {
+          const offset = 120 // Account for HUD
+          const elementPosition = feedRef.current.getBoundingClientRect().top
+          const offsetPosition = elementPosition + window.pageYOffset - offset
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+        }
+      }, 100)
     }
   }
 
@@ -98,7 +113,7 @@ function TagLibraryContent({ posts }: TagLibraryProps) {
       </section>
 
       {/* The Feed */}
-      <section className="space-y-12 border-t border-foreground/5 pt-16">
+      <section ref={feedRef} className="space-y-12 border-t border-foreground/5 pt-16">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/40">
             {selectedTag ? `Filtered by #${selectedTag}` : 'All Library Items'}

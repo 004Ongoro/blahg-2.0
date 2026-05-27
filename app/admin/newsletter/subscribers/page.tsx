@@ -146,7 +146,7 @@ export default function SubscribersPage() {
             { label: 'Active_Nodes', value: stats.active, icon: <Activity size={16} />, color: 'green-500', pulse: true },
             { label: 'Search_Results', value: pagination.total, icon: <Filter size={16} />, color: 'blue-500', subValue: search ? `Filtering: "${search}"` : 'Global_View' }
           ].map((stat, i) => (
-            <div key={i} className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-6 relative overflow-hidden group">
+            <div key={i} className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-6 relative overflow-hidden group will-change-transform">
               <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                 {stat.icon}
               </div>
@@ -194,7 +194,7 @@ export default function SubscribersPage() {
               subscribers.map((sub) => (
                 <div 
                   key={sub._id} 
-                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 bg-background/40 backdrop-blur-md border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden"
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden will-change-transform"
                 >
                   <div className={cn(
                     "absolute left-0 top-0 bottom-0 w-1 transition-all",

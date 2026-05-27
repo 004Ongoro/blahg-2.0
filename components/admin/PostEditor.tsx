@@ -147,7 +147,7 @@ export function PostEditor({ post }: PostEditorProps) {
         
         {/* Editor Side */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-6">
+          <div className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-6 will-change-transform">
             <div className="flex items-center gap-2 mb-4">
               <div className="h-2 w-2 rounded-full bg-accent" />
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">Metadata_Config</span>
@@ -239,7 +239,7 @@ export function PostEditor({ post }: PostEditorProps) {
             </div>
           </div>
 
-          <div className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-4">
+          <div className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 shadow-2xl space-y-4 will-change-transform">
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
@@ -321,9 +321,8 @@ export function PostEditor({ post }: PostEditorProps) {
         </div>
       </div>
 
-      {/* Action Bar HUD */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-4xl px-4">
-        <div className="bg-background/80 backdrop-blur-xl border border-foreground/10 rounded-full p-2 shadow-2xl flex items-center justify-between">
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-4xl px-4 will-change-transform">
+        <div className="bg-background/90 backdrop-blur-sm border border-foreground/10 rounded-full p-2 shadow-2xl flex items-center justify-between">
           <div className="flex items-center gap-2 px-6">
             <Link
               href="/admin"

@@ -96,7 +96,7 @@ export default function GuestbookPage() {
           {/* Form Side - Stick HUD */}
           <section className="lg:col-span-5">
             <div className="sticky top-24">
-              <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
+              <div className="bg-background/80 backdrop-blur-md border border-foreground/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group will-change-transform">
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <Terminal size={80} />
                 </div>

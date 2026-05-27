@@ -111,10 +111,10 @@ export default function NewsletterPage() {
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-[2.5rem] shadow-2xl overflow-hidden relative z-10 grid grid-cols-1 md:grid-cols-12">
+          <div className="bg-background/80 backdrop-blur-md border border-foreground/10 rounded-[2.5rem] shadow-2xl overflow-hidden relative z-10 grid grid-cols-1 md:grid-cols-12 will-change-transform">
             
             {/* Left Column: Perks */}
-            <div className="md:col-span-5 p-8 md:p-12 border-b md:border-b-0 md:border-r border-foreground/5 bg-foreground/[0.02]">
+            <div className="md:col-span-5 p-8 md:p-12 border-b md:border-b-0 md:border-r border-foreground/5 bg-foreground/[0.03]">
               <div className="flex items-center gap-2 mb-8">
                 <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Membership Benefits</h2>

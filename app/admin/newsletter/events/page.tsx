@@ -134,7 +134,7 @@ export default function EmailEventsPage() {
           </div>
         </header>
 
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2.5rem] p-8 shadow-2xl mb-20 relative overflow-hidden group">
+        <div className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2.5rem] p-8 shadow-2xl mb-20 relative overflow-hidden group will-change-transform">
           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
             <Info size={120} />
           </div>
@@ -160,7 +160,7 @@ export default function EmailEventsPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               {statsBySubject.map((stat, idx) => (
-                <div key={idx} className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 relative overflow-hidden group">
+                <div key={idx} className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 relative overflow-hidden group will-change-transform">
                   <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
                     <Zap size={60} className="text-accent" />
                   </div>
@@ -235,7 +235,7 @@ export default function EmailEventsPage() {
                 return (
                   <div 
                     key={event._id} 
-                    className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 bg-background/40 backdrop-blur-md border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden"
+                    className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-2xl hover:border-accent/30 transition-all duration-300 relative overflow-hidden will-change-transform"
                   >
                     <div className={cn(
                       "absolute left-0 top-0 bottom-0 w-1 transition-all",

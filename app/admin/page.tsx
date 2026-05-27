@@ -106,7 +106,7 @@ export default async function AdminPage() {
             { label: 'Published_Live', value: stats.publishedPosts, icon: <Activity size={16} />, color: 'green-500', pulse: true },
             { label: 'Subscribers', value: stats.subscribers, icon: <Users size={16} />, color: 'blue-500' }
           ].map((stat, i) => (
-            <div key={i} className="bg-background/40 backdrop-blur-xl border border-foreground/5 rounded-[2rem] p-8 relative overflow-hidden group">
+            <div key={i} className="bg-background/80 backdrop-blur-sm border border-foreground/5 rounded-[2rem] p-8 relative overflow-hidden group will-change-transform">
               <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                 {stat.icon}
               </div>

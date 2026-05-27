@@ -33,7 +33,7 @@ async function getTags() {
 }
 
 export const metadata = {
-  title: 'Tags | dev.blog',
+  title: 'Tags | George Ongoro',
   description: 'Browse posts by topic',
 }
 
@@ -43,29 +43,31 @@ export default async function TagsPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
-        <h1 className="text-3xl font-bold mb-8">
-          <span className="text-accent">{'>'}</span> all tags
-        </h1>
+      <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">
+        <header className="mb-16">
+          <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 tracking-tighter">
+            Tags
+          </h1>
+          <p className="text-muted-foreground font-medium">
+            Browse content by topic.
+          </p>
+        </header>
 
         {tags.length === 0 ? (
-          <div className="brutal-border brutal-shadow bg-card p-8 text-center">
-            <p className="text-muted-foreground">no tags yet.</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              tags will appear here once you create posts with tags.
-            </p>
+          <div className="border-2 border-dashed border-foreground/10 p-12 text-center rounded-lg">
+            <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">no tags yet.</p>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-x-8 gap-y-6">
             {tags.map((tag) => (
               <Link
                 key={tag.name}
                 href={`/tags/${tag.name}`}
-                className="brutal-border brutal-shadow bg-card px-4 py-3 hover:bg-accent hover:text-accent-foreground transition-colors group"
+                className="group flex items-baseline gap-2"
               >
-                <span className="text-lg font-bold">#{tag.name}</span>
-                <span className="ml-2 text-muted-foreground group-hover:text-accent-foreground">
-                  ({tag.count})
+                <span className="text-xl font-bold group-hover:text-accent transition-colors">#{tag.name}</span>
+                <span className="text-xs font-bold text-muted-foreground/30 group-hover:text-accent/50 transition-colors tabular-nums">
+                  {tag.count}
                 </span>
               </Link>
             ))}

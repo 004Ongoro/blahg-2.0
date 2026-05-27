@@ -6,15 +6,11 @@ import { MarkdownContent } from '@/components/MarkdownContent'
 import { TableOfContents } from '@/components/TableOfContents'
 import GiscusComments from '@/components/GiscusComments'
 import { Newsletter } from '@/components/Newsletter'
-import { LuckyButton } from '@/components/LuckyButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import { getBaseUrl, formatViews } from '@/lib/utils'
-import PostAnimations from '@/components/PostAnimations'
+import { getBaseUrl } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { ViewCounter } from '@/components/ViewCounter'
-import { SeriesCard } from '@/components/SeriesCard'
 import { PostReactions } from '@/components/PostReactions'
 import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
@@ -53,21 +49,6 @@ async function getPost(slug: string) {
   }
 }
 
-// Series data fetching
-async function getSeriesPosts(seriesName: string) {
-  try {
-    await dbConnect()
-    const posts = await Post.find({ series: seriesName, published: true })
-      .select('title slug seriesOrder')
-      .sort({ seriesOrder: 1 })
-      .lean()
-    return JSON.parse(JSON.stringify(posts))
-  } catch (error) {
-    console.error('Error fetching series posts:', error)
-    return []
-  }
-}
-
 // Navigation data fetching
 async function getNavigation(currentCreatedAt: Date) {
   try {
@@ -83,17 +64,31 @@ async function getNavigation(currentCreatedAt: Date) {
       createdAt: { $gt: currentCreatedAt } 
     }).sort({ createdAt: 1 }).select('slug').lean()
 
-    const allPosts = await Post.find({ published: true }).select('slug').lean()
-    const allSlugs = allPosts.map(p => String(p.slug))
-
     return {
       prev: prevPost ? String(prevPost.slug) : null,
       next: nextPost ? String(nextPost.slug) : null,
-      allSlugs: JSON.parse(JSON.stringify(allSlugs))
     }
   } catch (error) {
     console.error('Error fetching navigation:', error)
-    return { prev: null, next: null, allSlugs: [] }
+    return { prev: null, next: null }
+  }
+}
+
+async function getRelatedPosts(tags: string[], currentSlug: string) {
+  try {
+    await dbConnect()
+    const posts = await Post.find({
+      slug: { $ne: currentSlug },
+      published: true,
+      tags: { $in: tags }
+    })
+    .select('title slug')
+    .limit(5)
+    .lean()
+    return JSON.parse(JSON.stringify(posts))
+  } catch (error) {
+    console.error('Error fetching related posts:', error)
+    return []
   }
 }
 
@@ -121,24 +116,6 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-async function getRelatedPosts(tags: string[], currentSlug: string) {
-  try {
-    await dbConnect()
-    const posts = await Post.find({
-      slug: { $ne: currentSlug },
-      published: true,
-      tags: { $in: tags }
-    })
-    .select('title slug')
-    .limit(5)
-    .lean()
-    return JSON.parse(JSON.stringify(posts))
-  } catch (error) {
-    console.error('Error fetching related posts:', error)
-    return []
-  }
-}
-
 // Main component
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
@@ -146,7 +123,6 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) notFound()
 
-  const seriesPosts = post.series ? await getSeriesPosts(post.series) : []
   const relatedPosts = await getRelatedPosts(post.tags || [], slug)
   const nav = await getNavigation(new Date(post.createdAt))
 
@@ -175,102 +151,64 @@ export default async function PostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PostAnimations />
       <TableOfContents content={post.content} />
 
       <Header />
       
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         <article>
-          <header className="mb-8">
-            <div className="flex justify-between items-center mb-4">
+          <header className="mb-12">
+            <div className="flex justify-between items-center mb-8">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-accent text-sm font-bold"
+                className="text-muted-foreground hover:text-accent text-sm font-bold uppercase tracking-widest"
               >
                 &larr; back to posts
               </Link>
               <SocialShare title={post.title} slug={slug} />
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">
+            <h1 className="text-4xl md:text-5xl font-black uppercase mb-6 tracking-tighter leading-none text-balance">
               {post.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-4">
+            <div className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
               <FormattedDate date={post.createdAt} />
               {isUpdated && (
                 <>
-                  <span className="text-accent">•</span>
-                  <span className="italic font-medium">Last edited <FormattedDate date={post.updatedAt} /></span>
+                  <span className="h-1 w-1 rounded-full bg-accent/30" />
+                  <span className="italic">Edited <FormattedDate date={post.updatedAt} /></span>
                 </>
               )}
-              <span className="text-accent">|</span>
+              <span className="h-1 w-1 rounded-full bg-accent/30" />
               <span>{post.readTime} mins read</span>
-              {post.views > 100 && (
-                <>
-                  <span className="text-accent">|</span>
-                  <span 
-                    title={`${post.views.toLocaleString()} views`}
-                    className="group flex items-center gap-1 bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow animate-pulse cursor-help"
-                  >
-                    <span>🔥</span> 
-                    <span className="group-hover:hidden">trending</span>
-                    <span className="hidden group-hover:inline">{formatViews(post.views)} views</span>
-                  </span>
-                </>
-              )}
             </div>
           </header>
 
-          <ViewCounter slug={slug} />
-
-          {seriesPosts.length > 0 && (
-            <SeriesCard 
-              currentSlug={slug} 
-              seriesName={post.series} 
-              posts={seriesPosts} 
-            />
-          )}
-
-          <div className="brutal-border brutal-shadow bg-card p-6 md:p-8 mb-8">
+          <div className="prose prose-neutral dark:prose-invert max-w-none mb-16">
             <MarkdownContent content={post.content} />
           </div>
 
-          <div className="mb-12">
+          <div className="mb-16">
             <Newsletter />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-            <div className="w-full">
-              {nav.prev ? (
-                <Button asChild variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
-                  <Link href={`/post/${nav.prev}`}>
-                    <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-                  </Link>
-                </Button>
-              ) : (
-                <div className="w-full h-12 brutal-border brutal-shadow bg-muted/20 flex items-center justify-center text-muted-foreground font-bold opacity-50 cursor-not-allowed">
+          <div className="grid grid-cols-2 gap-4 mb-16">
+            {nav.prev ? (
+              <Button asChild variant="outline" className="h-16 font-black uppercase tracking-tighter border-2">
+                <Link href={`/post/${nav.prev}`}>
                   <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-                </div>
-              )}
-            </div>
+                </Link>
+              </Button>
+            ) : <div />}
 
-            <LuckyButton allSlugs={nav.allSlugs} currentSlug={slug} />
-
-            <div className="w-full">
-              {nav.next ? (
-                <Button asChild variant="outline" className="w-full brutal-border brutal-shadow hover:bg-accent hover:text-white font-bold h-12">
-                  <Link href={`/post/${nav.next}`}>
-                    Next <ChevronRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : (
-                <div className="w-full h-12 brutal-border brutal-shadow bg-muted/20 flex items-center justify-center text-muted-foreground font-bold opacity-50 cursor-not-allowed">
+            {nav.next ? (
+              <Button asChild variant="outline" className="h-16 font-black uppercase tracking-tighter border-2">
+                <Link href={`/post/${nav.next}`}>
                   Next <ChevronRight className="ml-2 h-4 w-4" />
-                </div>
-              )}
-            </div>
+                </Link>
+              </Button>
+            ) : <div />}
           </div>
 
           <PostReactions 
@@ -283,16 +221,16 @@ export default async function PostPage({ params }: Props) {
           <GiscusComments />
 
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t-4 border-foreground">
-              <h2 className="text-xl font-black uppercase mb-4 flex items-center gap-2">
-                <span className="text-accent">#</span> Related Topics
+            <div className="mt-16 pt-12 border-t border-foreground/5">
+              <h2 className="text-sm font-black uppercase tracking-widest mb-6 text-muted-foreground">
+                Related Topics
               </h2>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag: string) => (
                   <Link
                     key={tag}
                     href={`/tags/${tag}`}
-                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold brutal-border brutal-shadow hover:bg-accent hover:text-accent-foreground transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                    className="px-3 py-1.5 bg-foreground/5 text-foreground hover:bg-accent hover:text-accent-foreground text-[10px] font-black uppercase tracking-wider transition-colors"
                   >
                     #{tag}
                   </Link>

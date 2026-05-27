@@ -47,12 +47,6 @@ export function calculateReadTime(content: string): number {
   return Math.ceil(wordCount / wordsPerMinute)
 }
 
-export function formatViews(views: number): string {
-  if (views < 1000) return views.toString()
-  const k = views / 1000
-  return k.toFixed(k < 10 ? 1 : 0).replace(/\.0$/, '') + 'k'
-}
-
 export function addTrackingParams(url: string, params: Record<string, string>): string {
   try {
     // Check if it's a relative URL

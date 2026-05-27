@@ -2,7 +2,6 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { PostList } from '@/components/PostList'
 import { Newsletter } from '@/components/Newsletter'
-import { AboutSection } from '@/components/AboutSection'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import {
@@ -55,18 +54,21 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
-        <AboutSection />
-
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <span className="text-accent">{'>'}</span> latest posts
-          </h2>
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
+        <section className="mb-20">
+          <header className="mb-12">
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
+              Latest <span className="text-accent italic">Posts</span>
+            </h1>
+            <p className="text-muted-foreground font-medium">
+              Thoughts on software, design, and building things.
+            </p>
+          </header>
 
           <PostList posts={posts} />
 
           {totalPages > 1 && (
-            <div className="mt-12">
+            <div className="mt-16 pt-8 border-t border-foreground/5">
               <Pagination>
                 <PaginationContent>
                   {currentPage > 1 && (
@@ -77,7 +79,6 @@ export default async function HomePage({ searchParams }: Props) {
                   
                   {[...Array(totalPages)].map((_, i) => {
                     const pageNum = i + 1
-                    // Show first, last, current, and pages around current
                     if (
                       pageNum === 1 ||
                       pageNum === totalPages ||

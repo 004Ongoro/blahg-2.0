@@ -94,57 +94,48 @@ export default function SubscribersPage() {
     <div className="min-h-screen bg-background font-mono pb-20">
       <AdminHeader />
       
-      <main className="max-w-6xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="max-w-5xl mx-auto px-4 py-12 md:py-20 w-full">
         {/* Header Section */}
-        <header className="mb-12">
+        <header className="mb-12 border-b-2 border-foreground pb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-4">
               <Link 
                 href="/admin/newsletter"
-                className="group inline-flex items-center gap-2 px-3 py-1 brutal-border bg-card font-black uppercase text-[10px] hover:bg-accent transition-all"
+                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ArrowLeft size={12} /> Back
+                <ArrowLeft size={12} /> Back to dispatch
               </Link>
-              <div>
-                <div className="bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-black uppercase mb-4 inline-block brutal-border">
-                  Audience Database
-                </div>
-                <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8]">
-                  Subscri<span className="text-accent italic">bers</span>
-                </h1>
-              </div>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                Audience_<span className="text-accent italic">Nodes</span>
+              </h1>
             </div>
 
-            <div className="relative w-full md:w-96">
-              <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <div className="relative w-full md:w-80 group">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-accent transition-colors" />
               <input
                 type="text"
                 placeholder="Search database..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full brutal-border bg-background pl-12 pr-4 h-14 font-bold text-lg focus:ring-4 ring-accent outline-none border-black"
+                className="w-full bg-background border border-foreground/10 rounded-full pl-10 pr-4 h-11 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
               />
             </div>
           </div>
         </header>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {[
-            { label: 'Total Audience', value: stats.total, icon: <Users size={20} />, color: 'bg-card' },
-            { label: 'Active Nodes', value: stats.active, icon: <Activity size={20} />, color: 'bg-green-100' },
-            { label: 'Filtered', value: pagination.total, icon: <Filter size={20} />, color: 'bg-blue-100' }
+            { label: 'Total Audience', value: stats.total, icon: <Users size={12} /> },
+            { label: 'Active Nodes', value: stats.active, icon: <Activity size={12} />, accent: true },
+            { label: 'Query Match', value: pagination.total, icon: <Filter size={12} /> }
           ].map((stat, i) => (
-            <div key={i} className={cn("brutal-border brutal-shadow p-8 flex flex-col gap-6", stat.color)}>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-                <div className="bg-foreground text-background p-2 brutal-border">
-                  {stat.icon}
-                </div>
+            <div key={i} className="space-y-1">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                {stat.icon} {stat.label}
               </div>
-              <div className="flex items-end gap-2">
-                <span className="text-6xl font-black tracking-tighter leading-none">{stat.value}</span>
-                <span className="text-xs font-bold uppercase mb-1">Nodes</span>
+              <div className={cn("text-4xl font-black tracking-tighter leading-none", stat.accent && "text-accent")}>
+                {stat.value}
               </div>
             </div>
           ))}
@@ -152,52 +143,44 @@ export default function SubscribersPage() {
 
         {/* List Section */}
         <section className="space-y-4">
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-3xl font-black uppercase italic">Verified Registry</h2>
-            <div className="flex-1 h-1 bg-foreground opacity-10" />
-          </div>
-
-          <div className="space-y-4">
+          <div className="divide-y divide-foreground/5 border-t border-foreground/5">
             {loading && subscribers.length === 0 ? (
               [...Array(5)].map((_, i) => (
-                <div key={i} className="h-24 brutal-border bg-muted animate-pulse" />
+                <div key={i} className="h-20 animate-pulse bg-foreground/[0.01]" />
               ))
             ) : subscribers.length === 0 ? (
-              <div className="py-20 text-center brutal-border border-dashed bg-muted/30 opacity-60">
-                <p className="text-xl font-black uppercase tracking-widest">No records found</p>
+              <div className="py-20 text-center opacity-40">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Sector is empty</p>
               </div>
             ) : (
               subscribers.map((sub) => (
                 <div 
                   key={sub._id} 
-                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 brutal-border bg-card transition-all hover:bg-muted/10"
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 py-6 transition-all"
                 >
                   <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-8">
-                    <div className="flex items-center gap-4 min-w-0 max-w-md">
-                      <div className="h-12 w-12 shrink-0 bg-accent brutal-border flex items-center justify-center text-accent-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                        <Mail size={24} />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-xl font-black uppercase tracking-tight truncate leading-none mb-2">
-                          {sub.email}
-                        </h3>
-                        <div className={cn(
-                          "inline-block px-2 py-0.5 brutal-border text-[8px] font-black uppercase tracking-widest",
-                          sub.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        )}>
-                          {sub.active ? 'Active Node' : 'Inactive'}
-                        </div>
+                    <div className="min-w-0 max-w-md">
+                      <h3 className="text-base font-black uppercase tracking-tight truncate mb-1">
+                        {sub.email}
+                      </h3>
+                      <div className={cn(
+                        "inline-block px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border",
+                        sub.active 
+                          ? "bg-accent/5 text-accent border-accent/10" 
+                          : "bg-foreground/5 text-muted-foreground border-foreground/10"
+                      )}>
+                        {sub.active ? 'ACTIVE_SESSION' : 'INACTIVE_NODE'}
                       </div>
                     </div>
                     
-                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                      <div className="flex flex-col gap-1">
-                        <span className="opacity-40">Joined</span>
-                        <span className="text-foreground">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
+                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                      <div className="flex flex-col">
+                        <span>Joined</span>
+                        <span className="text-foreground/60">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="opacity-40">Node ID</span>
-                        <span className="text-foreground opacity-30">{sub._id.slice(-8)}</span>
+                      <div className="flex flex-col">
+                        <span>Object ID</span>
+                        <span className="opacity-40">{sub._id.slice(-8)}</span>
                       </div>
                     </div>
                   </div>
@@ -206,18 +189,20 @@ export default function SubscribersPage() {
                     <button 
                       onClick={() => toggleStatus(sub._id, sub.active)}
                       className={cn(
-                        "h-12 px-6 brutal-border font-black uppercase text-xs transition-all",
-                        sub.active ? "bg-white hover:bg-destructive hover:text-white" : "bg-accent hover:bg-accent/80"
+                        "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+                        sub.active 
+                          ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
+                          : "bg-accent text-accent-foreground hover:opacity-90"
                       )}
                     >
-                      {sub.active ? 'Deactivate' : 'Restore'}
+                      {sub.active ? 'DEACTIVATE' : 'RESTORE'}
                     </button>
                     <button 
                       onClick={() => deleteSubscriber(sub._id)}
-                      className="h-12 w-12 flex items-center justify-center brutal-border bg-destructive text-destructive-foreground hover:bg-red-700 transition-all"
+                      className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
                       title="Purge Record"
                     >
-                      <Trash2 size={20} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
@@ -227,17 +212,17 @@ export default function SubscribersPage() {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="mt-12 flex justify-center">
+            <div className="mt-12 flex justify-center border-t border-foreground/5 pt-8">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => fetchSubscribers(pagination.page - 1, search)}
                   disabled={pagination.page === 1}
-                  className="h-12 px-6 brutal-border bg-card font-black uppercase text-xs hover:bg-accent disabled:opacity-30 transition-all"
+                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all"
                 >
                   Prev
                 </button>
                 
-                <div className="flex gap-2">
+                <div className="flex gap-1 px-4 border-x border-foreground/5">
                   {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(p => {
                     const isActive = pagination.page === p
                     if (
@@ -250,8 +235,8 @@ export default function SubscribersPage() {
                           key={p}
                           onClick={() => fetchSubscribers(p, search)}
                           className={cn(
-                            "w-12 h-12 brutal-border font-black text-sm transition-all",
-                            isActive ? "bg-accent" : "bg-card hover:bg-accent/50"
+                            "w-9 h-9 rounded-full text-[10px] font-black transition-all",
+                            isActive ? "bg-foreground text-background" : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5"
                           )}
                         >
                           {p}
@@ -265,7 +250,7 @@ export default function SubscribersPage() {
                 <button
                   onClick={() => fetchSubscribers(pagination.page + 1, search)}
                   disabled={pagination.page === pagination.pages}
-                  className="h-12 px-6 brutal-border bg-card font-black uppercase text-xs hover:bg-accent disabled:opacity-30 transition-all"
+                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all"
                 >
                   Next
                 </button>
@@ -274,20 +259,6 @@ export default function SubscribersPage() {
           )}
         </section>
       </main>
-
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-left: 2px solid black;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: var(--accent);
-          border: 2px solid black;
-        }
-      `}</style>
     </div>
   )
 }

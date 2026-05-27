@@ -46,19 +46,14 @@ export default async function EditPostPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-background font-mono">
       <AdminHeader />
-      <main className="max-w-7xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
         {/* Header Section */}
-        <header className="mb-12">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="h-16 w-16 bg-accent text-accent-foreground brutal-border flex items-center justify-center">
-              <Edit3 size={32} />
-            </div>
+        <header className="mb-12 border-b-2 border-foreground pb-8">
+          <div className="flex items-center gap-4">
             <div>
-              <div className="bg-foreground text-background px-2 py-0.5 text-[10px] font-black uppercase mb-1 inline-block">
-                Content Editor
-              </div>
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
-                Edit <span className="text-accent italic">Entry</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-accent/10 text-accent px-2 py-0.5 rounded mb-2 inline-block">Record_Modifier</span>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                Edit <span className="text-accent italic">Post</span>
               </h1>
             </div>
           </div>

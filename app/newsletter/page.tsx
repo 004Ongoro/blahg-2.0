@@ -14,9 +14,7 @@ import {
   Sparkles, 
   Quote, 
   ArrowRight, 
-  Mail,
-  Layers,
-  Activity
+  Mail
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -27,23 +25,18 @@ const testimonials = [
     name: "Paul Marc",
     handle: "@paulmarc",
     text: "I keep learning new things, I like it ;)",
-    color: "bg-yellow-200"
   },
   {
     name: "Isaac de Andrade",
     handle: "@andradei",
     text: "Good read. Short and to the point.",
-    color: "bg-blue-200"
   },
   {
     name: "Rafael",
     handle: "@rafaelnacle",
     text: "Quality content every single time.",
-    color: "bg-green-200"
   }
 ]
-
-const techStack = ["Next.js", "TypeScript", "MongoDB", "Architecture", "Serverless", "Security", "Optimization"]
 
 export default function NewsletterPage() {
   const [email, setEmail] = useState('')
@@ -85,60 +78,33 @@ export default function NewsletterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-mono bg-background">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         
         {/* Header Section */}
         <header className="mb-16">
-          <div className="inline-block bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase mb-6 tracking-widest">
-            Dispatch Center
-          </div>
-          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-[0.8]">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
             The <span className="text-accent italic">Dispatch</span>
           </h1>
-          <p className="text-xl font-bold max-w-2xl leading-tight">
-            Weekly thoughts on software, design, and building in the open. 
-            No spam, just pure signal delivered to your inbox.
+          <p className="text-muted-foreground font-medium max-w-2xl leading-relaxed">
+            Weekly thoughts on software, design, and building things. 
+            Delivered directly to your inbox.
           </p>
         </header>
 
-        {/* Main Subscription Card */}
-        <div className="grid grid-cols-1 md:grid-cols-12 brutal-border brutal-shadow bg-card overflow-hidden mb-24">
+        {/* Main Interaction Area */}
+        <div className="space-y-12">
           
-          {/* Left Column: Perks */}
-          <div className="md:col-span-5 p-8 md:p-12 border-b md:border-b-0 md:border-r-4 border-foreground bg-accent text-accent-foreground">
-            <h2 className="text-xl font-black uppercase mb-8 tracking-tight">Membership Benefits</h2>
-
-            <div className="space-y-6">
-              {[
-                { icon: <Zap size={20} />, title: "Technical Deep Dives", desc: "Complex concepts explained simply." },
-                { icon: <Shield size={20} />, title: "Privacy First", desc: "Your data is never shared or sold." },
-                { icon: <Sparkles size={20} />, title: "Early Access", desc: "First looks at new projects and tools." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-4 items-start">
-                  <div className="bg-foreground text-background p-2 brutal-border shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-black uppercase text-sm mb-1">{item.title}</h3>
-                    <p className="text-xs font-bold opacity-90 leading-tight">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: Interaction */}
-          <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-background">
-            {/* Mode Switcher */}
-            <div className="flex brutal-border mb-10 bg-muted overflow-hidden">
+          {/* Form Card */}
+          <div className="border border-foreground/5 p-8 md:p-12 rounded-2xl bg-foreground/[0.01]">
+            <div className="flex gap-4 mb-10">
               <button
                 onClick={() => { setMode('subscribe'); setStatus(null); }}
                 className={cn(
-                  "flex-1 py-3 font-black uppercase text-xs tracking-widest transition-colors border-r-4 border-foreground",
-                  mode === 'subscribe' ? "bg-foreground text-background" : "hover:bg-foreground/10"
+                  "text-xs font-black uppercase tracking-widest pb-1 border-b-2 transition-all",
+                  mode === 'subscribe' ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
                 Subscribe
@@ -146,15 +112,15 @@ export default function NewsletterPage() {
               <button
                 onClick={() => { setMode('unsubscribe'); setStatus(null); }}
                 className={cn(
-                  "flex-1 py-3 font-black uppercase text-xs tracking-widest transition-colors",
-                  mode === 'unsubscribe' ? "bg-destructive text-destructive-foreground" : "hover:bg-destructive/10"
+                  "text-xs font-black uppercase tracking-widest pb-1 border-b-2 transition-all",
+                  mode === 'unsubscribe' ? "border-destructive text-destructive" : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
                 Unsubscribe
               </button>
             </div>
 
-            <h2 className="text-3xl font-black uppercase mb-8 tracking-tighter italic">
+            <h2 className="text-2xl font-black uppercase tracking-tight mb-8">
               {mode === 'subscribe' ? 'Join the community' : 'Manage subscription'}
             </h2>
 
@@ -163,24 +129,24 @@ export default function NewsletterPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email..."
+                placeholder="email@example.com"
                 required
-                className="w-full brutal-border bg-background px-4 py-4 text-lg font-bold focus:ring-4 ring-accent outline-none placeholder:opacity-30 border-black"
+                className="w-full bg-background border border-foreground/10 rounded-xl px-4 py-4 text-base font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
               />
 
               <button
                 disabled={loading}
                 className={cn(
-                  "w-full brutal-btn py-5 text-xl font-black uppercase flex items-center justify-center gap-3 disabled:opacity-50 transition-all",
-                  mode === 'subscribe' ? "bg-accent text-accent-foreground" : "bg-destructive text-destructive-foreground"
+                  "w-full py-4 rounded-xl font-black uppercase text-sm tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98]",
+                  mode === 'subscribe' ? "bg-foreground text-background hover:opacity-90" : "bg-destructive text-destructive-foreground hover:opacity-90"
                 )}
               >
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="animate-spin size-5" />
                 ) : (
                   <>
                     {mode === 'subscribe' ? 'Start Receiving' : 'Remove Email'}
-                    {mode === 'subscribe' && <Send size={24} />}
+                    {mode === 'subscribe' && <Send size={16} />}
                   </>
                 )}
               </button>
@@ -188,36 +154,43 @@ export default function NewsletterPage() {
 
             {status && (
               <div className={cn(
-                "mt-8 p-4 brutal-border flex items-center gap-3 font-black uppercase text-sm",
-                status.type === 'success' ? "bg-green-200 text-green-900" : "bg-red-200 text-red-900"
+                "mt-8 p-4 rounded-xl flex items-center gap-3 text-sm font-bold border",
+                status.type === 'success' ? "bg-green-500/5 text-green-600 border-green-500/10" : "bg-destructive/5 text-destructive border-destructive/10"
               )}>
-                {status.type === 'success' ? <CheckCircle2 /> : <XCircle />}
+                {status.type === 'success' ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
                 {status.msg}
               </div>
             )}
           </div>
+
+          {/* Benefits Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-foreground/5">
+            {[
+              { icon: <Zap size={18} className="text-accent" />, title: "Insights", desc: "Technical deep dives." },
+              { icon: <Shield size={18} className="text-accent" />, title: "Privacy", desc: "No spam, no selling." },
+              { icon: <Sparkles size={18} className="text-accent" />, title: "Early Access", desc: "First looks at projects." }
+            ].map((item, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex items-center gap-2 font-black uppercase text-[10px] tracking-widest">
+                  {item.icon} {item.title}
+                </div>
+                <p className="text-sm text-muted-foreground font-medium leading-tight">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Testimonials */}
-        <section className="mb-24">
-          <h3 className="text-4xl font-black uppercase italic text-center mb-12">
-            What <span className="text-accent underline decoration-4 underline-offset-4">Developers</span> Say
-          </h3>
+        <section className="mt-24 pt-16 border-t border-foreground/5">
+          <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-12">Readers Feedback</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "p-8 brutal-border brutal-shadow min-h-[200px] flex flex-col justify-between transition-all hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
-                  t.color
-                )}
-              >
-                <Quote className="opacity-20 mb-6" size={40} />
-                <p className="text-lg font-black leading-tight mb-8">"{t.text}"</p>
+              <div key={i} className="space-y-4">
+                <p className="text-sm font-medium leading-relaxed italic">"{t.text}"</p>
                 <div>
-                  <div className="font-black uppercase text-sm">{t.name}</div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase">{t.handle}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest">{t.name}</div>
+                  <div className="text-[10px] font-bold text-muted-foreground/50">{t.handle}</div>
                 </div>
               </div>
             ))}
@@ -225,24 +198,20 @@ export default function NewsletterPage() {
         </section>
         
         {/* Archive Hook */}
-        <div className="max-w-4xl mx-auto">
-          <div className="brutal-border brutal-shadow bg-card p-12 text-center relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Mail size={160} />
+        <div className="mt-24">
+          <Link 
+            href="/newsletter/archive"
+            className="group flex flex-col p-8 rounded-2xl border border-foreground/5 hover:border-accent/20 bg-foreground/[0.01] transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-black uppercase tracking-widest bg-accent/10 text-accent px-2 py-1 rounded">Knowledge Base</span>
+              <ArrowRight size={20} className="text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
             </div>
-            
-            <h3 className="text-4xl md:text-5xl font-black uppercase italic mb-4">Want to see past issues?</h3>
-            <p className="text-xl font-bold text-muted-foreground mb-8">
-              Explore our full catalog of deep dives into code and architecture.
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Browse Archive</h3>
+            <p className="text-sm font-medium text-muted-foreground">
+              Explore past issues on code, architecture, and design.
             </p>
-            
-            <Link 
-              href="/newsletter/archive"
-              className="brutal-btn bg-background text-foreground px-10 py-5 font-black uppercase inline-flex items-center gap-3 text-2xl hover:bg-accent hover:text-accent-foreground"
-            >
-              Browse Archive <ArrowRight size={28} />
-            </Link>
-          </div>
+          </Link>
         </div>
 
       </main>

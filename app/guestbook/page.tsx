@@ -60,137 +60,118 @@ export default function GuestbookPage() {
     } catch (err) {
       console.error('Failed to post entry', err)
     } finally {
-      setIsSubmitting(false)
+      setSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-mono bg-background">
+    <div className="min-h-screen flex flex-col font-mono">
       <Header />
       
-      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         {/* Header Section */}
-        <header className="mb-20">
-          <div className="inline-block bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase mb-6 tracking-widest">
-            Community Feed
-          </div>
-          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-[0.8]">
+        <header className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
             Guest<span className="text-accent italic">book</span>
           </h1>
-          <p className="text-xl font-bold max-w-2xl leading-tight">
-            Decentralized thoughts and digital signatures from the void. 
-            Leave your mark in the logs.
+          <p className="text-muted-foreground font-medium max-w-2xl">
+            Leave a message in the digital log. Say hi, or just leave your mark.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Form Side */}
-          <section className="lg:col-span-5">
-            <div className="sticky top-24">
-              <div className="brutal-border brutal-shadow bg-card p-8 relative overflow-hidden group">
-                <h2 className="text-2xl font-black uppercase tracking-tight mb-8 italic flex items-center gap-2">
-                  <Terminal size={24} className="text-accent" /> Sign the log
-                </h2>
+        <div className="space-y-20">
+          {/* Form Section */}
+          <section className="border-t-2 border-foreground pt-12">
+            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-8">Sign the Log</h2>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-black uppercase tracking-widest">
-                      Identity
-                    </label>
-                    <input
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter handle..."
-                      required
-                      className="w-full brutal-border bg-background h-12 px-4 font-bold focus:ring-4 ring-accent outline-none border-black"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-sm font-black uppercase tracking-widest">
-                      Payload
-                    </label>
-                    <textarea
-                      id="message"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="What's the status?"
-                      required
-                      className="w-full brutal-border bg-background min-h-[150px] p-4 font-bold focus:ring-4 ring-accent outline-none resize-none border-black"
-                    />
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full brutal-btn py-4 bg-accent text-accent-foreground font-black uppercase text-lg flex items-center justify-center gap-3 disabled:opacity-50 transition-all"
-                  >
-                    {isSubmitting ? 'Transmitting...' : (
-                      <>
-                        Commit to Log
-                        <Send size={20} />
-                      </>
-                    )}
-                  </button>
-                </form>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest px-1">
+                    Identity
+                  </label>
+                  <input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your handle..."
+                    required
+                    className="w-full bg-background border border-foreground/10 rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
+                  />
+                </div>
               </div>
-            </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest px-1">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="What's on your mind?"
+                  required
+                  className="w-full bg-background border border-foreground/10 rounded-xl min-h-[120px] p-4 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all resize-none"
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-foreground text-background font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? 'Transmitting...' : (
+                  <>
+                    Commit to Log
+                    <Send size={14} className="ml-2" />
+                  </>
+                )}
+              </button>
+            </form>
           </section>
 
-          {/* Entries Side */}
-          <section className="lg:col-span-7">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-black uppercase tracking-tight italic flex items-center gap-2">
-                <Database size={24} className="text-accent" /> Records
-              </h2>
-              <div className="bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase">
-                {entries.length} Entries
-              </div>
+          {/* Entries Section */}
+          <section className="space-y-10">
+            <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Transmission Archive</h2>
+              <span className="text-[10px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded">
+                {entries.length} RECORDS
+              </span>
             </div>
 
-            <div className="space-y-6">
+            <div className="divide-y divide-foreground/5">
               {isLoading ? (
                 [...Array(3)].map((_, i) => (
-                  <div key={i} className="h-32 brutal-border bg-muted animate-pulse" />
+                  <div key={i} className="py-8 space-y-4 animate-pulse">
+                    <div className="h-4 w-32 bg-foreground/5 rounded" />
+                    <div className="h-20 w-full bg-foreground/5 rounded" />
+                  </div>
                 ))
               ) : entries.map((entry) => (
-                <div
-                  key={entry._id}
-                  className="brutal-border brutal-shadow bg-card p-6 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
-                >
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 bg-accent brutal-border flex items-center justify-center text-accent-foreground font-black text-lg">
-                        {entry.name.slice(0, 1).toUpperCase()}
+                <div key={entry._id} className="py-8 group">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-foreground/5 flex items-center justify-center text-[10px] font-black uppercase">
+                        {entry.name.slice(0, 1)}
                       </div>
                       <div>
-                        <h3 className="font-black uppercase text-base leading-none mb-1">
-                          {entry.name}
-                        </h3>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                          Verified User
-                        </p>
+                        <h3 className="text-sm font-black uppercase tracking-tight">{entry.name}</h3>
+                        <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Authenticated</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground bg-muted px-2 py-1 brutal-border">
+                    <span className="text-[10px] font-bold text-muted-foreground/40">
                       <FormattedDate date={entry.createdAt} />
                     </span>
                   </div>
-                  
-                  <div className="relative">
-                    <p className="text-lg font-bold leading-snug text-foreground">
-                      "{entry.message}"
-                    </p>
-                  </div>
+                  <p className="text-base font-medium leading-relaxed text-foreground pl-11">
+                    "{entry.message}"
+                  </p>
                 </div>
               ))}
 
               {!isLoading && entries.length === 0 && (
-                <div className="text-center py-20 brutal-border border-dashed bg-muted/30 opacity-60">
-                  <MessageSquare size={48} className="mx-auto mb-4" />
-                  <p className="text-xl font-black uppercase tracking-widest">No transmissions found</p>
-                  <p className="font-bold">Be the first to leave a message.</p>
+                <div className="py-20 text-center opacity-40">
+                  <p className="text-sm font-black uppercase tracking-widest">Buffer is empty</p>
                 </div>
               )}
             </div>

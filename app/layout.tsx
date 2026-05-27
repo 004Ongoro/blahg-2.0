@@ -64,6 +64,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          enableColorScheme={false}
           disableTransitionOnChange
         >
           {/* Google Analytics */}

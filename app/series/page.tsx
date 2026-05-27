@@ -38,64 +38,52 @@ export default async function SeriesPage() {
   const series = await getSeries()
 
   return (
-    <div className="min-h-screen flex flex-col font-mono bg-background">
+    <div className="min-h-screen flex flex-col font-mono">
       <Header />
-      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         {/* Header Section */}
         <header className="mb-16">
-          <div className="inline-block bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase mb-6 tracking-widest">
-            Archive Collections
-          </div>
-          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-6 leading-[0.8]">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
             Curated <span className="text-accent italic">Series</span>
           </h1>
-          <p className="text-xl font-bold max-w-2xl leading-tight">
+          <p className="text-muted-foreground font-medium max-w-2xl leading-relaxed">
             Deep dives into specific technical domains, organized for sequential learning.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-12">
           {series.map((s) => (
             <Link 
               key={s.name} 
               href={`/series/${encodeURIComponent(s.name)}`}
-              className="group brutal-border brutal-shadow bg-card p-10 flex flex-col justify-between transition-all hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+              className="group block py-8 border-t border-foreground/5 transition-all hover:bg-foreground/[0.01]"
             >
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-2 w-2 rounded-full bg-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Collection Module</span>
-                </div>
-
-                <h2 className="text-3xl font-black uppercase tracking-tighter mb-10 leading-[0.9] group-hover:text-accent transition-colors">
-                  {s.name}
-                </h2>
-                
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-black uppercase text-muted-foreground">
-                    <Activity size={14} className="text-accent" />
-                    <span>{s.postCount} {s.postCount === 1 ? 'Article' : 'Articles'}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-accent/10 text-accent px-2 py-0.5 rounded">Module</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{s.postCount} {s.postCount === 1 ? 'Article' : 'Articles'}</span>
                   </div>
-                  
-                  <div className="flex items-center gap-2 text-xs font-black uppercase text-muted-foreground">
-                    <Clock size={14} />
-                    <span>Updated: {new Date(s.latestPost).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  <h2 className="text-2xl font-black uppercase tracking-tight group-hover:text-accent transition-colors leading-none">
+                    {s.name}
+                  </h2>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    <Clock size={12} />
+                    <span>Last Updated: {new Date(s.latestPost).toLocaleDateString()}</span>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-12 pt-8 border-t-2 border-foreground/10 flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-widest bg-foreground text-background px-3 py-1">View Index</span>
-                <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-accent transition-colors">
+                  View_Collection <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             </Link>
           ))}
         </div>
 
         {series.length === 0 && (
-          <div className="py-24 brutal-border border-dashed bg-muted/30 text-center opacity-60">
-            <Layers size={48} className="mx-auto mb-4" />
-            <p className="text-xl font-black uppercase tracking-widest">No collections found</p>
+          <div className="py-20 text-center opacity-40">
+            <p className="text-sm font-black uppercase tracking-widest">No series found</p>
           </div>
         )}
       </main>

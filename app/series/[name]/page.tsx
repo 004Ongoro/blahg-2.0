@@ -53,53 +53,48 @@ export default async function SeriesDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-mono bg-background">
+    <div className="min-h-screen flex flex-col font-mono">
       <Header />
-      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         {/* Navigation */}
         <div className="mb-12">
           <Link
             href="/series"
-            className="group inline-flex items-center gap-2 px-4 py-2 brutal-border bg-card font-black uppercase text-xs hover:bg-accent transition-all"
+            className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
           >
-            <ChevronLeft size={16} /> Back to Series
+            <ChevronLeft size={14} /> Back to collections
           </Link>
         </div>
 
         {/* Series Header */}
-        <header className="mb-20">
-          <div className="inline-block bg-accent text-accent-foreground px-3 py-1 text-[10px] font-black uppercase mb-6 tracking-widest brutal-border shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            Series Archive
-          </div>
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8]">
-              {decodedName}
-            </h1>
-            <div className="bg-foreground text-background px-4 py-2 brutal-border font-black uppercase text-sm">
-              {posts.length} {posts.length === 1 ? 'Article' : 'Articles'}
+        <header className="mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b-2 border-foreground">
+            <div className="space-y-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-accent/10 text-accent px-2 py-0.5 rounded">Collection</span>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                {decodedName}
+              </h1>
+            </div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              {posts.length} Sequential Records
             </div>
           </div>
         </header>
 
         {/* Content Section */}
-        <section className="relative">
-          <div className="absolute -left-8 top-0 bottom-0 w-1 bg-foreground hidden md:block" />
-          <div className="space-y-12">
-            <PostList posts={posts} />
-          </div>
+        <section className="space-y-12">
+          <PostList posts={posts} />
         </section>
 
         {/* Bottom Metadata */}
-        <div className="mt-32 pt-12 border-t-4 border-foreground flex flex-col md:flex-row items-center justify-between gap-8 opacity-40">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-widest">Collection ID</span>
-            <span className="text-sm font-bold">{decodedName.toUpperCase().replace(/\s+/g, '_')}</span>
-          </div>
-          <div className="flex gap-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-2 w-10 bg-foreground brutal-border" />
-            ))}
+        <div className="mt-32 pt-8 border-t border-foreground/5 opacity-40">
+          <div className="flex items-center justify-between">
+            <span className="text-[8px] font-black uppercase tracking-widest">End of Series: {decodedName}</span>
+            <div className="flex gap-1">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-1 w-4 bg-foreground/20 rounded-full" />
+              ))}
+            </div>
           </div>
         </div>
       </main>

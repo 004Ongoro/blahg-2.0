@@ -80,24 +80,34 @@ export function SocialShare({ title, slug }: SocialShareProps) {
         <Button 
           variant="outline" 
           size="sm"
-          className="brutal-border brutal-shadow-sm hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_var(--foreground)] transition-all font-bold gap-2"
+          className="rounded-full border-foreground/5 bg-background/70 backdrop-blur-md hover:bg-foreground/5 transition-all font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm"
         >
-          <Share2 className="w-4 h-4" />
+          <Share2 className="w-3.5 h-3.5" />
           <span>Share</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="brutal-border brutal-shadow rounded-none w-48 font-bold">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-48 p-1.5 rounded-2xl border-foreground/10 bg-background/95 backdrop-blur-2xl shadow-xl font-bold"
+      >
         {shareLinks.map((link) => (
-          <DropdownMenuItem key={link.name} asChild className="cursor-pointer focus:bg-accent focus:text-accent-foreground">
+          <DropdownMenuItem 
+            key={link.name} 
+            asChild 
+            className="cursor-pointer rounded-xl focus:bg-accent focus:text-accent-foreground py-2 px-3 transition-colors text-xs font-black uppercase tracking-wider"
+          >
             <a href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full">
-              <link.icon className="w-4 h-4" />
+              <link.icon className="w-3.5 h-3.5" />
               <span>{link.name}</span>
             </a>
           </DropdownMenuItem>
         ))}
-        <DropdownMenuItem onClick={copyToClipboard} className="cursor-pointer focus:bg-accent focus:text-accent-foreground border-t-2 border-foreground mt-1 pt-2">
+        <DropdownMenuItem 
+          onClick={copyToClipboard} 
+          className="cursor-pointer rounded-xl focus:bg-accent focus:text-accent-foreground border-t border-foreground/5 mt-1.5 pt-2 px-3 transition-colors text-xs font-black uppercase tracking-wider"
+        >
           <div className="flex items-center gap-3">
-            <Link2 className="w-4 h-4" />
+            <Link2 className="w-3.5 h-3.5" />
             <span>Copy Link</span>
           </div>
         </DropdownMenuItem>

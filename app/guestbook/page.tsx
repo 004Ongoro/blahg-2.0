@@ -60,7 +60,7 @@ export default function GuestbookPage() {
     } catch (err) {
       console.error('Failed to post entry', err)
     } finally {
-      setSubmitting(false)
+      setIsSubmitting(false)
     }
   }
 

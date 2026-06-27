@@ -10,9 +10,9 @@ export default function GiscusComments() {
   const giscusTheme = resolvedTheme === 'dark' ? 'dark' : 'light'
 
   return (
-    <div className="mt-12 brutal-border bg-card p-6 brutal-shadow">
-      <h2 className="text-2xl font-bold mb-6">
-        <span className="text-accent">{'>'}</span> comments
+    <div className="mt-20 border border-foreground/5 bg-background/50 backdrop-blur-md p-8 rounded-[32px] shadow-xs">
+      <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-8 flex items-center gap-2 border-b border-foreground/5 pb-4">
+        Discussions
       </h2>
       <Giscus
         id="comments"

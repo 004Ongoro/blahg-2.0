@@ -4,6 +4,8 @@ import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { ScrollProgress } from '@/components/ScrollProgress'
+import { ContactDialog } from '@/components/ContactDialog'
+import { MessageSquare } from 'lucide-react'
 import { getBaseUrl } from '@/lib/utils'
 import './globals.css'
 
@@ -88,6 +90,14 @@ export default function RootLayout({
           {children}
           <Toaster />
           <ScrollProgress />
+          <ContactDialog trigger={
+            <button
+              className="fixed bottom-24 right-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-foreground/5 bg-background/70 backdrop-blur-md shadow-sm text-foreground hover:bg-foreground/5 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              aria-label="Contact"
+            >
+              <MessageSquare className="h-5 w-5" />
+            </button>
+          } />
           {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>
       </body>

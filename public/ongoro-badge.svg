@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="31" viewBox="0 0 88 31">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="88" height="31" fill="#0a0a0a"/>
+
+  <!-- Left accent block -->
+  <rect x="0" y="0" width="22" height="31" fill="#1a1a1a"/>
+
+  <!-- Left chevron / symbol -->
+  <text x="4" y="20" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="11" fill="#c8f135" font-weight="bold">&gt;_</text>
+
+  <!-- Divider line -->
+  <rect x="22" y="4" width="1" height="23" fill="#c8f135" opacity="0.5"/>
+
+  <!-- Main label -->
+  <text x="28" y="12" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="6" fill="#c8f135" letter-spacing="0.5">ONGORO</text>
+
+  <!-- Subtitle -->
+  <text x="28" y="21" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="5" fill="#888888" letter-spacing="0.3">underground</text>
+  <text x="28" y="28" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="5" fill="#666666" letter-spacing="0.3">dev</text>
+
+  <!-- Border -->
+  <rect x="0" y="0" width="88" height="31" fill="none" stroke="#c8f135" stroke-width="0.75" opacity="0.4"/>
+
+  <!-- Top-left corner accent -->
+  <rect x="0" y="0" width="3" height="3" fill="#c8f135" opacity="0.8"/>
+  <!-- Bottom-right corner accent -->
+  <rect x="85" y="28" width="3" height="3" fill="#c8f135" opacity="0.8"/>
+</svg>

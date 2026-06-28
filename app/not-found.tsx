@@ -26,12 +26,12 @@ export default function NotFound() {
           position: absolute;
           width: 100%;
           height: 2px;
-          background: rgba(255, 164, 0, 0.1);
+          background: rgba(196, 73, 0, 0.1); /* Burnt Orange */
           animation: scan 4s linear infinite;
           z-index: 10;
         }
         .glitch-text {
-          text-shadow: 2px 0 #009ffd, -2px 0 #ffa400;
+          text-shadow: 2px 0 #183a37, -2px 0 #c44900; /* Dark Slate Grey and Burnt Orange */
         }
       `}</style>
       

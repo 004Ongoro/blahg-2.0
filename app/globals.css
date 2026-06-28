@@ -5,52 +5,61 @@
 
 /* Neo-brutalist design system */
 :root {
-  --background: #eaf6ff;
-  --foreground: #232528;
-  --card: #eaf6ff;
-  --card-foreground: #232528;
-  --popover: #eaf6ff;
-  --popover-foreground: #232528;
-  --primary: #ffa400;
-  --primary-foreground: #232528;
-  --secondary: #009ffd;
-  --secondary-foreground: #eaf6ff;
-  --muted: #d1e9ff;
-  --muted-foreground: #2a2a72;
-  --accent: #ffa400;
-  --accent-foreground: #232528;
+  /* Color Palette */
+  --ink-black: #04151f;
+  --dark-slate-grey: #183a37;
+  --wheat: #efd6ac;
+  --burnt-orange: #c44900;
+  --midnight-violet: #432534;
+
+  /* Theme mapping (Light Mode) */
+  --background: var(--wheat);
+  --foreground: var(--ink-black);
+  --card: var(--wheat);
+  --card-foreground: var(--ink-black);
+  --popover: var(--wheat);
+  --popover-foreground: var(--ink-black);
+  --primary: var(--burnt-orange);
+  --primary-foreground: var(--wheat);
+  --secondary: var(--dark-slate-grey);
+  --secondary-foreground: var(--wheat);
+  --muted: #e5cc9f; /* Slightly darker shade of wheat for UI depth */
+  --muted-foreground: var(--midnight-violet);
+  --accent: var(--burnt-orange);
+  --accent-foreground: var(--wheat);
   --destructive: #dc2626;
-  --destructive-foreground: #eaf6ff;
-  --border: #232528;
-  --input: #232528;
-  --ring: #ffa400;
+  --destructive-foreground: var(--wheat);
+  --border: var(--ink-black);
+  --input: var(--ink-black);
+  --ring: var(--burnt-orange);
   --radius: 0;
-  --reading-bg: #E5E5F7;
-  --reading-pattern-color: #444CF7;
+  --reading-bg: var(--wheat);
+  --reading-pattern-color: var(--burnt-orange);
 }
 
 .dark {
-  --background: #232528;
-  --foreground: #eaf6ff;
-  --card: #2a2a72;
-  --card-foreground: #eaf6ff;
-  --popover: #2a2a72;
-  --popover-foreground: #eaf6ff;
-  --primary: #ffa400;
-  --primary-foreground: #232528;
-  --secondary: #009ffd;
-  --secondary-foreground: #eaf6ff;
-  --muted: #2a2a72;
-  --muted-foreground: #009ffd;
-  --accent: #ffa400;
-  --accent-foreground: #232528;
+  /* Theme mapping (Dark Mode) */
+  --background: var(--ink-black);
+  --foreground: var(--wheat);
+  --card: var(--midnight-violet);
+  --card-foreground: var(--wheat);
+  --popover: var(--midnight-violet);
+  --popover-foreground: var(--wheat);
+  --primary: var(--burnt-orange);
+  --primary-foreground: var(--wheat);
+  --secondary: var(--dark-slate-grey);
+  --secondary-foreground: var(--wheat);
+  --muted: var(--dark-slate-grey);
+  --muted-foreground: var(--wheat);
+  --accent: var(--burnt-orange);
+  --accent-foreground: var(--wheat);
   --destructive: #dc2626;
-  --destructive-foreground: #eaf6ff;
-  --border: #eaf6ff;
-  --input: #eaf6ff;
-  --ring: #ffa400;
-  --reading-bg: #232528;
-  --reading-pattern-color: #2b30a3;
+  --destructive-foreground: var(--wheat);
+  --border: var(--wheat);
+  --input: var(--wheat);
+  --ring: var(--burnt-orange);
+  --reading-bg: var(--ink-black);
+  --reading-pattern-color: var(--dark-slate-grey);
 }
 
 @theme inline {

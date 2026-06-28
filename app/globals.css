@@ -25,6 +25,8 @@
   --input: #232528;
   --ring: #ffa400;
   --radius: 0;
+  --reading-bg: #E5E5F7;
+  --reading-pattern-color: #444CF7;
 }
 
 .dark {
@@ -47,6 +49,8 @@
   --border: #eaf6ff;
   --input: #eaf6ff;
   --ring: #ffa400;
+  --reading-bg: #232528;
+  --reading-pattern-color: #2b30a3;
 }
 
 @theme inline {
@@ -481,4 +485,60 @@
 
 .hljs-strong {
   font-weight: bold;
+}
+
+/* Reading page background pattern and animations */
+@keyframes slow-pan {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-30px, -45px, 0);
+  }
+}
+
+.reading-page-bg {
+  position: relative;
+  background-color: transparent !important;
+}
+
+.reading-page-bg::before {
+  content: "";
+  position: fixed;
+  top: -45px;
+  left: -30px;
+  right: -30px;
+  bottom: -45px;
+  z-index: -10;
+  background-color: var(--reading-bg, #E5E5F7);
+  opacity: 0.8;
+  background-image: 
+    radial-gradient(circle farthest-side at 0% 50%, var(--reading-bg, #E5E5F7) 23.5%, transparent 0), 
+    radial-gradient(circle farthest-side at 0% 50%, var(--reading-pattern-color, #444CF7) 24%, transparent 0), 
+    linear-gradient(var(--reading-bg, #E5E5F7) 14%, transparent 0, transparent 85%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(150deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(30deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(90deg, var(--reading-pattern-color, #444CF7) 1.6%, var(--reading-bg, #E5E5F7) 0 98.4%, var(--reading-pattern-color, #444CF7) 0);
+  background-position: 16px 23px, 14px 23px, 0 0, 0 0, 0 0, 0 0;
+  background-size: 30px 45px;
+  pointer-events: none;
+  animation: slow-pan 25s linear infinite;
+  will-change: transform;
+}
+
+/* Ensure reading page articles stand out with perfect readability and neo-brutalist styling */
+.reading-page-bg article {
+  background-color: var(--background);
+  border: 3px solid var(--foreground);
+  box-shadow: 6px 6px 0 var(--foreground);
+  padding: 2.5rem 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 0px;
+}
+
+@media (min-width: 768px) {
+  .reading-page-bg article {
+    padding: 3.5rem;
+    margin-bottom: 4rem;
+  }
 }

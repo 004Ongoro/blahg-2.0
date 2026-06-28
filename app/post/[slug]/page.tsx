@@ -146,7 +146,7 @@ export default async function PostPage({ params }: Props) {
     new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen flex flex-col relative reading-page-bg">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

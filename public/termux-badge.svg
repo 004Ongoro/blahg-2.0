@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="31" viewBox="0 0 88 31">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;display=swap');
+    </style>
+  </defs>
+  <rect width="88" height="31" fill="#181818"/>
+  <rect x="0" y="0" width="22" height="31" fill="#0d0d0d"/>
+  <text x="4" y="20" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="10" fill="#24e33a" font-weight="bold">$ _</text>
+  <rect x="22" y="4" width="1" height="23" fill="#24e33a" opacity="0.3"/>
+  <text x="28" y="14" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="7" fill="#24e33a" letter-spacing="0.5">TERMUX</text>
+  <text x="28" y="24" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="5" fill="#a0a0a0" letter-spacing="0.3">Android Shell</text>
+  <rect x="0" y="0" width="88" height="31" fill="none" stroke="#24e33a" stroke-width="0.75" opacity="0.2"/>
+  <rect x="0" y="0" width="3" height="3" fill="#24e33a" opacity="0.6"/>
+  <rect x="85" y="28" width="3" height="3" fill="#24e33a" opacity="0.6"/>
+</svg>

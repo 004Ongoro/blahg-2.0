@@ -100,13 +100,37 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row">
+        {/* Badges Row */}
+        <div className="mt-20 flex flex-wrap items-center justify-center gap-4 opacity-75 hover:opacity-100 transition-opacity duration-300">
+          <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:scale-105 transition-transform duration-200" title="Ongoro · The Underground Dev">
+            <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
+          </a>
+          <div className="hover:scale-105 transition-transform duration-200" title="Next.js App">
+            <img src="/nextjs-badge.svg" alt="Next.js App" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
+            <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
+            <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
+            <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
+            <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
+            <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
+          </div>
+        </div>
+
+        {/* Copyright Bottom Bar */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row">
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             © {new Date().getFullYear()} George Ongoro — Built with Next.js & Pure Spite
           </p>
-          <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-            <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
-          </a>
+          <div className="h-1 w-1 rounded-full bg-accent/20" />
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             No rights reserved — Steal everything
           </p>

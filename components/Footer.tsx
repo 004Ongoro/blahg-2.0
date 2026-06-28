@@ -104,7 +104,14 @@ export function Footer() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             © {new Date().getFullYear()} George Ongoro — Built with Next.js & Pure Spite
           </p>
-          <div className="h-1 w-1 rounded-full bg-accent/20" />
+          <div className="w-[88px] h-[31px] flex items-center border border-foreground/10 rounded-md overflow-hidden select-none font-mono text-[8px] font-black tracking-widest uppercase shadow-xs hover:border-accent/30 transition-all duration-300">
+            <div className="w-[52px] h-full bg-foreground text-background flex items-center justify-center font-bold">
+              GEORGE
+            </div>
+            <div className="w-[34px] h-full bg-accent text-accent-foreground flex items-center justify-center font-black italic border-l border-foreground/10">
+              2.0
+            </div>
+          </div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             No rights reserved — Steal everything
           </p>

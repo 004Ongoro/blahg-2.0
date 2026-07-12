@@ -1,9 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { AdminHeader } from '@/components/admin/AdminHeader'
-import { History, Mail, Calendar, Info, RefreshCcw } from 'lucide-react'
+import { 
+  History, 
+  Mail, 
+  Calendar, 
+  Info, 
+  RefreshCcw, 
+  BarChart3, 
+  TrendingUp, 
+  Users, 
+  XCircle, 
+  ArrowLeft,
+  Activity,
+  Zap,
+  CheckCircle2,
+  Clock
+} from 'lucide-react'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 export default function EmailEventsPage() {
   const [events, setEvents] = useState<any[]>([])
@@ -28,90 +44,188 @@ export default function EmailEventsPage() {
     fetchEvents()
   }, [])
 
-  const getStatusColor = (type: string) => {
+  const statsBySubject = useMemo(() => {
+    const stats: Record<string, { sent: number; opened: Set<string>; delivered: number; bounced: number }> = {}
+
+    events.forEach(event => {
+      const subj = event.subject || 'No Subject'
+      if (!stats[subj]) {
+        stats[subj] = { sent: 0, opened: new Set(), delivered: 0, bounced: 0 }
+      }
+
+      if (event.type === 'email.sent') stats[subj].sent++
+      if (event.type === 'email.delivered') stats[subj].delivered++
+      if (event.type === 'email.bounced') stats[subj].bounced++
+      if (event.type === 'email.opened') {
+        event.to.forEach((recipient: string) => stats[subj].opened.add(recipient))
+      }
+    })
+
+    return Object.entries(stats)
+      .filter(([subj]) => subj !== 'No Subject')
+      .map(([subject, data]) => {
+        const totalSent = data.sent || data.delivered 
+        const uniqueOpens = data.opened.size
+        const openRate = totalSent > 0 ? (uniqueOpens / totalSent) * 100 : 0
+        return {
+          subject,
+          sent: totalSent,
+          opened: uniqueOpens,
+          openRate: openRate.toFixed(1),
+          bounced: data.bounced
+        }
+      })
+      .sort((a, b) => b.sent - a.sent)
+  }, [events])
+
+  const getStatusInfo = (type: string) => {
     switch (type) {
-      case 'email.sent': return 'bg-blue-200 text-blue-800'
-      case 'email.delivered': return 'bg-green-200 text-green-800'
-      case 'email.bounced': return 'bg-red-200 text-red-800'
-      case 'email.complained': return 'bg-lime-200 text-lime-800'
-      case 'email.opened': return 'bg-purple-200 text-purple-800'
-      case 'email.clicked': return 'bg-cyan-200 text-cyan-800'
-      default: return 'bg-gray-200 text-gray-800'
+      case 'email.sent': return { label: 'SENT', color: 'text-blue-500', bg: 'bg-blue-500/5' }
+      case 'email.delivered': return { label: 'DELIVERED', color: 'text-green-600', bg: 'bg-green-600/5' }
+      case 'email.bounced': return { label: 'BOUNCED', color: 'text-destructive', bg: 'bg-destructive/5' }
+      case 'email.complained': return { label: 'COMPLAINED', color: 'text-orange-500', bg: 'bg-orange-500/5' }
+      case 'email.opened': return { label: 'OPENED', color: 'text-accent', bg: 'bg-accent/5' }
+      case 'email.clicked': return { label: 'CLICKED', color: 'text-cyan-600', bg: 'bg-cyan-600/5' }
+      default: return { label: 'UNKNOWN', color: 'text-muted-foreground', bg: 'bg-foreground/5' }
     }
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background font-mono pb-20">
       <AdminHeader />
-      <main className="max-w-6xl mx-auto px-4 py-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div className="flex items-center gap-4">
-             <Link href="/admin/newsletter" className="brutal-border p-2 hover:bg-accent transition-colors">
-                <span className="font-bold">←</span>
-             </Link>
-             <h1 className="text-4xl font-black uppercase italic">
-               Email <span className="text-accent">Events</span>
-             </h1>
-          </div>
-          <button 
-            onClick={fetchEvents}
-            className="flex items-center justify-center gap-2 brutal-border bg-white px-4 py-2 font-black uppercase text-xs hover:bg-accent transition-colors"
-          >
-            <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} /> Refresh
-          </button>
-        </div>
-
-        <div className="brutal-border bg-card p-6 brutal-shadow mb-8">
-            <p className="font-bold text-sm uppercase flex items-center gap-2">
-                <Info size={16} className="text-accent" />
-                These events are received via webhooks from Resend.
-            </p>
-        </div>
-
-        <div className="grid gap-4">
-          {loading && events.length === 0 ? (
-            <div className="brutal-border p-8 text-center bg-card font-bold animate-pulse">
-              LOADING EVENTS...
-            </div>
-          ) : events.length === 0 ? (
-            <div className="brutal-border p-8 text-center bg-card text-muted-foreground font-bold italic">
-              No email events found. Make sure your Resend webhook is configured.
-            </div>
-          ) : (
-            events.map((event) => (
-              <div 
-                key={event._id} 
-                className="brutal-border bg-card p-5 flex flex-col gap-4 hover:translate-x-[-2px] transition-transform"
+      
+      <main className="max-w-5xl mx-auto px-4 py-12 md:py-20 w-full">
+        {/* Header Section */}
+        <header className="mb-12 border-b-2 border-foreground pb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+              <Link 
+                href="/admin/newsletter"
+                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
               >
-                <div className="flex flex-wrap justify-between items-start gap-4">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-black uppercase px-2 py-1 brutal-border ${getStatusColor(event.type)}`}>
-                        {event.type.replace('email.', '')}
-                      </span>
-                      <h3 className="font-black uppercase text-lg leading-none">{event.subject || 'No Subject'}</h3>
+                <ArrowLeft size={12} /> Back to dispatch
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                Transmission_<span className="text-accent italic">Analytics</span>
+              </h1>
+            </div>
+
+            <button 
+              onClick={fetchEvents}
+              className="h-11 px-6 flex items-center justify-center gap-2 bg-foreground text-background rounded-full font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all active:scale-95"
+            >
+              <RefreshCcw size={14} className={loading ? 'animate-spin' : ''} /> 
+              Sync_Logs
+            </button>
+          </div>
+        </header>
+
+        {/* Performance Metrics */}
+        {statsBySubject.length > 0 && (
+          <section className="mb-20">
+            <div className="flex items-center gap-4 mb-8">
+              <BarChart3 size={16} className="text-accent" />
+              <h2 className="text-xs font-black uppercase tracking-[0.2em]">Issue_Performance</h2>
+              <div className="h-px flex-1 bg-foreground/5" />
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2">
+              {statsBySubject.map((stat, idx) => (
+                <div key={idx} className="space-y-6 group">
+                  <h3 className="text-sm font-black uppercase tracking-tight truncate border-b border-foreground/5 pb-2" title={stat.subject}>
+                    {stat.subject}
+                  </h3>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black uppercase text-muted-foreground/40 tracking-widest">Sent</span>
+                      <span className="text-2xl font-black tabular-nums">{stat.sent}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground mt-1">
-                      <span className="flex items-center gap-1"><Mail size={12}/> {event.to.join(', ')}</span>
-                      <span className="text-accent">|</span>
-                      <span className="flex items-center gap-1"><Calendar size={12}/> {new Date(event.createdAt).toLocaleString()}</span>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black uppercase text-accent tracking-widest">Reads</span>
+                      <span className="text-2xl font-black tabular-nums text-accent">{stat.openRate}%</span>
                     </div>
-                  </div>
-                  
-                  <div className="text-[10px] font-mono bg-secondary p-1 brutal-border">
-                    ID: {event.resendId}
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black uppercase text-blue-500 tracking-widest">Total</span>
+                      <span className="text-2xl font-black tabular-nums">{stat.opened}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black uppercase text-destructive tracking-widest">Fail</span>
+                      <span className="text-2xl font-black tabular-nums">{stat.bounced}</span>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-                {event.data?.bounce?.reason && (
-                    <div className="bg-red-50 border-l-4 border-red-500 p-2 text-xs font-bold text-red-700">
-                        BOUNCE REASON: {event.data.bounce.reason}
-                    </div>
-                )}
+        {/* Transmission Log */}
+        <section className="relative">
+          <div className="flex items-center justify-between mb-8 border-b border-foreground/5 pb-2">
+            <div className="flex items-center gap-2">
+              <History size={16} className="text-accent" />
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Recent Activity</h2>
+            </div>
+          </div>
+
+          <div className="divide-y divide-foreground/5 border-t border-foreground/5">
+            {loading && events.length === 0 ? (
+              [...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 animate-pulse bg-foreground/[0.01]" />
+              ))
+            ) : events.length === 0 ? (
+              <div className="py-20 text-center opacity-40">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em]">No activity logged</p>
               </div>
-            ))
-          )}
-        </div>
+            ) : (
+              events.map((event) => {
+                const info = getStatusInfo(event.type)
+                return (
+                  <div 
+                    key={event._id} 
+                    className="py-6 flex flex-col md:flex-row md:items-center justify-between gap-6"
+                  >
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border",
+                          info.bg, info.color, "border-current opacity-70"
+                        )}>
+                          {info.label}
+                        </div>
+                        <h3 className="text-sm font-black uppercase tracking-tight truncate leading-none">
+                          {event.subject || 'Internal transmission'}
+                        </h3>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-[10px] font-bold text-muted-foreground/60 uppercase">
+                        <span className="flex items-center gap-1.5 truncate max-w-[200px]">
+                          <Mail size={12} className="opacity-40" />
+                          {event.to.join(', ')}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={12} className="opacity-40" />
+                          {new Date(event.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-[10px] font-black uppercase tracking-widest opacity-20 select-all">
+                      ID: {event.resendId}
+                    </div>
+
+                    {event.data?.bounce?.reason && (
+                      <div className="w-full mt-2 text-[8px] font-black uppercase tracking-widest text-destructive/60 bg-destructive/5 p-2 rounded">
+                        ERROR: {event.data.bounce.reason}
+                      </div>
+                    )}
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </section>
       </main>
     </div>
   )

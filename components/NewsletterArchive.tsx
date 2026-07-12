@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, ArrowRight, Mail, Calendar } from 'lucide-react'
 import { FormattedDate } from '@/components/FormattedDate'
+import { cn } from '@/lib/utils'
 
 interface Issue {
   _id: string
@@ -28,15 +29,15 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
   const otherIssues = search ? filteredIssues : filteredIssues.slice(1)
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-16">
       {/* Search Bar */}
-      <div className="relative group max-w-2xl mx-auto">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors" />
+      <div className="relative group">
+        <div className="absolute inset-y-0 left-0 pl-0 flex items-center pointer-events-none">
+          <Search className="h-4 w-4 text-muted-foreground/40 group-focus-within:text-accent transition-colors" />
         </div>
         <input
           type="text"
-          placeholder="Search for an issue..."
+          placeholder="Find a specific dispatch..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full brutal-border bg-card py-4 pl-12 pr-4 font-bold text-lg focus:ring-4 ring-accent outline-none placeholder:opacity-50 transition-all"
@@ -45,55 +46,44 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
 
       {/* Featured Latest Issue (only if not searching) */}
       {!search && latestIssue && (
-        <section className="animate-fade-in">
-          <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-            <span className="w-8 h-[2px] bg-accent"></span>
-            Latest Release
-          </h2>
+        <section>
+          <div className="mb-6 flex items-center gap-3">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Latest Dispatch</span>
+            <div className="h-px flex-1 bg-foreground/5" />
+          </div>
+          
           <Link 
             href={`/newsletter/archive/${latestIssue.slug}`}
             className="block brutal-border bg-accent text-accent-foreground p-8 brutal-shadow hover:-translate-y-1 transition-all group relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Mail size={120} />
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <span>Issue #{(issues.length).toString().padStart(3, '0')}</span>
+                <span className="h-1 w-1 rounded-full bg-foreground/10" />
+                <FormattedDate date={latestIssue.createdAt} />
+              </div>
+              <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter group-hover:text-accent transition-colors leading-none">
+                {latestIssue.subject}
+              </h3>
             </div>
             
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-4">
-                <div className="inline-block bg-foreground text-background px-3 py-1 text-[10px] font-black uppercase">
-                  Issue #{(issues.length).toString().padStart(3, '0')}
-                </div>
-                <h3 className="text-3xl md:text-5xl font-black uppercase italic leading-tight">
-                  {latestIssue.subject}
-                </h3>
-                <div className="flex items-center gap-2 text-sm font-bold opacity-80">
-                  <Calendar size={16} />
-                  <FormattedDate date={latestIssue.createdAt} />
-                </div>
-              </div>
-              <div className="flex items-center gap-2 font-black uppercase text-xl group-hover:translate-x-4 transition-transform whitespace-nowrap">
-                Read Issue <ArrowRight size={24} />
-              </div>
-            </div>
+            <p className="text-muted-foreground font-medium flex items-center gap-2 text-sm">
+              Read the full issue <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </p>
           </Link>
         </section>
       )}
 
       {/* Issues Grid */}
       <section>
-        {search && (
-          <h2 className="text-2xl font-black uppercase italic mb-8">
-            Found {filteredIssues.length} {filteredIssues.length === 1 ? 'issue' : 'issues'} for "{search}"
-          </h2>
-        )}
-        {!search && (
-          <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-8 flex items-center gap-2">
-            <span className="w-8 h-[2px] bg-foreground"></span>
-            Previous Issues
-          </h2>
-        )}
+        <div className="mb-10 flex items-center gap-3">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
+            {search ? `Search results (${filteredIssues.length})` : 'Previous Issues'}
+          </span>
+          <div className="h-px flex-1 bg-foreground/5" />
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col">
           {otherIssues.length === 0 ? (
             <div className="col-span-full brutal-border p-12 bg-card text-center font-bold italic text-muted-foreground">
               {search ? "No issues match your search." : "No other issues found."}
@@ -114,17 +104,23 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
                       </span>
                       <span className="text-xs font-bold text-muted-foreground">
                         <FormattedDate date={issue.createdAt} />
-                      </span>
+                      </div>
+
+                      <Link href={`/newsletter/archive/${issue.slug}`} className="block group-hover:text-accent transition-colors">
+                        <h4 className="text-xl font-black uppercase tracking-tighter leading-tight">
+                          {issue.subject}
+                        </h4>
+                      </Link>
                     </div>
-                    <h3 className="text-xl font-black uppercase group-hover:text-accent transition-colors line-clamp-2 leading-tight">
-                      {issue.subject}
-                    </h3>
+
+                    <Link 
+                      href={`/newsletter/archive/${issue.slug}`}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-0"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
-                  <div className="mt-6 flex items-center justify-end text-accent opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all">
-                    <span className="font-black uppercase text-xs mr-2">Read</span>
-                    <ArrowRight size={18} />
-                  </div>
-                </Link>
+                </article>
               )
             })
           )}
@@ -140,13 +136,10 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
           </p>
           <Link 
             href="/newsletter"
-            className="brutal-btn bg-accent text-accent-foreground px-10 py-4 font-black uppercase inline-block text-xl"
+            className="bg-accent text-accent-foreground px-8 py-3 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2 w-full sm:w-auto inline-flex"
           >
-            Join the underground
+            Join the underground <Mail size={14} />
           </Link>
-        </div>
-        <div className="absolute -bottom-10 -right-10 opacity-5 rotate-12">
-          <Mail size={240} />
         </div>
       </section>
     </div>

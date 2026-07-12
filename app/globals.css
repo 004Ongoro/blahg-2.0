@@ -24,6 +24,8 @@
   --input: #191308;
   --ring: #677db7;
   --radius: 0;
+  --reading-bg: var(--wheat);
+  --reading-pattern-color: var(--burnt-orange);
 }
 
 .dark {
@@ -87,6 +89,33 @@
     animation: BackgroundGradient 15s ease infinite;
     min-height: 100vh;
   }
+
+  /* Minimal Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    opacity: 0.2;
+    border-radius: 10px;
+    border: 2px solid var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Firefox support */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
 }
 
 @keyframes BackgroundGradient {
@@ -149,15 +178,15 @@
 }
 
 .prose-brutal h2 {
-  @apply text-2xl md:text-3xl;
+  @apply text-2xl md:text-3xl mt-12;
 }
 
 .prose-brutal h3 {
-  @apply text-xl md:text-2xl;
+  @apply text-xl md:text-2xl mt-8;
 }
 
 .prose-brutal p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-5 leading-relaxed text-base text-foreground/80 font-medium;
 }
 
 .prose-brutal a {
@@ -183,6 +212,28 @@
 
 .prose-brutal pre code {
   @apply border-0 p-0 bg-transparent text-[#e6edf3];
+  border-radius: 0;
+}
+
+.prose-brutal table {
+  @apply w-full border-collapse mb-8 border border-foreground/5 rounded-2xl overflow-hidden shadow-xs bg-background/30 backdrop-blur-md;
+}
+
+.prose-brutal th {
+  @apply bg-secondary/50 p-3 text-left font-black uppercase text-[10px] tracking-wider border-b border-r border-foreground/5 text-muted-foreground/80;
+}
+
+.prose-brutal td {
+  @apply p-3 border-b border-r border-foreground/5 text-sm font-medium text-foreground/80;
+}
+
+.prose-brutal th:last-child,
+.prose-brutal td:last-child {
+  @apply border-r-0;
+}
+
+.prose-brutal tr:last-child td {
+  @apply border-b-0;
 }
 
 .prose-brutal blockquote {
@@ -192,7 +243,7 @@
 
 .prose-brutal ul,
 .prose-brutal ol {
-  @apply ml-6 mb-4;
+  @apply ml-6 mb-6 space-y-2 text-foreground/80 font-medium;
 }
 
 .prose-brutal ul {
@@ -204,7 +255,7 @@
 }
 
 .prose-brutal li {
-  @apply mb-2;
+  @apply mb-1.5;
 }
 
 .prose-brutal img {
@@ -220,7 +271,7 @@
 
 /* Code block with title bar */
 .code-block-wrapper {
-  @apply mb-4;
+  @apply mb-6 border border-foreground/5 rounded-2xl overflow-hidden bg-background/40 backdrop-blur-md shadow-xs;
 }
 
 .code-title-bar {
@@ -255,7 +306,7 @@
 
 /* Code runner output */
 .code-output-wrapper {
-  @apply mt-0 mb-8;
+  @apply mt-2 mb-8 border border-foreground/5 rounded-2xl overflow-hidden shadow-xs bg-[#090d16];
 }
 
 .code-output-header {
@@ -322,35 +373,35 @@
 }
 
 .callout-content {
-  @apply p-4 bg-card;
+  @apply p-5 bg-transparent text-sm leading-relaxed;
 }
 
 .callout-note {
-  @apply border-foreground;
+  @apply border-foreground/5;
 }
 
 .callout-note .callout-header {
-  @apply bg-secondary;
+  @apply bg-secondary/20 text-foreground;
 }
 
 .callout-warning {
-  @apply border-foreground;
+  @apply border-foreground/5;
 }
 
 .callout-warning .callout-header {
-  @apply bg-destructive text-destructive-foreground;
+  @apply bg-destructive/10 text-destructive;
 }
 
 .callout-tip {
-  @apply border-foreground;
+  @apply border-foreground/5;
 }
 
 .callout-tip .callout-header {
-  @apply bg-accent text-accent-foreground;
+  @apply bg-accent/15 text-accent;
 }
 
 .callout-info {
-  @apply border-foreground;
+  @apply border-foreground/5;
 }
 
 .callout-info .callout-header {
@@ -429,4 +480,69 @@
 
 .hljs-strong {
   font-weight: bold;
+}
+
+/* Reading page background pattern and animations */
+@keyframes slow-pan {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-30px, -45px, 0);
+  }
+}
+
+.reading-page-bg {
+  position: relative;
+  background-color: transparent !important;
+}
+
+.reading-page-bg::before {
+  content: "";
+  position: fixed;
+  top: -45px;
+  left: -30px;
+  right: -30px;
+  bottom: -45px;
+  z-index: -10;
+  background-color: var(--reading-bg, #E5E5F7);
+  opacity: 0.8;
+  background-image: 
+    radial-gradient(circle farthest-side at 0% 50%, var(--reading-bg, #E5E5F7) 23.5%, transparent 0), 
+    radial-gradient(circle farthest-side at 0% 50%, var(--reading-pattern-color, #444CF7) 24%, transparent 0), 
+    linear-gradient(var(--reading-bg, #E5E5F7) 14%, transparent 0, transparent 85%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(150deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(30deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
+    linear-gradient(90deg, var(--reading-pattern-color, #444CF7) 1.6%, var(--reading-bg, #E5E5F7) 0 98.4%, var(--reading-pattern-color, #444CF7) 0);
+  background-position: 16px 23px, 14px 23px, 0 0, 0 0, 0 0, 0 0;
+  background-size: 30px 45px;
+  pointer-events: none;
+  animation: slow-pan 25s linear infinite;
+  will-change: transform;
+}
+
+/* Ensure reading page articles stand out with perfect readability and neo-brutalist styling */
+.reading-page-bg article {
+  background-color: color-mix(in srgb, var(--background) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 3px solid var(--foreground);
+  box-shadow: 6px 6px 0 var(--foreground);
+  padding: 2.5rem 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 0px;
+}
+
+@media (min-width: 768px) {
+  .reading-page-bg article {
+    padding: 3.5rem;
+    margin-bottom: 4rem;
+  }
+}
+
+/* Make footer also semi-transparent on reading pages to keep the pattern visible */
+.reading-page-bg footer {
+  background-color: color-mix(in srgb, var(--background) 85%, transparent) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

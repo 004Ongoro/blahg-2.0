@@ -4,7 +4,19 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { CheckCircle2, XCircle, Send, Loader2, Zap, Shield, Sparkles, Quote, Twitter, ArrowRight, Mail } from 'lucide-react'
+import { 
+  CheckCircle2, 
+  XCircle, 
+  Send, 
+  Loader2, 
+  Zap, 
+  Shield, 
+  Sparkles, 
+  Quote, 
+  ArrowRight, 
+  Mail
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Mode = 'subscribe' | 'unsubscribe'
 
@@ -13,23 +25,18 @@ const testimonials = [
     name: "Paul Marc",
     handle: "@paulmarc",
     text: "I keep learning new things, I like it ;)",
-    color: "bg-yellow-200"
   },
   {
     name: "Isaac de Andrade",
     handle: "@andradei",
     text: "Good read. Short and to the point.",
-    color: "bg-blue-200"
   },
   {
     name: "Rafael",
     handle: "@rafaelnacle",
-    text: "Nice!",
-    color: "bg-green-200"
+    text: "Quality content every single time.",
   }
 ]
-
-const techStack = ["Next.js", "TypeScript", "MongoDB", "Architecture", "Serverless", "Security", "Optimization"]
 
 export default function NewsletterPage() {
   const [email, setEmail] = useState('')
@@ -56,8 +63,8 @@ export default function NewsletterPage() {
         setStatus({
           type: 'success',
           msg: mode === 'subscribe' 
-            ? "Welcome to the inner circle! Check your inbox." 
-            : "You've been removed. Sorry to see you go."
+            ? "Successfully subscribed. Check your inbox!" 
+            : "Successfully unsubscribed. We'll miss you."
         })
         setEmail('')
       } else {
@@ -71,182 +78,140 @@ export default function NewsletterPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.5s ease-out forwards;
-        }
-      `}</style>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center p-4 py-12 md:py-20">
+      
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         
-        {/* Main Hero Card */}
-        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 brutal-border brutal-shadow bg-card overflow-hidden mb-16">
-          
-          {/* Left Column: Benefits/Hype */}
-          <div className="bg-accent text-accent-foreground p-8 md:p-12 flex flex-col justify-center border-b-4 md:border-b-0 md:border-r-4 border-foreground">
-            <div className="inline-block bg-foreground text-background px-3 py-1 text-xs font-black uppercase mb-6 self-start">
-              Weekly Insights
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase italic mb-6 leading-[0.8] tracking-tighter">
-              The <span className="text-white block sm:inline">Underground</span> Dev
-            </h1>
-            <p className="text-lg font-bold mb-8 opacity-90 leading-tight">
-              Deep dives into high-performance web architecture, building profitable side projects, and the unvarnished truth about tech.
-            </p>
-            
-            <ul className="space-y-4">
-              {[
-                { icon: <Zap size={20} />, text: "Zero Fluff. Just Code." },
-                { icon: <Shield size={20} />, text: "No Spam. Ever." },
-                { icon: <Sparkles size={20} />, text: "Exclusive Early Access." }
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 font-black uppercase text-sm">
-                  <span className="bg-foreground text-background p-1">{item.icon}</span>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* Header Section */}
+        <header className="mb-16">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
+            The <span className="text-accent italic">Dispatch</span>
+          </h1>
+          <p className="text-muted-foreground font-medium max-w-2xl leading-relaxed">
+            Weekly thoughts on software, design, and building things. 
+            Delivered directly to your inbox.
+          </p>
+        </header>
 
-          {/* Right Column: Form */}
-          <div className="p-8 md:p-12 bg-background flex flex-col justify-center">
-             {/* Mode Toggle */}
-            <div className="flex brutal-border mb-8 bg-muted overflow-hidden">
+        {/* Main Interaction Area */}
+        <div className="space-y-12">
+          
+          {/* Form Card */}
+          <div className="border border-foreground/5 p-8 md:p-12 rounded-2xl bg-foreground/[0.01]">
+            <div className="flex gap-4 mb-10">
               <button
                 onClick={() => { setMode('subscribe'); setStatus(null); }}
-                className={`flex-1 py-3 font-black uppercase text-xs tracking-tighter transition-colors ${
-                  mode === 'subscribe' ? 'bg-foreground text-background' : 'hover:bg-foreground/10'
-                }`}
+                className={cn(
+                  "text-xs font-black uppercase tracking-widest pb-1 border-b-2 transition-all",
+                  mode === 'subscribe' ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
               >
-                Join Now
+                Subscribe
               </button>
               <button
                 onClick={() => { setMode('unsubscribe'); setStatus(null); }}
-                className={`flex-1 py-3 font-black uppercase text-xs tracking-tighter transition-colors ${
-                  mode === 'unsubscribe' ? 'bg-destructive text-destructive-foreground' : 'hover:bg-destructive/10'
-                }`}
+                className={cn(
+                  "text-xs font-black uppercase tracking-widest pb-1 border-b-2 transition-all",
+                  mode === 'unsubscribe' ? "border-destructive text-destructive" : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
               >
-                Leave
+                Unsubscribe
               </button>
             </div>
 
-            <h2 className="text-2xl font-black uppercase mb-6">
-              {mode === 'subscribe' ? 'Ready to level up?' : 'Goodbye, friend.'}
+            <h2 className="text-2xl font-black uppercase tracking-tight mb-8">
+              {mode === 'subscribe' ? 'Join the community' : 'Manage subscription'}
             </h2>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@geohack.top"
-                  required
-                  className="w-full brutal-border bg-background px-4 py-4 text-lg font-bold focus:ring-4 ring-accent outline-none placeholder:opacity-30 border-black"
-                />
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@example.com"
+                required
+                className="w-full bg-background border border-foreground/10 rounded-xl px-4 py-4 text-base font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
+              />
 
               <button
                 disabled={loading}
-                className={`brutal-btn py-4 text-xl font-black uppercase flex items-center justify-center gap-3 disabled:opacity-50 ${
-                  mode === 'subscribe' ? 'bg-accent text-accent-foreground' : 'bg-destructive text-destructive-foreground'
-                }`}
+                className={cn(
+                  "w-full py-4 rounded-xl font-black uppercase text-sm tracking-widest flex items-center justify-center gap-2 transition-all active:scale-[0.98]",
+                  mode === 'subscribe' ? "bg-foreground text-background hover:opacity-90" : "bg-destructive text-destructive-foreground hover:opacity-90"
+                )}
               >
                 {loading ? (
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="animate-spin size-5" />
                 ) : (
                   <>
-                    {mode === 'subscribe' ? <Send size={24} /> : <XCircle size={24} />}
-                    {mode === 'subscribe' ? 'Get the newsletter' : 'Unsubscribe'}
+                    {mode === 'subscribe' ? 'Start Receiving' : 'Remove Email'}
+                    {mode === 'subscribe' && <Send size={16} />}
                   </>
                 )}
               </button>
             </form>
 
             {status && (
-              <div className={`mt-8 p-4 brutal-border flex items-center gap-3 font-black uppercase text-sm ${
-                status.type === 'success' ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'
-              }`}>
-                {status.type === 'success' ? <CheckCircle2 /> : <XCircle />}
+              <div className={cn(
+                "mt-8 p-4 rounded-xl flex items-center gap-3 text-sm font-bold border",
+                status.type === 'success' ? "bg-green-500/5 text-green-600 border-green-500/10" : "bg-destructive/5 text-destructive border-destructive/10"
+              )}>
+                {status.type === 'success' ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
                 {status.msg}
               </div>
             )}
+          </div>
 
-            <p className="mt-8 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">
-              Joined by developers worldwide.
-            </p>
+          {/* Benefits Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-foreground/5">
+            {[
+              { icon: <Zap size={18} className="text-accent" />, title: "Insights", desc: "Technical deep dives." },
+              { icon: <Shield size={18} className="text-accent" />, title: "Privacy", desc: "No spam, no selling." },
+              { icon: <Sparkles size={18} className="text-accent" />, title: "Early Access", desc: "First looks at projects." }
+            ].map((item, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex items-center gap-2 font-black uppercase text-[10px] tracking-widest">
+                  {item.icon} {item.title}
+                </div>
+                <p className="text-sm text-muted-foreground font-medium leading-tight">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Testimonials Section */}
-        <div className="max-w-6xl w-full mb-20 px-4">
-          <h3 className="text-3xl font-black uppercase italic text-center mb-12">
-            What <span className="text-accent underline decoration-4 underline-offset-4">Developers</span> Are Saying
-          </h3>
+        {/* Testimonials */}
+        <section className="mt-24 pt-16 border-t border-foreground/5">
+          <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-12">Readers Feedback</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className={`p-6 brutal-border brutal-shadow ${t.color} flex flex-col justify-between min-h-[180px] relative group cursor-default transition-all duration-300 hover:scale-105 hover:rotate-0 z-0 hover:z-10 animate-fade-in-up`}
-                style={{ 
-                  animationDelay: `${i * 100}ms`,
-                  transform: i % 2 === 0 ? 'rotate(-2deg)' : 'rotate(2deg)'
-                }}
-              >
-                <Quote className="absolute top-2 right-2 opacity-10 group-hover:opacity-20 transition-opacity" size={40} />
-                <p className="text-lg font-black leading-tight mb-6">"{t.text}"</p>
+              <div key={i} className="space-y-4">
+                <p className="text-sm font-medium leading-relaxed italic">"{t.text}"</p>
                 <div>
-                  <div className="font-black uppercase text-sm">{t.name}</div>
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase">
-                    <Twitter size={10} /> {t.handle}
-                  </div>
+                  <div className="text-[10px] font-black uppercase tracking-widest">{t.name}</div>
+                  <div className="text-[10px] font-bold text-muted-foreground/50">{t.handle}</div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
         
-        {/* Infinite Marquee Tech Stack */}
-        <div className="w-full bg-foreground py-6 overflow-hidden relative border-y-4 border-foreground mb-20">
-          <div className="flex gap-12 whitespace-nowrap min-w-full animate-marquee">
-            {[...techStack, ...techStack, ...techStack, ...techStack].map((tech, i) => (
-              <span key={i} className="text-3xl md:text-5xl font-black uppercase italic text-background tracking-tighter">
-                {tech} <span className="text-accent ml-8">///</span>
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Link to Archive */}
-        <div className="max-w-4xl w-full text-center px-4">
-          <div className="brutal-border p-12 bg-card brutal-shadow relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Mail size={160} />
+        {/* Archive Hook */}
+        <div className="mt-24">
+          <Link 
+            href="/newsletter/archive"
+            className="group flex flex-col p-8 rounded-2xl border border-foreground/5 hover:border-accent/20 bg-foreground/[0.01] transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-black uppercase tracking-widest bg-accent/10 text-accent px-2 py-1 rounded">Knowledge Base</span>
+              <ArrowRight size={20} className="text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-3xl md:text-4xl font-black uppercase italic mb-4">Want to see what you're missing?</h3>
-            <p className="text-xl font-bold text-muted-foreground mb-8">
-              Explore our full catalog of past issues and deep dives.
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Browse Archive</h3>
+            <p className="text-sm font-medium text-muted-foreground">
+              Explore past issues on code, architecture, and design.
             </p>
-            <Link 
-              href="/newsletter/archive"
-              className="brutal-btn bg-background text-foreground px-8 py-4 font-black uppercase inline-flex items-center gap-2 text-xl hover:bg-accent hover:text-accent-foreground"
-            >
-              Browse Archive <ArrowRight size={24} />
-            </Link>
-          </div>
+          </Link>
         </div>
 
       </main>

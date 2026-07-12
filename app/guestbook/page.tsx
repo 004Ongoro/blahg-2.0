@@ -6,8 +6,9 @@ import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { MessageSquare, Send, User } from 'lucide-react'
+import { MessageSquare, Send, User, Terminal, Database, Shield } from 'lucide-react'
 import { FormattedDate } from '@/components/FormattedDate'
+import { cn } from '@/lib/utils'
 
 interface Entry {
   _id: string
@@ -64,87 +65,109 @@ export default function GuestbookPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-mono">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-12 w-full">
+      
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
+        {/* Header Section */}
         <header className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 tracking-tighter">
-            Guestbook<span className="text-accent">.</span>
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
+            Guest<span className="text-accent italic">book</span>
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
-            Leave a message, say hi, or share a thought. This is a public space for the community.
+          <p className="text-muted-foreground font-medium max-w-2xl">
+            Leave a message in the digital log. Say hi, or just leave your mark.
           </p>
         </header>
 
-        <section className="mb-16">
-          <form onSubmit={handleSubmit} className="brutal-border brutal-shadow bg-card p-6 md:p-8">
-            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-accent" /> Sign the Guestbook
-            </h2>
-            
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-xs font-black uppercase mb-1 ml-1 text-muted-foreground">
-                  Your Name
-                </label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="George Burdell"
-                  required
-                  className="brutal-border focus:ring-accent"
-                />
+        <div className="space-y-20">
+          {/* Form Section */}
+          <section className="border-t-2 border-foreground pt-12">
+            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-8">Sign the Log</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest px-1">
+                    Identity
+                  </label>
+                  <input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your handle..."
+                    required
+                    className="w-full bg-background border border-foreground/10 rounded-xl h-12 px-4 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
+                  />
+                </div>
               </div>
               
-              <div>
-                <label htmlFor="message" className="block text-xs font-black uppercase mb-1 ml-1 text-muted-foreground">
-                  Your Message
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest px-1">
+                  Message
                 </label>
-                <Textarea
+                <textarea
                   id="message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="What's on your mind?"
                   required
-                  className="brutal-border focus:ring-accent min-h-[100px]"
+                  className="w-full bg-background border border-foreground/10 rounded-xl min-h-[120px] p-4 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all resize-none"
                 />
               </div>
 
-              <Button 
+              <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="brutal-btn bg-accent text-accent-foreground w-full font-black uppercase py-6 h-auto text-lg"
+                className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-foreground text-background font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all disabled:opacity-50"
               >
-                {isSubmitting ? 'Posting...' : 'Sign Guestbook'} <Send className="ml-2 w-5 h-5" />
-              </Button>
+                {isSubmitting ? 'Transmitting...' : (
+                  <>
+                    Commit to Log
+                    <Send size={14} className="ml-2" />
+                  </>
+                )}
+              </button>
+            </form>
+          </section>
+
+          {/* Entries Section */}
+          <section className="space-y-10">
+            <div className="flex items-center justify-between border-b border-foreground/5 pb-4">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Transmission Archive</h2>
+              <span className="text-[10px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded">
+                {entries.length} RECORDS
+              </span>
             </div>
-          </form>
-        </section>
 
-        <section>
-          <h2 className="text-2xl font-black uppercase mb-8 flex items-center gap-2">
-            <User className="w-6 h-6 text-accent" /> Recent Entries 
-            <span className="text-sm font-normal text-muted-foreground ml-2">({entries.length})</span>
-          </h2>
-
-          <div className="space-y-6">
-            {entries.map((entry) => (
-              <div
-                key={entry._id}
-                className="brutal-border brutal-shadow bg-card p-6 relative overflow-hidden transition-all animate-in fade-in slide-in-from-bottom-4 duration-500"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-black uppercase text-accent">{entry.name}</h3>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                    <FormattedDate date={entry.createdAt} />
-                  </span>
+            <div className="divide-y divide-foreground/5">
+              {isLoading ? (
+                [...Array(3)].map((_, i) => (
+                  <div key={i} className="py-8 space-y-4 animate-pulse">
+                    <div className="h-4 w-32 bg-foreground/5 rounded" />
+                    <div className="h-20 w-full bg-foreground/5 rounded" />
+                  </div>
+                ))
+              ) : entries.map((entry) => (
+                <div key={entry._id} className="py-8 group">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-foreground/5 flex items-center justify-center text-[10px] font-black uppercase">
+                        {entry.name.slice(0, 1)}
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black uppercase tracking-tight">{entry.name}</h3>
+                        <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Authenticated</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold text-muted-foreground/40">
+                      <FormattedDate date={entry.createdAt} />
+                    </span>
+                  </div>
+                  <p className="text-base font-medium leading-relaxed text-foreground pl-11">
+                    "{entry.message}"
+                  </p>
                 </div>
-                <p className="text-foreground leading-relaxed italic">
-                  "{entry.message}"
-                </p>
-              </div>
-            ))}
+              ))}
 
             {!isLoading && entries.length === 0 && (
               <div className="text-center py-20 brutal-border border-dashed border-2 opacity-50">
@@ -154,6 +177,7 @@ export default function GuestbookPage() {
           </div>
         </section>
       </main>
+      
       <Footer />
     </div>
   )

@@ -1,73 +1,146 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from './ThemeToggle'
+import { ChevronRight, Menu, X } from 'lucide-react'
 
 const navLinks = [
   { name: 'posts', href: '/' },
-  { name: 'series', href: '/series' },
+  { name: 'dispatches', href: '/newsletter/archive' },
+  { name: 'about', href: '/about' },
   { name: 'tags', href: '/tags' },
   { name: 'archive', href: '/archive' },
-  { name: 'issues', href: '/newsletter/archive' },
-  { name: 'guestbook', href: '/guestbook' },
-  { name: 'newsletter', href: '/newsletter' },
-  { name: 'admin', href: '/admin' },
 ]
 
-// Main header component
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [pathname])
+
+  const pathPieces = pathname.split('/').filter(Boolean)
+  
   return (
-    <header className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
-      <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-black uppercase tracking-tighter hover:text-accent transition-colors">
-          george<span className="text-accent">.</span>2.0
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex gap-8">
-          {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className="font-bold hover:underline decoration-accent decoration-4 underline-offset-4">
-              {link.name}
-            </Link>
-          ))}
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
+      {/* Desktop HUD */}
+      <div className="hidden md:flex items-center gap-2 max-w-full">
+        {/* Identity Pill */}
+        <div className={cn(
+          "pointer-events-auto h-10 px-4 flex items-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-500",
+          isScrolled ? "opacity-100 translate-y-0" : "opacity-100"
+        )}>
+          <Link href="/" className="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
+            George <span className="text-accent">Ongoro</span>
+          </Link>
         </div>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden p-2 brutal-border bg-accent text-accent-foreground"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </nav>
+        {/* Context & Navigation Pill */}
+        <div className="pointer-events-auto group relative flex items-center h-10 bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-300 hover:px-2">
+          <div className="flex items-center px-4 group-hover:hidden transition-all duration-300">
+            <span className="text-[10px] font-bold text-muted-foreground/40">GO</span>
+            <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[150px]">
+              {pathPieces.length === 0 ? 'Home' : pathPieces[0]}
+            </span>
+            {pathPieces.length > 1 && (
+              <>
+                <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
+                <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[80px]">
+                  {pathPieces[pathPieces.length - 1].replace(/-/g, ' ')}
+                </span>
+              </>
+            )}
+          </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={cn(
-          "absolute top-[68px] left-0 w-full bg-background border-b-4 border-foreground md:hidden overflow-hidden transition-all duration-300 ease-in-out z-40",
-          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-        )}
-      >
-        <div className="flex flex-col p-6 gap-6">
-          {navLinks.map((link) => (
-            <div key={link.name} className={cn(
-              "transform transition-transform duration-300 delay-100",
-              isOpen ? "translate-x-0" : "-translate-x-10"
-            )}>
-              <Link
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="text-3xl font-black uppercase hover:text-accent flex items-center gap-2"
-              >
-                <span className="text-accent">{'>'}</span> {link.name}
-              </Link>
+          <div className="hidden group-hover:flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+              return (
+                <Link 
+                  key={link.name} 
+                  href={link.href}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                    isActive 
+                      ? "bg-foreground text-background" 
+                      : "hover:bg-foreground/5 text-muted-foreground/60 hover:text-foreground"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Utility Pill */}
+        <div className="pointer-events-auto h-10 w-10 flex items-center justify-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm">
+          <ThemeToggle />
+        </div>
+      </div>
+
+      {/* Mobile HUD */}
+      <div className="md:hidden w-full flex flex-col items-center pointer-events-none">
+        <div className={cn(
+          "pointer-events-auto relative flex flex-col items-center bg-background/80 backdrop-blur-lg border border-foreground/5 shadow-lg transition-all duration-500 overflow-hidden",
+          isMobileMenuOpen ? "rounded-3xl w-full max-w-[280px]" : "rounded-full w-[200px]"
+        )}>
+          {/* Main Bar */}
+          <div className="flex items-center justify-between w-full h-11 px-4">
+            <Link href="/" className="text-[9px] font-black uppercase tracking-tighter truncate max-w-[80px]">
+              {isMobileMenuOpen ? "George" : (pathPieces[0] || "Home")}
+            </Link>
+            
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex items-center justify-center h-8 w-8 rounded-full bg-foreground/5 text-foreground transition-transform active:scale-90"
+            >
+              {isMobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
+            </button>
+
+            <div className="flex items-center">
+              <ThemeToggle />
             </div>
-          ))}
+          </div>
+
+          {/* Expanded Menu */}
+          <div className={cn(
+            "w-full flex flex-col items-center gap-2 transition-all duration-300",
+            isMobileMenuOpen ? "p-4 pt-0 max-h-[300px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+          )}>
+            <div className="w-full h-px bg-foreground/5 mb-2" />
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+              return (
+                <Link 
+                  key={link.name} 
+                  href={link.href}
+                  className={cn(
+                    "w-full py-3 px-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-center transition-all",
+                    isActive 
+                      ? "bg-accent text-accent-foreground" 
+                      : "bg-foreground/5 text-muted-foreground"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              )
+            })}
+          </div>
         </div>
       </div>
     </header>

@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { FormattedDate } from './FormattedDate'
 
 interface PostCardProps {
@@ -11,9 +10,6 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
-  series?: string
-  views?: number
-  isSelected?: boolean
 }
 
 export function PostCard({
@@ -23,9 +19,6 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
-  series,
-  views = 0,
-  isSelected = false,
 }: PostCardProps) {
   return (
     <article 
@@ -58,54 +51,50 @@ export function PostCard({
         </div>
       </div>
 
-      {isSelected && (
-        <div className="absolute top-0 left-0 w-2 h-full bg-foreground" />
-      )}
-      <Link href={`/post/${slug}`} className="block">
-        <h2 className={cn(
-          "text-xl md:text-2xl font-bold mb-2 transition-colors",
-          isSelected ? "text-accent-foreground" : "text-foreground hover:text-accent"
-        )}>
-          {title}
-        </h2>
-      </Link>
-      <p className={cn(
-        "mb-4 leading-relaxed",
-        isSelected ? "text-accent-foreground/90" : "text-muted-foreground"
-      )}>
-        {excerpt}
-      </p>
-      <div className="flex flex-wrap items-center gap-3 text-sm">
-        <span className={isSelected ? "text-accent-foreground/70" : "text-muted-foreground"}>
-          <FormattedDate date={createdAt} />
-        </span>
-        <span className={isSelected ? "text-accent-foreground" : "text-accent"}>|</span>
-        <span className={isSelected ? "text-accent-foreground/70" : "text-muted-foreground"}>
-          {readTime} min read
-        </span>
-        {tags.length > 0 && (
-          <>
-            <span className={isSelected ? "text-accent-foreground" : "text-accent"}>|</span>
-            <div className="flex flex-wrap gap-2">
-              {tags.slice(0, 3).map((tag) => (
-                <Link
-                  key={tag}
-                  href={`/tags/${tag}`}
-                  className={cn(
-                    "px-2 py-0.5 text-xs brutal-border transition-colors",
-                    isSelected 
-                      ? "bg-background text-foreground hover:bg-foreground hover:text-background border-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  #{tag}
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
+          <Link href={`/post/${slug}`} className="block group-hover:text-accent transition-colors">
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-none">
+              {title}
+            </h2>
+          </Link>
+
+          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground font-medium">
+            {excerpt}
+          </p>
+
+          <div className="flex flex-wrap gap-2 pt-1">
+            {tags.slice(0, 3).map((tag) => (
+              <Link
+                key={tag}
+                href={`/tags?tag=${encodeURIComponent(tag)}`}
+                className="text-[10px] font-bold uppercase tracking-wider text-accent/60 hover:text-accent transition-colors"
+              >
+                #{tag}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <Link 
+          href={`/post/${slug}`}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-2"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+          >
+            <path
+              d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z"
+              fill="currentColor"
+              fillRule="evenodd"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        </Link>
       </div>
     </article>
   )
 }
-

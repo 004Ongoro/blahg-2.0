@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="31" viewBox="0 0 88 31">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;display=swap');
+    </style>
+  </defs>
+  <rect width="88" height="31" fill="#1f0a0d"/>
+  <rect x="0" y="0" width="22" height="31" fill="#100305"/>
+  <text x="4" y="20" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="10" fill="#ff2a5f" font-weight="bold">⚡</text>
+  <rect x="22" y="4" width="1" height="23" fill="#ff2a5f" opacity="0.3"/>
+  <text x="28" y="14" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="7" fill="#ff2a5f" letter-spacing="0.5">SPITE</text>
+  <text x="28" y="24" font-family="'Share Tech Mono', 'Courier New', monospace" font-size="5" fill="#fca1b7" letter-spacing="0.3">powered_engine</text>
+  <rect x="0" y="0" width="88" height="31" fill="none" stroke="#ff2a5f" stroke-width="0.75" opacity="0.2"/>
+  <rect x="0" y="0" width="3" height="3" fill="#ff2a5f" opacity="0.6"/>
+  <rect x="85" y="28" width="3" height="3" fill="#ff2a5f" opacity="0.6"/>
+</svg>

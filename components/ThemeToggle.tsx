@@ -1,37 +1,23 @@
 'use client'
 
 import * as React from 'react'
-import { Moon, Sun, Monitor, Palette } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
-  // Avoid hydration mismatch
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) return null
 
-  const themes = [
-    { name: 'light', icon: Sun, label: 'Light' },
-    { name: 'dark', icon: Moon, label: 'Dark' },
-    { name: 'system', icon: Monitor, label: 'System' },
-  ]
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-40">

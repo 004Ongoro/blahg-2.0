@@ -90,61 +90,164 @@ export async function POST(req: Request) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>${subject}</title>
           <style>
-            @media only screen and (max-width: 600px) {
-              .main { width: 100% !important; border-left: none !important; border-right: none !important; box-shadow: none !important; }
-              .content { padding: 30px 20px !important; }
-              .header { padding: 30px 20px !important; }
-              .footer { padding: 30px 20px !important; }
+            body {
+              background-color: #ffffff;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+              color: #000000;
+              margin: 0;
+              padding: 0;
+              -webkit-font-smoothing: antialiased;
+            }
+            .wrapper {
+              padding: 20px;
+            }
+            .main {
+              max-width: 600px;
+              margin: 0 auto;
+              border: 1px solid #eeeeee;
+            }
+            .header {
+              padding: 40px;
+              border-bottom: 1px solid #000000;
+            }
+            .identity {
+              font-size: 10px;
+              font-weight: 900;
+              text-transform: uppercase;
+              letter-spacing: 0.3em;
+              margin-bottom: 40px;
+            }
+            .identity span { color: #ff3e00; }
+            .issue-meta {
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              color: #999999;
+              margin-bottom: 12px;
+            }
+            h1 {
+              color: #000000;
+              font-size: 32px;
+              font-weight: 900;
+              line-height: 1.1;
+              margin: 0 0 24px 0;
+              text-transform: uppercase;
+              letter-spacing: -0.02em;
+            }
+            .view-online {
+              font-size: 10px;
+              color: #ff3e00;
+              text-decoration: none;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+            }
+            .content {
+              padding: 40px;
+              font-size: 15px;
+              line-height: 1.6;
+              color: #333333;
             }
             .content p { margin-bottom: 24px; }
             .content h1, .content h2, .content h3 { 
-              margin-top: 40px; 
+              color: #000000;
+              margin-top: 48px; 
               margin-bottom: 16px; 
-              line-height: 1.1; 
+              line-height: 1.2;
               text-transform: uppercase;
               font-weight: 900;
-              letter-spacing: -0.02em;
             }
-            .content h1 { font-size: 32px; }
-            .content h2 { font-size: 28px; }
-            .content h3 { font-size: 24px; }
+            .content h1 { font-size: 24px; }
+            .content h2 { font-size: 20px; }
+            .content h3 { font-size: 18px; }
             .content img { 
               max-width: 100%; 
               height: auto; 
-              border: 4px solid #000; 
-              box-shadow: 8px 8px 0px #000; 
               margin: 32px 0;
               display: block;
+              border: 1px solid #eeeeee;
             }
             .content blockquote { 
               border-left: 8px solid #677db7; 
               margin: 32px 0; 
-              padding: 16px 24px; 
-              background: #fff7ed; 
+              padding: 16px 32px; 
+              background: #f9f9f9; 
               font-style: italic;
-              border-top: 2px solid #000;
-              border-right: 2px solid #000;
-              border-bottom: 2px solid #000;
+              color: #555555;
             }
             .content code { 
-              background: #e5e7eb; 
+              background: #f1f1f1; 
               padding: 2px 6px; 
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+              font-family: inherit;
               font-size: 0.9em;
-              border: 1px solid #000;
+              color: #000000;
+              font-weight: 700;
             }
             .content pre {
-              background: #1f2937;
-              color: #f9fafb;
-              padding: 20px;
-              border: 3px solid #000;
-              box-shadow: 6px 6px 0px #000;
+              background: #000000;
+              color: #ffffff;
+              padding: 32px;
               overflow-x: auto;
               margin: 32px 0;
+              font-size: 13px;
+              line-height: 1.5;
             }
-            .content ul, .content ol { margin-bottom: 24px; padding-left: 24px; }
+            .content ul, .content ol { margin-bottom: 24px; padding-left: 20px; }
             .content li { margin-bottom: 12px; }
-            .content hr { border: none; border-top: 4px solid #000; margin: 48px 0; }
+            .content hr { border: none; border-top: 1px solid #eeeeee; margin: 48px 0; }
+            
+            .footer {
+              background-color: #f9f9f9;
+              padding: 40px;
+              border-top: 1px solid #eeeeee;
+              text-align: left;
+            }
+            .footer-brand {
+              font-size: 12px;
+              font-weight: 900;
+              text-transform: uppercase;
+              letter-spacing: 0.2em;
+              margin-bottom: 8px;
+            }
+            .footer-sub {
+              font-size: 10px;
+              font-weight: 700;
+              color: #999999;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              margin-bottom: 24px;
+            }
+            .social-links {
+              margin-bottom: 32px;
+            }
+            .social-link {
+              color: #000000;
+              text-decoration: none;
+              font-weight: 800;
+              font-size: 10px;
+              margin-right: 20px;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+            }
+            .unsubscribe-info {
+              color: #bbbbbb;
+              font-size: 10px;
+              line-height: 1.8;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              font-weight: 600;
+            }
+            .unsubscribe-link {
+              color: #999999;
+              text-decoration: underline;
+            }
+            
+            @media only screen and (max-width: 600px) {
+              .main { border: none; }
+              .header, .content, .footer { padding: 24px; }
+              h1 { font-size: 28px; }
+            }
           </style>
         </head>
         <body style="margin: 0; padding: 0; background-color: #9ca3db; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
@@ -172,7 +275,7 @@ export async function POST(req: Request) {
               </div>
               
               <!-- Main Content -->
-              <div class="content" style="padding: 48px 40px; color: #000000; font-size: 19px; line-height: 1.6;">
+              <div class="content">
                 ${processedContent}
               </div>
 
@@ -228,11 +331,6 @@ export async function POST(req: Request) {
                 </div>
               </div>
             </div>
-            <!--[if mso]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
           </div>
         </body>
         </html>

@@ -4,6 +4,7 @@ import { AdminHeader } from '@/components/admin/AdminHeader'
 import { PostEditor } from '@/components/admin/PostEditor'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
+import { Edit3, Terminal } from 'lucide-react'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
   const post = await getPost(slug)
   
   return {
-    title: post ? `Edit: ${post.title} | dev.blog Admin` : 'Edit Post',
+    title: post ? `Edit: ${post.title} | Admin` : 'Edit Post',
   }
 }
 
@@ -43,12 +44,21 @@ export default async function EditPostPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-mono">
       <AdminHeader />
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">
-          <span className="text-accent">{'>'}</span> edit post
-        </h1>
+      <main className="max-w-5xl mx-auto px-4 py-12 md:py-24 w-full">
+        {/* Header Section */}
+        <header className="mb-12 border-b-2 border-foreground pb-8">
+          <div className="flex items-center gap-4">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-accent/10 text-accent px-2 py-0.5 rounded mb-2 inline-block">Record_Modifier</span>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                Edit <span className="text-accent italic">Post</span>
+              </h1>
+            </div>
+          </div>
+        </header>
+
         <PostEditor post={post} />
       </main>
     </div>

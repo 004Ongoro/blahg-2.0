@@ -8,6 +8,20 @@ import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
+import { 
+  Send, 
+  X, 
+  Eye, 
+  FileEdit, 
+  Hash, 
+  Layers, 
+  Clock, 
+  ArrowLeft,
+  Loader2,
+  Settings,
+  Monitor
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Post {
   _id: string
@@ -128,142 +142,139 @@ export function PostEditor({ post }: PostEditorProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Editor Panel */}
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-bold mb-2">title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
-              required
-            />
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-12 font-mono">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-12">
+        
+        {/* Editor Side */}
+        <div className="space-y-12">
+          <div className="space-y-8">
+            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">1. Metadata</h2>
 
-          <div>
-            <label className="block text-sm font-bold mb-2">
-              slug
-              <span className="text-muted-foreground font-normal ml-2">
-                (auto-generated)
-              </span>
-            </label>
-            <input
-              type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
-              required
-            />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">identity</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Transmission Title"
+                  className="w-full bg-background border-b-2 border-foreground/10 py-2 text-xl font-black uppercase tracking-tight focus:outline-none focus:border-accent transition-all"
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-bold mb-2">excerpt</label>
-            <textarea
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              rows={2}
-              maxLength={300}
-              className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-              required
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {excerpt.length}/300 characters
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-2">
-              tags
-              <span className="text-muted-foreground font-normal ml-2">
-                (comma-separated)
-              </span>
-            </label>
-            <input
-              type="text"
-              value={tagsInput}
-              onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="javascript, react, tutorial"
-              className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-bold mb-2">series (optional)</label>
-              <input
-                type="text"
-                value={series}
-                onChange={(e) => setSeries(e.target.value)}
-                list="series-list"
-                placeholder="e.g. Building in Public"
-                className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
-              />
-              <datalist id="series-list">
-                {allSeries.map((s) => (
-                  <option key={s} value={s} />
-                ))}
-              </datalist>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">slug_handle</label>
+                <input
+                  type="text"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  className="w-full bg-background border-b-2 border-foreground/10 py-2 text-sm font-bold text-muted-foreground focus:outline-none focus:border-accent transition-all"
+                  required
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-bold mb-2">series order</label>
-              <input
-                type="number"
-                value={seriesOrder}
-                onChange={(e) => setSeriesOrder(e.target.value)}
-                className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent"
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">brief_description</label>
+              <textarea
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+                rows={2}
+                maxLength={300}
+                placeholder="Short summary..."
+                className="w-full bg-background border-b-2 border-foreground/10 py-2 text-base font-medium focus:outline-none focus:border-accent transition-all resize-none"
+                required
               />
+              <div className="flex justify-end">
+                <span className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-widest">{excerpt.length}/300 chars</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">tag_array</label>
+                <input
+                  type="text"
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  placeholder="comma, separated, tags"
+                  className="w-full bg-background border-b-2 border-foreground/10 py-2 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">series_link</label>
+                  <input
+                    type="text"
+                    value={series}
+                    onChange={(e) => setSeries(e.target.value)}
+                    list="series-list"
+                    placeholder="None"
+                    className="w-full bg-background border-b-2 border-foreground/10 py-2 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                  />
+                  <datalist id="series-list">
+                    {allSeries.map((s) => (
+                      <option key={s} value={s} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">seq_index</label>
+                  <input
+                    type="number"
+                    value={seriesOrder}
+                    onChange={(e) => setSeriesOrder(e.target.value)}
+                    className="w-full bg-background border-b-2 border-foreground/10 py-2 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-bold">content (markdown)</label>
-              <span className="text-xs text-muted-foreground">
-                ~{readTime} min read
-              </span>
+          <div className="space-y-8">
+            <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">2. Payload</h2>
+              <div className="text-[8px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded tracking-widest text-muted-foreground">
+                ESTIMATED_READ: {readTime} MIN
+              </div>
             </div>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              rows={16}
-              className="w-full brutal-border bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent resize-none font-mono text-sm"
+              className="w-full bg-background border border-foreground/5 rounded-2xl p-8 font-mono text-base focus:outline-none focus:ring-1 ring-accent transition-all resize-none min-h-[600px] leading-relaxed"
+              placeholder="# Start writing transmission..."
               required
             />
           </div>
         </div>
 
-        {/* Preview Panel */}
-        <div className="flex flex-col">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-bold">preview</label>
-            <button
-              type="button"
-              onClick={() => setShowPreview(!showPreview)}
-              className="text-xs text-accent hover:underline lg:hidden"
-            >
-              {showPreview ? 'hide' : 'show'}
-            </button>
-          </div>
-          <div
-            className={`brutal-border bg-card p-6 flex-1 overflow-auto ${
-              showPreview ? '' : 'hidden lg:block'
-            }`}
-            style={{ minHeight: '400px', maxHeight: '600px' }}
-          >
-            {content ? (
-              <div
-                className="prose-brutal"
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
-            ) : (
-              <p className="text-muted-foreground text-center mt-8">
-                start typing to see preview...
-              </p>
+        {/* Preview Section */}
+        <div className="space-y-8">
+           <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">3. System Preview</h2>
+              <button
+                type="button"
+                onClick={() => setShowPreview(!showPreview)}
+                className="text-[10px] font-black uppercase tracking-widest text-accent hover:underline"
+              >
+                {showPreview ? 'hide_preview' : 'show_preview'}
+              </button>
+            </div>
+
+            {showPreview && (
+              <div className="border border-foreground/5 rounded-2xl p-8 bg-foreground/[0.01] animate-in fade-in slide-in-from-top-2">
+                {content ? (
+                  <div
+                    className="prose-brutal"
+                    dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  />
+                ) : (
+                  <p className="text-center py-20 text-[10px] font-black uppercase tracking-widest opacity-20">no data to render</p>
+                )}
+              </div>
             )}
-          </div>
         </div>
       </div>
 
@@ -279,25 +290,23 @@ export function PostEditor({ post }: PostEditorProps) {
           <span className="font-bold">publish immediately</span>
         </label>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            cancel
-          </Link>
-          {error && <span className="text-destructive text-sm">{error}</span>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="brutal-btn bg-accent text-accent-foreground px-6 py-2 font-bold disabled:opacity-50"
-          >
-            {loading
-              ? 'saving...'
-              : isEditing
-              ? 'update post'
-              : 'create post'}
-          </button>
+          <div className="flex items-center gap-3">
+            {error && <span className="text-destructive text-[8px] font-bold uppercase tracking-widest mr-2">{error}</span>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="h-10 px-6 bg-foreground text-background rounded-full font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <>
+                  <Send size={12} />
+                  {isEditing ? 'Update_Log' : 'Create_Log'}
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </form>

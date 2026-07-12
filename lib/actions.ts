@@ -1,6 +1,7 @@
 'use server'
 
 import { Resend } from 'resend'
+import { getBaseUrl } from '@/lib/utils'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -11,6 +12,7 @@ export async function sendContactEmail(formData: {
   message: string
 }) {
   const { name, email, subject, message } = formData
+  const baseUrl = getBaseUrl()
 
   if (!name || !email || !subject || !message) {
     return { error: 'All fields are required' }
@@ -18,8 +20,8 @@ export async function sendContactEmail(formData: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Contact Form Blog <george.blog@deepread.website>', 
-      to: ['george.blog@deepread.website'],
+      from: 'George Ongoro <george.blog@deepread.website>', 
+      to: 'george.blog@deepread.website',
       subject: `Contact Form: ${subject}`,
       replyTo: email,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,

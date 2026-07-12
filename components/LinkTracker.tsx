@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 
 declare global {
   interface Window {
@@ -10,6 +11,48 @@ declare global {
 
 export function LinkTracker() {
   useEffect(() => {
+    const VIBRANT_COLORS = [
+      '#ff007f', // Bright Pink
+      '#7000ff', // Electric Purple
+      '#00d4ff', // Neon Blue
+      '#00ff88', // Vibrant Green
+      '#ff5e00', // Hot Orange
+      '#d4ff00', // Acid Yellow
+      '#ff0033', // Deep Red
+      '#00f2ff', // Bright Teal
+      '#bc13fe', // Electric Purple
+      '#39ff14', // Neon Green
+    ];
+
+    let lastColorIndex = -1;
+
+    const getRandomColor = () => {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * VIBRANT_COLORS.length);
+      } while (newIndex === lastColorIndex);
+      
+      lastColorIndex = newIndex;
+      return VIBRANT_COLORS[newIndex];
+    };
+
+    // Initialize links with random colors
+    const initLinks = () => {
+      const links = document.querySelectorAll('.prose-brutal a');
+      links.forEach((link) => {
+        if (link instanceof HTMLElement) {
+          link.style.setProperty('--hover-color', getRandomColor());
+        }
+      });
+    };
+
+    // Run initialization
+    initLinks();
+
+    // Re-run after a short delay to catch any late-rendered content
+    const initTimeout = setTimeout(initLinks, 500);
+
+    // Analytics tracking
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
@@ -23,8 +66,35 @@ export function LinkTracker() {
       }
     };
 
+    // Dynamic hover color - change to a NEW random color on every hover
+    const handleLinkHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor && anchor.closest('.prose-brutal')) {
+        anchor.style.setProperty('--hover-color', getRandomColor());
+      }
+    };
+
+    // Global toast listener for static content
+    const handleToastEvent = (e: any) => {
+      const { message, type = 'success' } = e.detail || {};
+      if (!message) return;
+
+      if (type === 'success') toast.success(message);
+      else if (type === 'error') toast.error(message);
+      else toast(message);
+    };
+
     document.addEventListener('click', handleLinkClick);
-    return () => document.removeEventListener('click', handleLinkClick);
+    document.addEventListener('mouseenter', handleLinkHover, true);
+    window.addEventListener('toast', handleToastEvent);
+    
+    return () => {
+      clearTimeout(initTimeout);
+      document.removeEventListener('click', handleLinkClick);
+      document.removeEventListener('mouseenter', handleLinkHover, true);
+      window.removeEventListener('toast', handleToastEvent);
+    };
   }, []);
 
   return null

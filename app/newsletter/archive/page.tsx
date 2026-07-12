@@ -21,15 +21,15 @@ export default async function NewsletterArchivePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-5xl mx-auto px-4 py-12 w-full">
-        <div className="mb-12">
-          <h1 className="text-5xl md:text-7xl font-black uppercase mb-4 italic leading-none">
-            Issue <span className="text-accent">Archive</span>
+      <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">
+        <header className="mb-16">
+          <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 tracking-tighter">
+            Dispatches
           </h1>
-          <p className="text-xl font-bold text-muted-foreground max-w-2xl">
-            A collection of past insights on performance, architecture, and the business of software.
+          <p className="text-muted-foreground font-medium">
+            Past insights on performance, architecture, and the business of software.
           </p>
-        </div>
+        </header>
         
         <NewsletterArchive issues={issues} />
       </main>

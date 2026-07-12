@@ -31,7 +31,11 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'flex-start',
+            backgroundColor: '#efd6ac', // Wheat
+            border: '12px solid #04151f', // Ink Black
+            fontFamily: 'monospace',
+            padding: '40px',
+            boxSizing: 'border-box',
             justifyContent: 'space-between',
             backgroundColor: '#9ca3db',
             padding: '80px',
@@ -49,16 +53,47 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               </div>
               <div style={{ height: 4, flexGrow: 1, backgroundColor: '#000' }} />
             </div>
+            
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                alignItems: 'center',
+              }}
+            >
+              <span
+                style={{
+                  color: '#183a37',
+                  fontSize: '20px',
+                  fontWeight: 900,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                SYSTEM MODULE // BLOG
+              </span>
+            </div>
+          </div>
 
+          {/* Main Title Area */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+              justifyContent: 'center',
+              padding: '40px 0',
+            }}
+          >
             <h1
               style={{
-                fontSize: 84,
+                fontSize: '72px',
                 fontWeight: 900,
-                color: '#000',
-                lineHeight: 1,
+                color: '#04151f',
+                lineHeight: 1.1,
                 textTransform: 'uppercase',
                 margin: 0,
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.03em',
               }}
             >
               {title}
@@ -73,16 +108,29 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                 </div>
               ))}
             </div>
-            
+
             {readTime && (
-              <div style={{ backgroundColor: '#000', padding: '10px 20px', display: 'flex' }}>
-                <span style={{ color: '#fff', fontSize: 24, fontWeight: 900, textTransform: 'uppercase' }}>{readTime} MIN READ</span>
+              <div
+                style={{
+                  backgroundColor: '#183a37',
+                  padding: '8px 20px',
+                  border: '4px solid #04151f',
+                  boxShadow: '4px 4px 0px #04151f',
+                  display: 'flex',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#efd6ac',
+                    fontSize: '20px',
+                    fontWeight: 900,
+                  }}
+                >
+                  {readTime} MIN READ
+                </span>
               </div>
             )}
           </div>
-          
-          {/* Brutalist Shadow Effect */}
-          <div style={{ position: 'absolute', bottom: 40, right: 40, width: 200, height: 10, backgroundColor: '#000', opacity: 0.2 }} />
         </div>
       ),
       {

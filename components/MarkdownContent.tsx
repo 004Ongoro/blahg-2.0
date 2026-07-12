@@ -1,25 +1,15 @@
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
+import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
-import { CodeExecutor } from './CodeExecutor'
 
 interface MarkdownContentProps {
   content: string
 }
-
-const RUNNABLE_LANGS = [
-  'js', 'javascript', 
-  'ts', 'typescript', 
-  'python', 'py', 
-  'react', 'jsx', 'tsx',
-  'cpp', 'c++',
-  'go',
-  'java'
-]
 
 // Extract YouTube video ID from various URL formats
 function extractYouTubeId(url: string): string | null {
@@ -49,16 +39,17 @@ function processYouTubeEmbeds(content: string): string {
 
 // Add title bars to code blocks
 function processCodeBlocks(html: string): string {
+  // Even more robust regex to capture language even if other classes are present
   return html.replace(
-    /<pre><code class="hljs language-(\w+)">/g,
-    (_, lang) => {
+    /<pre><code\s+class="([^"]*?language-(\w+)[^"]*?)">/g,
+    (match, fullClass, lang) => {
       const displayLang = lang.charAt(0).toUpperCase() + lang.slice(1)
       const isRunnable = RUNNABLE_LANGS.includes(lang.toLowerCase())
       const runButton = isRunnable 
         ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:scale-95" onclick="window.runCode(this)">Run</button>`
         : ''
       
-      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span>${runButton}<button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent)">Copy</button></div><pre><code class="hljs language-${lang}">`
+      return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span><button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Code copied!', type: 'success' } })); })">Copy</button></div><pre><code class="${fullClass}">`
     }
   ).replace(
     /<\/code><\/pre>/g,
@@ -68,14 +59,23 @@ function processCodeBlocks(html: string): string {
 
 // Inject paperclip icons for section links
 function processHeadings(html: string): string {
+  // More robust regex to match headings with an id attribute, potentially among other attributes
   return html.replace(
-    /<(h[1-6])\s+id="([^"]+)">(.+?)<\/\1>/g,
-    (match, tag, id, content) => {
-      return `<${tag} id="${id}" class="group flex items-center gap-2">
+    /<(h[1-6])([^>]*?\s+id="([^"]+)"[^>]*?)>(.*?)<\/\1>/gi,
+    (match, tag, attributes, id, content) => {
+      // Remove the id from attributes if it exists to avoid duplication when we manually add it back
+      const cleanAttributes = attributes.replace(/\s+id="[^"]+"/, '').trim();
+      const extraClasses = cleanAttributes.match(/class="([^"]+)"/);
+      const otherAttrs = cleanAttributes.replace(/class="[^"]+"/, '').trim();
+      
+      const baseClass = "group flex items-center gap-2";
+      const finalClass = extraClasses ? `${baseClass} ${extraClasses[1]}` : baseClass;
+
+      return `<${tag} id="${id}" class="${finalClass}" ${otherAttrs}>
         <span>${content}</span>
         <button 
-          onclick="const url = new URL(window.location.href); url.hash = '${id}'; navigator.clipboard.writeText(url.href);"
-          class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded text-muted-foreground inline-flex items-center justify-center"
+          onclick="const url = window.location.origin + window.location.pathname + '#' + '${id}'; (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); }).catch(() => { const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Section link copied!', type: 'success' } })); });"
+          class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-muted rounded text-muted-foreground inline-flex items-center justify-center cursor-pointer"
           title="Copy link to section"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -110,6 +110,39 @@ function processLinks(html: string): string {
   })
 }
 
+// Wrap images in a designed frame with captions
+function processImages(html: string): string {
+  // Match images that are potentially wrapped in paragraphs (common in markdown)
+  // Group 1: full tag inside P, Group 2: attributes inside P
+  // Group 3: full standalone tag, Group 4: attributes standalone
+  const imgRegex = /<p>(<img\s+([^>]*?)>)<\/p>|(<img\s+([^>]*?)>)/g;
+  
+  return html.replace(imgRegex, (match, wrappedImg, wrappedAttrs, standaloneImg, standaloneAttrs) => {
+    const attrs = wrappedAttrs || standaloneAttrs;
+    
+    const srcMatch = attrs.match(/src="([^"]*)"/);
+    const altMatch = attrs.match(/alt="([^"]*)"/);
+    const titleMatch = attrs.match(/title="([^"]*)"/);
+    
+    const src = srcMatch ? srcMatch[1] : '';
+    const alt = altMatch ? altMatch[1] : '';
+    const title = titleMatch ? titleMatch[1] : '';
+    
+    // If no src, something is wrong, return original
+    if (!src) return match;
+    
+    const captionText = alt || title;
+    const caption = captionText ? `<figcaption class="image-caption">${captionText}</figcaption>` : '';
+    
+    return `<figure class="image-figure">
+      <div class="image-frame">
+        <img ${attrs}>
+        ${caption}
+      </div>
+    </figure>`;
+  });
+}
+
 // Implement custom syntax for highlights
 function processCustomSyntax(content: string): string {
   let processed = content.replace(/!!(.+?)!!/g, '<span class="definition-highlight">$1</span>')
@@ -119,36 +152,41 @@ function processCustomSyntax(content: string): string {
 
 // Process side-notes/callouts by injecting markers
 function injectSideNoteMarkers(content: string): string {
-  const sideNoteRegex = /:::(note|warning|tip|info)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
+  const sideNoteRegex = /:::(note|warning|tip|info|sponsor)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
   
   return content.replace(sideNoteRegex, (match, type, title, body) => {
-    return `\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n${body}\n:::CALLOUT_CLOSE:::\n`
+    // Use double newlines to ensure Remark treats these as separate paragraphs
+    return `\n\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n\n${body}\n\n:::CALLOUT_CLOSE:::\n\n`
   })
 }
 
 // Apply final HTML for side-notes
 function applySideNotes(html: string): string {
-  const openRegex = /<p>:::CALLOUT_OPEN:(note|warning|tip|info):(.*?)?:::<\/p>/g
-  const closeRegex = /<p>:::CALLOUT_CLOSE:::<\/p>/g
+  // Even more flexible regex to match callout markers anywhere
+  const openRegex = /(?:<p>\s*)?:::CALLOUT_OPEN:(note|warning|tip|info|sponsor):(.*?)?:::(?:\s*<\/p>)?/g
+  const closeRegex = /(?:<p>\s*)?:::CALLOUT_CLOSE:::(?:\s*<\/p>)?/g
 
   const defaultTitles = {
     note: 'Note',
     warning: 'Warning',
     tip: 'Pro-Tip',
-    info: 'Information'
+    info: 'Information',
+    sponsor: 'Sponsored'
   }
 
   const icons = {
     note: '📝',
     warning: '⚠️',
     tip: '💡',
-    info: 'ℹ️'
+    info: 'ℹ️',
+    sponsor: '🤝'
   }
 
   let processed = html.replace(openRegex, (match, type, title) => {
     const displayTitle = (title || defaultTitles[type as keyof typeof defaultTitles]).trim()
     const icon = icons[type as keyof typeof icons]
     
+    // We use a div here, so we must ensure we aren't leaving stray P tags if we didn't match them
     return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">`
   })
 
@@ -163,6 +201,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
   
   const result = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeSlug)
     .use(rehypeHighlight, { detect: true })
@@ -171,6 +210,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
 
   // Post-process HTML
   let finalHtml = applySideNotes(String(result))
+  finalHtml = processImages(finalHtml)
   finalHtml = processCodeBlocks(finalHtml)
   finalHtml = processHeadings(finalHtml)
   finalHtml = processLinks(finalHtml)
@@ -178,7 +218,6 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
   return (
     <>
       <LinkTracker />
-      <CodeExecutor />
       <div
         className="prose-brutal"
         dangerouslySetInnerHTML={{ __html: finalHtml }}

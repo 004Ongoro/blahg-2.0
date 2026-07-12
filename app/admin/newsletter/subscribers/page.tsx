@@ -1,9 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { AdminHeader } from '@/components/admin/AdminHeader'
-import { Trash2, UserCheck, UserX, Search, Mail, Calendar } from 'lucide-react'
+import { 
+  Trash2, 
+  UserCheck, 
+  UserX, 
+  Search, 
+  Mail, 
+  Calendar, 
+  ArrowLeft, 
+  Users, 
+  Activity, 
+  Filter,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 export default function SubscribersPage() {
   const [subscribers, setSubscribers] = useState<any[]>([])
@@ -54,7 +68,6 @@ export default function SubscribersPage() {
       })
       if (res.ok) {
         setSubscribers(subscribers.map(s => s._id === id ? { ...s, active: !currentStatus } : s))
-        // Also update active stats locally or re-fetch stats
         setStats(prev => ({
           ...prev,
           active: prev.active + (currentStatus ? -1 : 1)
@@ -70,7 +83,6 @@ export default function SubscribersPage() {
     try {
       const res = await fetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
-        // Re-fetch to keep pagination and stats consistent
         fetchSubscribers(pagination.page, search)
       }
     } catch (err) {
@@ -79,41 +91,66 @@ export default function SubscribersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background font-mono pb-20">
       <AdminHeader />
-      <main className="max-w-6xl mx-auto px-4 py-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div>
-            <Link href="/admin/newsletter" className="text-xs font-bold uppercase text-accent hover:underline mb-2 block">
-              ← Back to Broadcast Center
-            </Link>
-            <h1 className="text-4xl font-black uppercase italic">
-              Subscriber <span className="text-accent">List</span>
-            </h1>
+      
+      <main className="max-w-5xl mx-auto px-4 py-12 md:py-20 w-full">
+        {/* Header Section */}
+        <header className="mb-12 border-b-2 border-foreground pb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+              <Link 
+                href="/admin/newsletter"
+                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft size={12} /> Back to dispatch
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                Audience_<span className="text-accent italic">Nodes</span>
+              </h1>
+            </div>
+
+            <div className="relative w-full md:w-80 group">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-accent transition-colors" />
+              <input
+                type="text"
+                placeholder="Search database..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-background border border-foreground/10 rounded-full pl-10 pr-4 h-11 text-sm font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
+              />
+            </div>
           </div>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-            <input
-              type="text"
-              placeholder="Search emails..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full brutal-border bg-card pl-10 pr-4 py-2 font-bold focus:ring-2 ring-accent outline-none"
-            />
-          </div>
+        </header>
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {[
+            { label: 'Total Audience', value: stats.total, icon: <Users size={12} /> },
+            { label: 'Active Nodes', value: stats.active, icon: <Activity size={12} />, accent: true },
+            { label: 'Query Match', value: pagination.total, icon: <Filter size={12} /> }
+          ].map((stat, i) => (
+            <div key={i} className="space-y-1">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                {stat.icon} {stat.label}
+              </div>
+              <div className={cn("text-4xl font-black tracking-tighter leading-none", stat.accent && "text-accent")}>
+                {stat.value}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {loading && subscribers.length === 0 ? (
-          <div className="grid gap-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-20 brutal-border bg-card animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {subscribers.length === 0 ? (
-              <div className="brutal-border p-8 text-center bg-card text-muted-foreground font-bold italic">
-                {search ? `No subscribers matching "${search}"` : 'No subscribers found.'}
+        {/* List Section */}
+        <section className="space-y-4">
+          <div className="divide-y divide-foreground/5 border-t border-foreground/5">
+            {loading && subscribers.length === 0 ? (
+              [...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 animate-pulse bg-foreground/[0.01]" />
+              ))
+            ) : subscribers.length === 0 ? (
+              <div className="py-20 text-center opacity-40">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Sector is empty</p>
               </div>
             ) : (
               <div className="grid gap-4">
@@ -132,94 +169,44 @@ export default function SubscribersPage() {
                       <div className="w-10 h-10 bg-accent flex items-center justify-center brutal-border">
                         <Mail size={20} className="text-accent-foreground" />
                       </div>
-                      <span className="font-black truncate">{sub.email}</span>
                     </div>
                     
-                    <div className="col-span-3 flex items-center gap-2 text-sm font-bold text-muted-foreground">
-                      <Calendar size={14} />
-                      {new Date(sub.subscribedAt).toLocaleDateString()}
-                    </div>
-
-                    <div className="col-span-2 flex justify-center">
-                      <button
-                        onClick={() => toggleStatus(sub._id, sub.active)}
-                        className={`px-3 py-1 brutal-border text-[10px] font-black uppercase transition-colors ${
-                          sub.active ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
-                        }`}
-                      >
-                        {sub.active ? 'Active' : 'Inactive'}
-                      </button>
-                    </div>
-                    
-                    <div className="col-span-2 flex justify-end gap-2">
-                      <button 
-                        onClick={() => toggleStatus(sub._id, sub.active)}
-                        title={sub.active ? "Deactivate" : "Activate"}
-                        className="p-2 brutal-border bg-secondary hover:bg-accent transition-colors"
-                      >
-                        {sub.active ? <UserX size={16} /> : <UserCheck size={16} />}
-                      </button>
-                      <button 
-                        onClick={() => deleteSubscriber(sub._id)}
-                        className="p-2 brutal-border bg-destructive text-destructive-foreground hover:bg-red-700 transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                      <div className="flex flex-col">
+                        <span>Joined</span>
+                        <span className="text-foreground/60">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span>Object ID</span>
+                        <span className="opacity-40">{sub._id.slice(-8)}</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-
-                {/* Pagination Controls */}
-                {pagination.pages > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-4">
-                    <button
-                      onClick={() => fetchSubscribers(pagination.page - 1, search)}
-                      disabled={pagination.page === 1}
-                      className="px-4 py-2 brutal-border bg-card font-black uppercase text-xs disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
+                  
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => toggleStatus(sub._id, sub.active)}
+                      className={cn(
+                        "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+                        sub.active 
+                          ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
+                          : "bg-accent text-accent-foreground hover:opacity-90"
+                      )}
                     >
-                      Prev
+                      {sub.active ? 'DEACTIVATE' : 'RESTORE'}
                     </button>
-                    <div className="flex gap-1">
-                      {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(p => {
-                        // Show only a few page numbers if there are many
-                        if (
-                          p === 1 || 
-                          p === pagination.pages || 
-                          (p >= pagination.page - 1 && p <= pagination.page + 1)
-                        ) {
-                          return (
-                            <button
-                              key={p}
-                              onClick={() => fetchSubscribers(p, search)}
-                              className={`w-10 h-10 brutal-border font-black ${
-                                pagination.page === p ? 'bg-accent text-accent-foreground' : 'bg-card hover:bg-accent/50'
-                              }`}
-                            >
-                              {p}
-                            </button>
-                          )
-                        } else if (
-                          p === pagination.page - 2 || 
-                          p === pagination.page + 2
-                        ) {
-                          return <span key={p} className="flex items-end pb-2">...</span>
-                        }
-                        return null
-                      })}
-                    </div>
-                    <button
-                      onClick={() => fetchSubscribers(pagination.page + 1, search)}
-                      disabled={pagination.page === pagination.pages}
-                      className="px-4 py-2 brutal-border bg-card font-black uppercase text-xs disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
+                    <button 
+                      onClick={() => deleteSubscriber(sub._id)}
+                      className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
+                      title="Purge Record"
                     >
-                      Next
+                      <Trash2 size={14} />
                     </button>
                   </div>
-                )}
-              </div>
+                </div>
+              ))
             )}
           </div>
-        )}
 
         {/* Enhanced Stats Footer */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -254,13 +241,9 @@ export default function SubscribersPage() {
                   Showing {subscribers.length} of {pagination.total} results
                 </span>
               </div>
-            ) : (
-              <div className="flex items-center h-full">
-                <span className="text-sm font-bold uppercase italic text-muted-foreground">No active search filter</span>
-              </div>
-            )}
-          </div>
-        </div>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   )

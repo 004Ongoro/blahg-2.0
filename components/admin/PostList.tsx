@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
+import { Eye, Edit3, Trash2, Clock, Hash, Layers, CheckCircle2, Circle } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Post {
   _id: string
@@ -44,75 +46,84 @@ export function PostList({ posts }: PostListProps) {
 
   if (posts.length === 0) {
     return (
-      <div className="brutal-border brutal-shadow bg-card p-8 text-center">
-        <p className="text-muted-foreground mb-2">no posts yet.</p>
-        <Link href="/admin/new" className="text-accent hover:underline">
-          create your first post &rarr;
+      <div className="py-20 text-center opacity-40">
+        <p className="text-xs font-black uppercase tracking-[0.3em] mb-4">No records found</p>
+        <Link href="/admin/new" className="text-[10px] font-bold uppercase tracking-widest text-accent hover:underline">
+          Initialize first entry &rarr;
         </Link>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="divide-y divide-foreground/5">
       {posts.map((post) => (
         <div
           key={post._id}
-          className="brutal-border brutal-shadow bg-card p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+          className="group flex flex-col md:flex-row md:items-center justify-between gap-6 py-8 transition-all"
         >
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold truncate">{post.title}</h3>
-              <span
-                className={`text-xs px-2 py-0.5 brutal-border ${
-                  post.published
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {post.published ? 'published' : 'draft'}
-              </span>
+          <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border",
+                post.published 
+                  ? "bg-accent/5 text-accent border-accent/10" 
+                  : "bg-foreground/5 text-muted-foreground border-foreground/10"
+              )}>
+                {post.published ? 'LIVE' : 'DRAFT'}
+              </div>
+              <h3 className="text-base font-black uppercase tracking-tight truncate leading-none group-hover:text-accent transition-colors">
+                {post.title}
+              </h3>
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span>{formatDate(post.createdAt)}</span>
-              <span>|</span>
-              <span>{post.readTime} min read</span>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+              <span className="flex items-center gap-1.5">
+                <Clock size={12} className="opacity-40" />
+                {formatDate(post.createdAt)}
+              </span>
+              
+              <span className="flex items-center gap-1.5">
+                <Hash size={12} className="opacity-40" />
+                {post.readTime} MIN
+              </span>
+
               {post.series && (
-                <>
-                  <span>|</span>
-                  <span className="font-bold text-accent">Series: {post.series} (#{post.seriesOrder})</span>
-                </>
-              )}
-              {post.tags.length > 0 && (
-                <>
-                  <span>|</span>
-                  <span>{post.tags.join(', ')}</span>
-                </>
+                <span className="flex items-center gap-1.5 text-accent/60">
+                  <Layers size={12} className="opacity-40" />
+                  {post.series} [{post.seriesOrder}]
+                </span>
               )}
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             {post.published && (
               <Link
                 href={`/post/${post.slug}`}
-                className="text-sm text-muted-foreground hover:text-foreground"
                 target="_blank"
+                className="h-10 w-10 flex items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground hover:text-background transition-all"
+                title="View Live"
               >
-                view
+                <Eye size={16} />
               </Link>
             )}
+            
             <Link
               href={`/admin/edit/${post.slug}`}
-              className="brutal-btn bg-secondary text-secondary-foreground px-3 py-1 text-sm font-bold"
+              className="h-10 px-6 flex items-center gap-2 rounded-full bg-foreground text-background text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all"
             >
-              edit
+              <Edit3 size={14} />
+              Edit
             </Link>
+
             <button
               onClick={() => handleDelete(post.slug)}
               disabled={deletingSlug === post.slug}
-              className="brutal-btn bg-destructive text-destructive-foreground px-3 py-1 text-sm font-bold disabled:opacity-50"
+              className="h-10 w-10 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all disabled:opacity-50"
+              title="Delete Record"
             >
-              {deletingSlug === post.slug ? '...' : 'delete'}
+              {deletingSlug === post.slug ? '...' : <Trash2 size={16} />}
             </button>
           </div>
         </div>

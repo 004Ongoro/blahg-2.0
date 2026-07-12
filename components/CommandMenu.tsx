@@ -60,7 +60,7 @@ export function CommandMenu() {
             <Button
               variant="outline"
               size="icon"
-              className="w-12 h-12 brutal-border brutal-shadow hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)] transition-all bg-accent text-accent-foreground"
+              className="w-12 h-12 brutal-border brutal-shadow hover:-translate-y-1 transition-all bg-accent text-accent-foreground"
               onClick={() => setOpen(true)}
             >
               <Keyboard className="h-6 w-6" />
@@ -76,7 +76,7 @@ export function CommandMenu() {
       <CommandDialog 
         open={open} 
         onOpenChange={setOpen}
-        className="brutal-border brutal-shadow rounded-none border-4 border-foreground"
+        className="brutal-border brutal-shadow"
       >
         <CommandInput 
           placeholder="Type a command or search posts..." 

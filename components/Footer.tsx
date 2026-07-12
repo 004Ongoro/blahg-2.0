@@ -20,7 +20,7 @@ export function Footer() {
         
         {/* Brand & Bio */}
         <div className="md:col-span-5 space-y-8">
-          <div className="inline-block p-4 brutal-border bg-accent text-accent-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] transform -rotate-2 hover:rotate-0 transition-transform">
+          <div className="inline-block p-4 brutal-border bg-accent text-accent-foreground transform -rotate-2 hover:rotate-0 transition-transform">
             <h3 className="text-4xl font-black uppercase italic tracking-tighter">george.2.0</h3>
           </div>
           
@@ -37,7 +37,7 @@ export function Footer() {
         <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8">
           
           {/* Socials Grid */}
-          <div className="p-6 brutal-border bg-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] flex flex-col">
+          <div className="p-6 brutal-border bg-background flex flex-col">
             <h4 className="font-black uppercase tracking-widest text-xl border-b-4 border-foreground pb-3 flex justify-between items-center mb-6">
               Connect <ArrowUpRight size={24} className="text-accent" />
             </h4>
@@ -48,7 +48,7 @@ export function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center p-4 brutal-border bg-card hover:bg-accent hover:text-accent-foreground hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:-translate-y-1 hover:-translate-x-1 transition-all group"
+                  className="flex flex-col items-center justify-center p-4 brutal-border bg-card hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:-translate-x-1 transition-all group"
                   title={s.name}
                 >
                   <span className="group-hover:scale-110 transition-transform group-hover:-rotate-6">{s.icon}</span>
@@ -62,7 +62,7 @@ export function Footer() {
 
           {/* Open Source & Copyright */}
           <div className="flex flex-col gap-8">
-            <div className="p-6 brutal-border bg-secondary text-secondary-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
+            <div className="p-6 brutal-border bg-secondary text-secondary-foreground hover:-translate-y-0.5 transition-all">
                <h4 className="font-black uppercase tracking-widest text-lg mb-3">Open Source</h4>
                <p className="text-sm font-bold mb-6 leading-relaxed">
                  Created by <a href='https://github.com/004Ongoro' target='_blank' className='text-accent hover:underline decoration-2 underline-offset-4'>@004Ongoro</a>. <br/>

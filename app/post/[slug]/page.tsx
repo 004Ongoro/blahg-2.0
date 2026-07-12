@@ -257,7 +257,7 @@ export default async function PostPage({ params }: Props) {
                   <Link
                     key={tag}
                     href={`/tags/${tag}`}
-                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold brutal-border brutal-shadow hover:bg-accent hover:text-accent-foreground transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
+                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold brutal-border brutal-shadow hover:bg-accent hover:text-accent-foreground transition-all hover:-translate-y-0.5"
                   >
                     #{tag}
                   </Link>

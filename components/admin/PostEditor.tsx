@@ -268,7 +268,7 @@ export function PostEditor({ post }: PostEditorProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t-3 brutal-border border-x-0 border-b-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t brutal-border border-x-0 border-b-0">
         <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"

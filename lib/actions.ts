@@ -24,12 +24,12 @@ export async function sendContactEmail(formData: {
       replyTo: email,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
       html: `
-        <div style="font-family: sans-serif; padding: 20px; border: 3px solid #232528; box-shadow: 4px 4px 0 #232528;">
-          <h2 style="border-bottom: 2px solid #232528; padding-bottom: 10px;">New Contact Message</h2>
+        <div style="font-family: sans-serif; padding: 20px; border: 3px solid #191308; box-shadow: 4px 4px 0 #191308;">
+          <h2 style="border-bottom: 2px solid #191308; padding-bottom: 10px;">New Contact Message</h2>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Subject:</strong> ${subject}</p>
-          <div style="margin-top: 20px; padding: 15px; background-color: #eaf6ff; border: 2px solid #232528;">
+          <div style="margin-top: 20px; padding: 15px; background-color: #9ca3db; border: 2px solid #191308;">
             <strong>Message:</strong><br/>
             <pre style="white-space: pre-wrap;">${message}</pre>
           </div>

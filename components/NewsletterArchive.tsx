@@ -39,7 +39,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
           placeholder="Search for an issue..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full brutal-border bg-card py-4 pl-12 pr-4 font-bold text-lg focus:ring-4 ring-accent outline-none placeholder:opacity-50 transition-all shadow-[4px_4px_0px_#000] focus:shadow-[8px_8px_0px_#000] focus:translate-x-[-4px] focus:translate-y-[-4px]"
+          className="w-full brutal-border bg-card py-4 pl-12 pr-4 font-bold text-lg focus:ring-4 ring-accent outline-none placeholder:opacity-50 transition-all"
         />
       </div>
 
@@ -52,7 +52,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
           </h2>
           <Link 
             href={`/newsletter/archive/${latestIssue.slug}`}
-            className="block brutal-border bg-accent text-accent-foreground p-8 brutal-shadow hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_#000] transition-all group relative overflow-hidden"
+            className="block brutal-border bg-accent text-accent-foreground p-8 brutal-shadow hover:-translate-y-1 transition-all group relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <Mail size={120} />
@@ -95,7 +95,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {otherIssues.length === 0 ? (
-            <div className="col-span-full brutal-border p-12 bg-card text-center font-bold italic text-muted-foreground shadow-[4px_4px_0px_#000]">
+            <div className="col-span-full brutal-border p-12 bg-card text-center font-bold italic text-muted-foreground">
               {search ? "No issues match your search." : "No other issues found."}
             </div>
           ) : (
@@ -105,7 +105,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
                 <Link 
                   key={issue._id} 
                   href={`/newsletter/archive/${issue.slug}`}
-                  className="brutal-border bg-card p-6 brutal-shadow hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_#000] transition-all group flex flex-col justify-between"
+                  className="brutal-border bg-card p-6 brutal-shadow hover:-translate-y-1 transition-all group flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex justify-between items-start mb-4">
@@ -132,7 +132,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
       </section>
 
       {/* Subscribe Footer CTA */}
-      <section className="mt-20 p-12 brutal-border bg-secondary text-center relative overflow-hidden shadow-[8px_8px_0px_#000]">
+      <section className="mt-20 p-12 brutal-border bg-secondary text-center relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl font-black uppercase italic mb-4">Missing out on the next one?</h2>
           <p className="text-lg font-bold mb-8 max-w-xl mx-auto">

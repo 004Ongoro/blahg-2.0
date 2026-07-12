@@ -12,11 +12,11 @@ export default function NotFound() {
           100% { transform: scale(1); opacity: 1; }
         }
         @keyframes glitch {
-          0% { transform: translateX(0); color: #ffa400; }
+          0% { transform: translateX(0); color: #677db7; }
           20% { transform: translateX(-2px); }
           40% { transform: translateX(2px); color: #000; }
           60% { transform: translateX(-2px); }
-          80% { transform: translateX(2px); color: #ffa400; }
+          80% { transform: translateX(2px); color: #677db7; }
           100% { transform: translateX(0); }
         }
         .animate-spring-in {
@@ -49,13 +49,13 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="flex items-center justify-center gap-2 bg-accent text-accent-foreground px-8 py-4 font-black uppercase brutal-border hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)] transition-all"
+            className="flex items-center justify-center gap-2 bg-accent text-accent-foreground px-8 py-4 font-black uppercase brutal-border hover:-translate-y-0.5 transition-all"
           >
             <Home size={20} /> Back to Safety
           </Link>
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-4 font-black uppercase brutal-border hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)] transition-all"
+            className="flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-4 font-black uppercase brutal-border hover:-translate-y-0.5 transition-all"
           >
             <AlertCircle size={20} /> Try Again
           </button>

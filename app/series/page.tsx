@@ -45,7 +45,7 @@ export default async function SeriesPage() {
             <Link 
               key={s.name} 
               href={`/series/${encodeURIComponent(s.name)}`}
-              className="brutal-border brutal-shadow bg-card p-6 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0_var(--foreground)] transition-all"
+              className="brutal-border brutal-shadow bg-card p-6 hover:-translate-y-1 transition-all"
             >
               <h2 className="text-2xl font-bold mb-2">{s.name}</h2>
               <div className="flex items-center justify-between text-sm">

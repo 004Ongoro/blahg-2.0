@@ -134,7 +134,7 @@ export default async function NewsletterIssuePage({ params }: Props) {
         <div className="flex justify-center">
           <Link
             href="/newsletter/archive"
-            className="brutal-border px-6 py-3 font-black uppercase text-sm hover:bg-muted transition-colors flex items-center gap-2 shadow-[4px_4px_0px_#000]"
+            className="brutal-border px-6 py-3 font-black uppercase text-sm hover:bg-muted transition-colors flex items-center gap-2"
           >
             <ArrowLeft size={16} /> All Issues
           </Link>

@@ -53,7 +53,7 @@ export function SeriesCard({ currentSlug, seriesName, posts }: SeriesCardProps) 
                 className={cn(
                   "flex items-center gap-3 p-2 transition-all font-bold text-sm border-2 border-transparent",
                   isCurrent 
-                    ? "bg-accent text-accent-foreground border-foreground shadow-[2px_2px_0_var(--foreground)]" 
+                    ? "bg-accent text-accent-foreground border-foreground" 
                     : "hover:bg-accent/10 hover:border-foreground/20"
                 )}
               >

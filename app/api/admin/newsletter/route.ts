@@ -117,7 +117,7 @@ export async function POST(req: Request) {
               display: block;
             }
             .content blockquote { 
-              border-left: 8px solid #ffa400; 
+              border-left: 8px solid #677db7; 
               margin: 32px 0; 
               padding: 16px 24px; 
               background: #fff7ed; 
@@ -147,17 +147,17 @@ export async function POST(req: Request) {
             .content hr { border: none; border-top: 4px solid #000; margin: 48px 0; }
           </style>
         </head>
-        <body style="margin: 0; padding: 0; background-color: #eaf6ff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-          <div style="background-color: #eaf6ff; padding: 40px 0;">
+        <body style="margin: 0; padding: 0; background-color: #9ca3db; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+          <div style="background-color: #9ca3db; padding: 40px 0;">
             <!--[if mso]>
             <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
             <tr>
             <td align="center" valign="top" width="600">
             <![endif]-->
-            <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #eaf6ff; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
+            <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #9ca3db; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
               
               <!-- Header -->
-              <div class="header" style="background-color: #ffa400; padding: 48px 40px; border-bottom: 4px solid #000000;">
+              <div class="header" style="background-color: #677db7; padding: 48px 40px; border-bottom: 4px solid #000000;">
                 <p style="margin: 0 0 16px 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.1em; color: #000;">
                   Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}
                 </p>
@@ -165,7 +165,7 @@ export async function POST(req: Request) {
                   ${subject}
                 </h1>
                 <div style="margin-top: 32px;">
-                  <a href="${baseUrl}/newsletter/archive/${slug}" style="display: inline-block; background-color: #eaf6ff; color: #000; text-decoration: none; font-size: 13px; font-weight: 900; padding: 10px 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; text-transform: uppercase;">
+                  <a href="${baseUrl}/newsletter/archive/${slug}" style="display: inline-block; background-color: #9ca3db; color: #000; text-decoration: none; font-size: 13px; font-weight: 900; padding: 10px 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; text-transform: uppercase;">
                     View in Browser ↗
                   </a>
                 </div>
@@ -178,7 +178,7 @@ export async function POST(req: Request) {
 
               <!-- CTA / Interaction -->
               <div style="padding: 0 40px 48px;">
-                <div style="border: 4px solid #000; padding: 32px; background-color: #009ffd; box-shadow: 8px 8px 0px #000;">
+                <div style="border: 4px solid #000; padding: 32px; background-color: #454b66; box-shadow: 8px 8px 0px #000;">
                   <h3 style="margin: 0 0 12px 0; font-weight: 900; text-transform: uppercase; font-size: 20px; line-height: 1;">
                     Let's Chat
                   </h3>
@@ -191,7 +191,7 @@ export async function POST(req: Request) {
               <!-- Footer -->
               <div class="footer" style="background-color: #000000; color: #ffffff; padding: 48px 40px;">
                 <div style="margin-bottom: 32px;">
-                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #ffa400;">
+                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #677db7;">
                     George Ongoro
                   </h2>
                   <p style="margin: 8px 0 0 0; font-weight: 700; font-size: 16px; color: #9ca3af;">
@@ -203,13 +203,13 @@ export async function POST(req: Request) {
                   <table border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td style="padding-right: 20px;">
-                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">GitHub</a>
+                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">GitHub</a>
                       </td>
                       <td style="padding-right: 20px;">
-                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">Twitter/X</a>
+                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">Twitter/X</a>
                       </td>
                       <td>
-                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #ffa400;">LinkedIn</a>
+                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">LinkedIn</a>
                       </td>
                     </tr>
                   </table>
@@ -217,7 +217,7 @@ export async function POST(req: Request) {
 
                 <div style="border-top: 2px solid #374151; padding-top: 32px;">
                   <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #ffa400; text-decoration: none;">code.geohack.top</a>. 
+                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #677db7; text-decoration: none;">code.geohack.top</a>. 
                     If you're no longer interested, you can unsubscribe at any time.
                   </p>
                   <p style="margin: 24px 0 0 0;">

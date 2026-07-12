@@ -86,7 +86,7 @@ export function ArchiveCalendar({ items }: ArchiveCalendarProps) {
                       key={item.id}
                       href={item.type === 'post' ? `/post/${item.slug}` : `/newsletter/archive/${item.slug}`}
                       className={cn(
-                        "text-[9px] sm:text-[10px] p-1.5 leading-tight font-bold brutal-border-sm flex items-center gap-1 transition-all hover:translate-x-[2px] hover:translate-y-[-2px] hover:shadow-[2px_2px_0_#000]",
+                        "text-[9px] sm:text-[10px] p-1.5 leading-tight font-bold brutal-border-sm flex items-center gap-1 transition-all",
                         item.type === 'post' ? "bg-white text-black" : "bg-foreground text-background"
                       )}
                     >

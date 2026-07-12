@@ -126,7 +126,7 @@ export default function SubscribersPage() {
                 {subscribers.map((sub) => (
                   <div 
                     key={sub._id} 
-                    className="brutal-border bg-card p-5 flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 hover:translate-x-[-2px] transition-transform"
+                    className="brutal-border bg-card p-5 flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 transition-transform"
                   >
                     <div className="col-span-5 flex items-center gap-3">
                       <div className="w-10 h-10 bg-accent flex items-center justify-center brutal-border">
@@ -223,7 +223,7 @@ export default function SubscribersPage() {
 
         {/* Enhanced Stats Footer */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="brutal-border bg-card p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
+          <div className="brutal-border bg-card p-6 transition-all">
             <p className="text-xs font-black uppercase text-muted-foreground mb-1">Total Audience</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black italic text-accent">{stats.total}</span>
@@ -231,7 +231,7 @@ export default function SubscribersPage() {
             </div>
           </div>
 
-          <div className="brutal-border bg-card p-6 shadow-[4px_4px_0px_0px_rgba(34,197,94,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(34,197,94,1)] transition-all">
+          <div className="brutal-border bg-card p-6 transition-all">
             <p className="text-xs font-black uppercase text-muted-foreground mb-1">Health Status</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-black italic text-green-600">{stats.active}</span>
@@ -241,7 +241,7 @@ export default function SubscribersPage() {
 
           <div className={`brutal-border p-6 transition-all ${
             search 
-              ? 'bg-accent/10 border-accent border-dashed shadow-[4px_4px_0px_0px_var(--color-accent)]' 
+              ? 'bg-accent/10 border-accent border-dashed ' 
               : 'bg-muted/30 border-muted-foreground/20 border-dashed opacity-60'
           }`}>
             <p className="text-xs font-black uppercase text-muted-foreground mb-1 flex items-center gap-2">

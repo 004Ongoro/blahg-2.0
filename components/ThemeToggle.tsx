@@ -42,7 +42,7 @@ export function ThemeToggle() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="w-12 h-12 brutal-border brutal-shadow hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)] transition-all bg-accent text-accent-foreground"
+                className="w-12 h-12 brutal-border brutal-shadow hover:-translate-y-0.5 transition-all bg-accent text-accent-foreground"
                 title="Change Theme"
               >
                 <Palette className="h-6 w-6" />

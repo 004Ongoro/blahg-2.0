@@ -32,8 +32,8 @@ export function PostCard({
       className={cn(
         "brutal-border brutal-shadow p-6 transition-all duration-200 relative overflow-hidden",
         isSelected 
-          ? "border-foreground shadow-[8px_8px_0_var(--foreground)] ring-2 ring-foreground ring-offset-2 ring-offset-background translate-x-1 bg-accent text-accent-foreground" 
-          : "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--foreground)] bg-card"
+          ? "border-foreground ring-2 ring-foreground ring-offset-2 ring-offset-background translate-x-1 bg-accent text-accent-foreground" 
+          : "hover:-translate-y-1 bg-card"
       )}
     >
       <div className="flex justify-between items-start mb-2 gap-4">
@@ -42,7 +42,7 @@ export function PostCard({
             <Link 
               href={`/series/${encodeURIComponent(series)}`}
               className={cn(
-                "px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[4px_4px_0_var(--foreground)]",
+                "px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 transition-all",
                 isSelected ? "bg-background text-foreground" : "bg-accent text-accent-foreground"
               )}
               onClick={(e) => e.stopPropagation()}

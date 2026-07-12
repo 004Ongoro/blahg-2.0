@@ -27,7 +27,7 @@ export function FloatingContactButton() {
           <TooltipTrigger asChild>
             <button
               onClick={() => setIsOpen(true)}
-              className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center rounded-none transition-all hover:scale-110 hover:-rotate-2 active:scale-95 active:rotate-2"
+              className="brutal-btn bg-accent text-accent-foreground p-4 flex items-center justify-center transition-transform hover:scale-105"
               aria-label="Contact me"
             >
               <MessageSquareIcon className="size-6" />
@@ -40,8 +40,8 @@ export function FloatingContactButton() {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="brutal-border brutal-shadow-lg rounded-none sm:max-w-md bg-background p-0 overflow-hidden border-[3px]">
-          <DialogHeader className="bg-primary text-primary-foreground p-6 border-b-[3px] border-primary">
+        <DialogContent className="brutal-border brutal-shadow-lg sm:max-w-md bg-background p-0 overflow-hidden">
+          <DialogHeader className="bg-primary text-primary-foreground p-6 border-b border-primary">
             <DialogTitle className="text-2xl font-black uppercase tracking-tighter flex items-center gap-2">
               <span className="text-accent">{'>'}</span> drop me a line
             </DialogTitle>

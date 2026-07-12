@@ -106,7 +106,7 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
                 "group relative flex items-center gap-2 px-4 py-2 brutal-border font-bold transition-all",
                 hasReacted 
                   ? "bg-foreground text-background cursor-default" 
-                  : "bg-background hover:bg-accent hover:text-accent-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_var(--foreground)] active:translate-x-[0] active:translate-y-[0] active:shadow-none"
+                  : "bg-background hover:bg-accent hover:text-accent-foreground hover:-translate-y-0.5 active:translate-x-[0] active:translate-y-[0] active:shadow-none"
               )}
             >
               <Icon className={cn("w-5 h-5", isAnimating && "animate-bounce")} />

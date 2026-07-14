@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
+import { StatusWidget } from '@/components/StatusWidget'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -79,21 +80,20 @@ export function Footer() {
             <div className="grid grid-cols-3 gap-3 flex-1 content-start">
               {socials.map((s) => (
                 <a
-                  key={social.name}
-                  href={social.href}
+                  key={s.name}
+                  href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col items-center justify-center p-4 brutal-border bg-card hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:-translate-x-1 transition-all group"
                   title={s.name}
                 >
-                  {social.icon}
+                  {s.icon}
                 </a>
               ))}
             </div>
           </div>
-        </div>
 
-          {/* Open Source & Copyright */}
+          {/* Open Source, Copyright & Badges */}
           <div className="flex flex-col gap-8">
             <div className="p-6 brutal-border bg-secondary text-secondary-foreground hover:-translate-y-0.5 transition-all">
                <h4 className="font-black uppercase tracking-widest text-lg mb-3">Open Source</h4>
@@ -106,32 +106,38 @@ export function Footer() {
                </a>
             </div>
             
+            <StatusWidget />
+            
             <div className="flex flex-col justify-end flex-1">
               <div className="p-5 border-4 border-dashed border-muted-foreground/20 bg-muted/10 flex flex-col gap-1 hover:border-accent/50 transition-colors">
                 <p className="font-black uppercase tracking-wider text-sm">© {new Date().getFullYear()} George Ongoro</p>
                 <p className="text-muted-foreground font-bold text-xs">// No rights reserved</p>
               </div>
             </div>
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
-            <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
-            <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
-            <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
-            <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
-            <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
+
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 mt-2">
+              <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
+                <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
+              </div>
+              <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
+                <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
+              </div>
+              <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
+                <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
+              </div>
+              <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
+                <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
+              </div>
+              <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
+                <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Copyright Bottom Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row col-span-12">
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             © {new Date().getFullYear()} George Ongoro — Built with Next.js & Pure Spite
           </p>

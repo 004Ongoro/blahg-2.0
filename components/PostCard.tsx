@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { FormattedDate } from './FormattedDate'
+import { cn } from '@/lib/utils'
 
 interface PostCardProps {
   title: string
@@ -10,6 +11,9 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
+  isSelected?: boolean
+  series?: string
+  views?: number
 }
 
 export function PostCard({
@@ -19,6 +23,9 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
+  isSelected = false,
+  series,
+  views = 0,
 }: PostCardProps) {
   return (
     <article 
@@ -51,6 +58,8 @@ export function PostCard({
         </div>
       </div>
 
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-4 flex-1">
           <Link href={`/post/${slug}`} className="block group-hover:text-accent transition-colors">
             <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-none">
               {title}

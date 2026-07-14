@@ -135,9 +135,10 @@ export default async function NewsletterIssuePage({ params }: Props) {
             <ArrowLeft size={16} /> All Issues
           </Link>
         </div>
-      </main>
+      </footer>
+    </main>
 
-      <Footer />
-    </div>
+    <Footer />
+  </div>
   )
 }

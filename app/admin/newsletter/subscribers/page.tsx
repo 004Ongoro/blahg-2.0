@@ -169,9 +169,10 @@ export default function SubscribersPage() {
                       <div className="w-10 h-10 bg-accent flex items-center justify-center brutal-border">
                         <Mail size={20} className="text-accent-foreground" />
                       </div>
+                      <span className="font-bold truncate text-sm">{sub.email}</span>
                     </div>
                     
-                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <div className="col-span-3 flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                       <div className="flex flex-col">
                         <span>Joined</span>
                         <span className="text-foreground/60">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
@@ -181,30 +182,41 @@ export default function SubscribersPage() {
                         <span className="opacity-40">{sub._id.slice(-8)}</span>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => toggleStatus(sub._id, sub.active)}
-                      className={cn(
-                        "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+
+                    <div className="col-span-2 md:text-center">
+                      <span className={cn(
+                        "inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-sm",
                         sub.active 
-                          ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
-                          : "bg-accent text-accent-foreground hover:opacity-90"
-                      )}
-                    >
-                      {sub.active ? 'DEACTIVATE' : 'RESTORE'}
-                    </button>
-                    <button 
-                      onClick={() => deleteSubscriber(sub._id)}
-                      className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
-                      title="Purge Record"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
+                          : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                      )}>
+                        {sub.active ? 'ACTIVE' : 'INACTIVE'}
+                      </span>
+                    </div>
+                    
+                    <div className="col-span-2 flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => toggleStatus(sub._id, sub.active)}
+                        className={cn(
+                          "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+                          sub.active 
+                            ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
+                            : "bg-accent text-accent-foreground hover:opacity-90"
+                        )}
+                      >
+                        {sub.active ? 'DEACTIVATE' : 'RESTORE'}
+                      </button>
+                      <button 
+                        onClick={() => deleteSubscriber(sub._id)}
+                        className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
+                        title="Purge Record"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
 
@@ -241,9 +253,10 @@ export default function SubscribersPage() {
                   Showing {subscribers.length} of {pagination.total} results
                 </span>
               </div>
-            </div>
-          )}
-        </section>
+            ) : null}
+          </div>
+        </div>
+      </section>
       </main>
     </div>
   )

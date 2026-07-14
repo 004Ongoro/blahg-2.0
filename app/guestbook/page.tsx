@@ -176,9 +176,10 @@ export default function GuestbookPage() {
             )}
           </div>
         </section>
-      </main>
-      
-      <Footer />
-    </div>
+      </div>
+    </main>
+    
+    <Footer />
+  </div>
   )
 }

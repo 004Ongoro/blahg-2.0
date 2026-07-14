@@ -104,23 +104,22 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
                       </span>
                       <span className="text-xs font-bold text-muted-foreground">
                         <FormattedDate date={issue.createdAt} />
-                      </div>
-
-                      <Link href={`/newsletter/archive/${issue.slug}`} className="block group-hover:text-accent transition-colors">
-                        <h4 className="text-xl font-black uppercase tracking-tighter leading-tight">
-                          {issue.subject}
-                        </h4>
-                      </Link>
+                      </span>
                     </div>
 
-                    <Link 
-                      href={`/newsletter/archive/${issue.slug}`}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-0"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    <div className="block group-hover:text-accent transition-colors">
+                      <h4 className="text-xl font-black uppercase tracking-tighter leading-tight">
+                        {issue.subject}
+                      </h4>
+                    </div>
                   </div>
-                </article>
+
+                  <div 
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-0"
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
               )
             })
           )}

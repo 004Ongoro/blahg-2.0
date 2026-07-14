@@ -308,7 +308,6 @@ export function PostEditor({ post }: PostEditorProps) {
             </button>
           </div>
         </div>
-      </div>
     </form>
   )
 }

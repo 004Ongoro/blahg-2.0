@@ -7,16 +7,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl()
 
 
-  // Fetch all published posts for the sitemap
-  await dbConnect()
-  const posts = await Post.find({ published: true }).select('slug updatedAt').lean()
+  let postUrls: any[] = []
 
-  const postUrls = posts.map((post) => ({
-    url: `${baseUrl}/post/${post.slug}`,
-    lastModified: post.updatedAt || new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  try {
+    // Fetch all published posts for the sitemap
+    await dbConnect()
+    const posts = await Post.find({ published: true }).select('slug updatedAt').lean()
+
+    postUrls = posts.map((post) => ({
+      url: `${baseUrl}/post/${post.slug}`,
+      lastModified: post.updatedAt || new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
+  } catch (error) {
+    console.error('Error fetching posts for sitemap, returning static routes only:', error)
+  }
 
   return [
     {

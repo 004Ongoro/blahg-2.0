@@ -3,7 +3,7 @@
 import { Resend } from 'resend'
 import { getBaseUrl } from '@/lib/utils'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key')
 
 export async function sendContactEmail(formData: {
   name: string

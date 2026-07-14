@@ -8,11 +8,16 @@ export const dynamic = 'force-static'
 export const revalidate = false
 
 async function getIssues() {
-  await dbConnect()
-  const issues = await NewsletterIssue.find({ published: true })
-    .sort({ createdAt: -1 })
-    .lean()
-  return JSON.parse(JSON.stringify(issues))
+  try {
+    await dbConnect()
+    const issues = await NewsletterIssue.find({ published: true })
+      .sort({ createdAt: -1 })
+      .lean()
+    return JSON.parse(JSON.stringify(issues))
+  } catch (error) {
+    console.error('Error fetching archive:', error)
+    return []
+  }
 }
 
 export default async function NewsletterArchivePage() {

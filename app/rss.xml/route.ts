@@ -11,13 +11,18 @@ export const dynamic = 'force-static'
 export const revalidate = 3600
 
 export async function GET() {
-  await dbConnect()
-  const posts = await Post.find({ published: true })
-    .sort({ createdAt: -1 })
-    .limit(20)
-    .lean()
-
+  let posts: any[] = []
   const baseUrl = getBaseUrl()
+
+  try {
+    await dbConnect()
+    posts = await Post.find({ published: true })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean()
+  } catch (error) {
+    console.error('Error fetching posts for RSS feed:', error)
+  }
 
   const items = await Promise.all(
     posts.map(async (post: any) => {

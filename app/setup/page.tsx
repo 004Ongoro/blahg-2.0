@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils'
 
 export const metadata = {
   title: 'Setup | George Ongoro',
-  description: 'A detailed look at my workstation, hardware configuration, local developer tools, and dotfiles.',
+  description: 'A detailed look at my active developer environment, local tools, and shell configurations.',
 }
 
 interface PageProps {
@@ -47,31 +47,16 @@ export default async function SetupPage({ searchParams }: PageProps) {
   // Format code content into markdown so MarkdownContent renders it with beautiful styles & syntax highlighting
   const markdownCodeBlock = `\`\`\`bash\n${codeContent}\n\`\`\``
 
-  // Map category strings to Lucide icons
-  const getHardwareIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case 'computer':
-        return <Laptop className="h-4 w-4 text-accent" />
-      case 'display':
-        return <Monitor className="h-4 w-4 text-accent" />
-      case 'keyboard':
-        return <Keyboard className="h-4 w-4 text-accent" />
-      case 'mouse':
-        return <Mouse className="h-4 w-4 text-accent" />
-      case 'audio':
-        return <Headphones className="h-4 w-4 text-accent" />
-      default:
-        return <Cpu className="h-4 w-4 text-accent" />
-    }
-  }
-
   const getSoftwareIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case 'os':
         return <Settings className="h-4 w-4 text-accent" />
       case 'editor':
+      case 'prompt':
         return <Code2 className="h-4 w-4 text-accent" />
       case 'terminal':
+      case 'shell':
+      case 'multiplexer':
         return <Terminal className="h-4 w-4 text-accent" />
       default:
         return <Cpu className="h-4 w-4 text-accent" />
@@ -86,71 +71,30 @@ export default async function SetupPage({ searchParams }: PageProps) {
         {/* Header section */}
         <header className="mb-16 text-center max-w-3xl mx-auto space-y-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase">
-            Setup <span className="text-accent italic">&</span> Stack
+            Terminal <span className="text-accent italic">&</span> Stack
           </h1>
           <p className="text-sm md:text-base text-muted-foreground font-medium uppercase tracking-wider">
-            A comprehensive log of my workstation gear, active developer ecosystem, and shell configurations.
+            A comprehensive log of my active developer environment and shell configurations.
           </p>
         </header>
 
         {/* Dynamic layout grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Columns - Hardware & Software */}
-          <div className="lg:col-span-5 space-y-12">
+          {/* Left Columns - Software Stack */}
+          <div className="lg:col-span-4 space-y-12">
             
-            {/* Hardware Section */}
-            <section className="space-y-6">
-              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">
-                Workstation Hardware
-              </h2>
-              
-              <div className="space-y-4">
-                {setupData.hardware.map((item, idx) => (
-                  <div 
-                    key={idx}
-                    className="p-5 border border-foreground/5 bg-background hover:-translate-y-0.5 transition-all duration-350 rounded-2xl shadow-sm flex gap-4"
-                  >
-                    <div className="h-9 w-9 rounded-xl bg-foreground/5 flex items-center justify-center shrink-0">
-                      {getHardwareIcon(item.category)}
-                    </div>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded text-muted-foreground tracking-wider">
-                          {item.category}
-                        </span>
-                      </div>
-                      <h3 className="text-sm font-black uppercase tracking-tight">{item.name}</h3>
-                      <p className="text-[11px] font-bold text-muted-foreground/60 leading-relaxed">
-                        {item.description}
-                      </p>
-                      {item.link && item.link !== '#' && (
-                        <a 
-                          href={item.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-accent hover:underline mt-1"
-                        >
-                          View Gear <ExternalLink size={8} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
             {/* Software Section */}
             <section className="space-y-6">
               <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">
                 Development Environment
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 {setupData.software.map((item, idx) => (
                   <div 
                     key={idx}
-                    className="p-5 border border-foreground/5 bg-background rounded-2xl shadow-xs space-y-3"
+                    className="p-5 border border-foreground/5 bg-background hover:-translate-y-0.5 transition-all duration-350 rounded-2xl shadow-sm space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded text-muted-foreground tracking-wider">
@@ -159,7 +103,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                       {getSoftwareIcon(item.category)}
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-xs font-black uppercase tracking-tight">{item.name}</h3>
+                      <h3 className="text-xs font-black uppercase tracking-tight text-foreground">{item.name}</h3>
                       <p className="text-[10px] font-bold text-muted-foreground/50 leading-relaxed">
                         {item.description}
                       </p>
@@ -172,7 +116,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           </div>
 
           {/* Right Columns - Interactive Dotfiles Shell */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-8 space-y-6">
             <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">
               Dotfiles & Configurations
             </h2>
@@ -253,3 +197,4 @@ export default async function SetupPage({ searchParams }: PageProps) {
     </div>
   )
 }
+

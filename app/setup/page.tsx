@@ -2,7 +2,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { MarkdownContent } from '@/components/MarkdownContent'
 import setupData from '@/lib/setup-data.json'
-import { fetchDotfileContent } from '@/lib/github'
+import { fetchDotfileContent, fetchRepoFiles } from '@/lib/github'
 import Link from 'next/link'
 import { 
   Laptop, 
@@ -30,11 +30,12 @@ interface PageProps {
 
 export default async function SetupPage({ searchParams }: PageProps) {
   const params = await searchParams
-  const files = setupData.github.files
-  const activeFileName = params.file || files[0].name
+  const files = await fetchRepoFiles()
+  const activeFileName = params.file || (files.length > 0 ? files[0].name : '')
   
   // Find currently active file config
   const activeFile = files.find(f => f.name === activeFileName) || files[0]
+
   
   // Fetch content for the active dotfile
   let codeContent = ''

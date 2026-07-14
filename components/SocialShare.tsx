@@ -80,13 +80,16 @@ export function SocialShare({ title, slug }: SocialShareProps) {
         <Button 
           variant="outline" 
           size="sm"
-          className="brutal-border brutal-shadow-sm transition-all font-bold gap-2"
+          className="rounded-full border-foreground/5 bg-background/70 backdrop-blur-md hover:bg-foreground/5 transition-all font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm"
         >
           <Share2 className="w-3.5 h-3.5" />
           <span>Share</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="brutal-border brutal-shadow w-48 font-bold">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-48 p-1.5 rounded-2xl border-foreground/10 bg-background/95 backdrop-blur-2xl shadow-xl font-bold"
+      >
         {shareLinks.map((link) => (
           <DropdownMenuItem 
             key={link.name} 

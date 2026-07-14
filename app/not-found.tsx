@@ -18,13 +18,9 @@ export default function NotFound() {
           from { transform: translateY(-100%); }
           to { transform: translateY(100%); }
         }
-        @keyframes glitch {
-          0% { transform: translateX(0); color: #677db7; }
-          20% { transform: translateX(-2px); }
-          40% { transform: translateX(2px); color: #000; }
-          60% { transform: translateX(-2px); }
-          80% { transform: translateX(2px); color: #677db7; }
-          100% { transform: translateX(0); }
+        @keyframes pulse-soft {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.1; }
         }
         .scanline {
           position: absolute;
@@ -80,14 +76,15 @@ export default function NotFound() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/"
-            className="flex items-center justify-center gap-2 bg-accent text-accent-foreground px-8 py-4 font-black uppercase brutal-border hover:-translate-y-0.5 transition-all"
+            className="pointer-events-auto h-12 px-8 flex items-center gap-2 bg-foreground text-background rounded-full font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-all duration-300 shadow-lg active:scale-95"
           >
             <Home size={14} /> Return to Core
           </Link>
           
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-4 font-black uppercase brutal-border hover:-translate-y-0.5 transition-all"
+            className="pointer-events-auto h-12 w-12 flex items-center justify-center bg-background/50 backdrop-blur-md border border-foreground/10 rounded-full hover:bg-foreground/5 transition-all active:scale-90"
+            title="Reload Module"
           >
             <RefreshCcw size={16} />
           </button>

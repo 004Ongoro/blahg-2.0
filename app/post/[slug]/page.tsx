@@ -230,8 +230,8 @@ export default async function PostPage({ params }: Props) {
                 {post.tags.map((tag: string) => (
                   <Link
                     key={tag}
-                    href={`/tags/${tag}`}
-                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold brutal-border brutal-shadow hover:bg-accent hover:text-accent-foreground transition-all hover:-translate-y-0.5"
+                    href={`/tags?tag=${encodeURIComponent(tag)}`}
+                    className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
                   >
                     #{tag}
                   </Link>

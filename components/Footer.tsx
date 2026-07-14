@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
-import { StatusWidget } from '@/components/StatusWidget'
+import { StatusWidget } from './StatusWidget'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -48,96 +48,90 @@ const secondaryLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t-4 border-foreground bg-card mt-20 relative overflow-hidden">
-      {/* Decorative background element */}
-      <div className="absolute -top-24 -right-24 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 relative z-10">
-        
-        {/* Brand & Bio */}
-        <div className="md:col-span-5 space-y-8">
-          <div className="inline-block p-4 brutal-border bg-accent text-accent-foreground transform -rotate-2 hover:rotate-0 transition-transform">
-            <h3 className="text-4xl font-black uppercase italic tracking-tighter">george.2.0</h3>
-          </div>
-          
-          <div className="space-y-4">
-            <p className="text-2xl font-black leading-tight border-l-4 border-accent pl-5 py-1">
-              Half-baked ideas, <br />
-              fully-baked builds, <br />
-              <span className="text-muted-foreground italic text-xl">and the messy bits in between.</span>
-            </p>
-          </div>
-        </div>
+    <footer className="mt-20 border-t-2 border-foreground/10 bg-background pb-12 pt-16">
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+          {/* Left Column: Brand & Nav */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <Link href="/" className="text-2xl font-black uppercase tracking-tighter">
+                george<span className="text-accent">.</span>2.0
+              </Link>
+              <p className="max-w-xs text-sm font-medium leading-relaxed text-muted-foreground">
+                Software engineer, occasional writer, and professional over-thinker. 
+                Building things that (mostly) work.
+              </p>
+            </div>
 
-        {/* Links & Socials */}
-        <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8">
-          
-          {/* Socials Grid */}
-          <div className="p-6 brutal-border bg-background flex flex-col">
-            <h4 className="font-black uppercase tracking-widest text-xl border-b-4 border-foreground pb-3 flex justify-between items-center mb-6">
-              Connect <ArrowUpRight size={24} className="text-accent" />
-            </h4>
-            <div className="grid grid-cols-3 gap-3 flex-1 content-start">
-              {socials.map((s) => (
+            <nav className="flex flex-wrap gap-x-6 gap-y-2">
+              {secondaryLinks.map((link) => (
+                <Link 
+                  key={link.name} 
+                  href={link.href} 
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="max-w-xs pt-4">
+              <StatusWidget />
+            </div>
+          </div>
+
+          {/* Right Column: Contact & Socials */}
+          <div className="flex flex-col items-start md:items-end justify-between gap-8">
+            <ContactDialog trigger={
+              <button className="group flex items-center gap-2 text-lg font-black uppercase tracking-tighter hover:text-accent transition-colors">
+                Say Hello <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+              </button>
+            } />
+
+            <div className="flex gap-4">
+              {socials.map((social) => (
                 <a
-                  key={s.name}
-                  href={s.href}
+                  key={social.name}
+                  href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center p-4 brutal-border bg-card hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:-translate-x-1 transition-all group"
-                  title={s.name}
+                  className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/5 rounded-md transition-all"
+                  title={social.name}
                 >
-                  {s.icon}
+                  {social.icon}
                 </a>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Open Source, Copyright & Badges */}
-          <div className="flex flex-col gap-8">
-            <div className="p-6 brutal-border bg-secondary text-secondary-foreground hover:-translate-y-0.5 transition-all">
-               <h4 className="font-black uppercase tracking-widest text-lg mb-3">Open Source</h4>
-               <p className="text-sm font-bold mb-6 leading-relaxed">
-                 Created by <a href='https://github.com/004Ongoro' target='_blank' className='text-accent hover:underline decoration-2 underline-offset-4'>@004Ongoro</a>. <br/>
-                 Steal it, break it, make it better.
-               </p>
-               <a href="https://github.com/004Ongoro/blahg-2.0" target="_blank" className="inline-flex w-full justify-center items-center gap-2 text-sm font-black uppercase bg-foreground text-background px-4 py-3 brutal-border hover:bg-accent hover:text-accent-foreground transition-colors group">
-                 View on Github <Github size={16} className="group-hover:rotate-12 transition-transform" />
-               </a>
-            </div>
-            
-            <StatusWidget />
-            
-            <div className="flex flex-col justify-end flex-1">
-              <div className="p-5 border-4 border-dashed border-muted-foreground/20 bg-muted/10 flex flex-col gap-1 hover:border-accent/50 transition-colors">
-                <p className="font-black uppercase tracking-wider text-sm">© {new Date().getFullYear()} George Ongoro</p>
-                <p className="text-muted-foreground font-bold text-xs">// No rights reserved</p>
-              </div>
-            </div>
-
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
-                <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
-              </div>
-              <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
-                <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
-              </div>
-              <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
-                <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
-              </div>
-              <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
-                <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
-              </div>
-              <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
-                <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
-              </div>
-            </div>
+        {/* Badges Row */}
+        <div className="mt-20 flex flex-wrap items-center justify-center gap-4 opacity-75 hover:opacity-100 transition-opacity duration-300">
+          <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:scale-105 transition-transform duration-200" title="Ongoro · The Underground Dev">
+            <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
+          </a>
+          <div className="hover:scale-105 transition-transform duration-200" title="Next.js App">
+            <img src="/nextjs-badge.svg" alt="Next.js App" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
+            <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
+            <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
+            <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
+            <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
+          </div>
+          <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
+            <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
           </div>
         </div>
 
         {/* Copyright Bottom Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row col-span-12">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row">
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
             © {new Date().getFullYear()} George Ongoro — Built with Next.js & Pure Spite
           </p>

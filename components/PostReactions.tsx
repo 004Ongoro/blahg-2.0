@@ -103,8 +103,8 @@ export function PostReactions({ slug, initialReactions }: PostReactionsProps) {
               className={cn(
                 "group relative flex items-center gap-2 px-4 py-2 border transition-all text-sm font-medium",
                 hasReacted 
-                  ? "bg-foreground text-background cursor-default" 
-                  : "bg-background hover:bg-accent hover:text-accent-foreground hover:-translate-y-0.5 active:translate-x-[0] active:translate-y-[0] active:shadow-none"
+                  ? "bg-foreground text-background border-foreground cursor-default" 
+                  : "bg-background border-foreground/10 hover:border-accent hover:text-accent"
               )}
             >
               <Icon className={cn("w-4 h-4", isAnimating && "animate-bounce")} />

@@ -40,7 +40,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
           placeholder="Find a specific dispatch..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full brutal-border bg-card py-4 pl-12 pr-4 font-bold text-lg focus:ring-4 ring-accent outline-none placeholder:opacity-50 transition-all"
+          className="w-full bg-transparent border-b border-foreground/5 py-4 pl-8 pr-4 font-medium focus:border-accent outline-none placeholder:text-muted-foreground/20 transition-all"
         />
       </div>
 
@@ -54,7 +54,7 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
           
           <Link 
             href={`/newsletter/archive/${latestIssue.slug}`}
-            className="block brutal-border bg-accent text-accent-foreground p-8 brutal-shadow hover:-translate-y-1 transition-all group relative overflow-hidden"
+            className="group block space-y-4"
           >
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -85,53 +85,55 @@ export function NewsletterArchive({ issues }: NewsletterArchiveProps) {
 
         <div className="flex flex-col">
           {otherIssues.length === 0 ? (
-            <div className="col-span-full brutal-border p-12 bg-card text-center font-bold italic text-muted-foreground">
-              {search ? "No issues match your search." : "No other issues found."}
+            <div className="border-2 border-dashed border-foreground/10 p-12 text-center rounded-lg">
+              <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">
+                {search ? "No dispatches match your search." : "No other dispatches found."}
+              </p>
             </div>
           ) : (
             otherIssues.map((issue, index) => {
               const issueNumber = issues.length - (search ? issues.indexOf(issue) : index + 1)
               return (
-                <Link 
-                  key={issue._id} 
-                  href={`/newsletter/archive/${issue.slug}`}
-                  className="brutal-border bg-card p-6 brutal-shadow hover:-translate-y-1 transition-all group flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="text-[10px] font-black uppercase bg-muted px-2 py-1">
-                        Issue #{issueNumber.toString().padStart(3, '0')}
-                      </span>
-                      <span className="text-xs font-bold text-muted-foreground">
+                <article key={issue._id} className="group border-b border-foreground/5 py-8 first:pt-0 last:border-0">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                        <span>#{issueNumber.toString().padStart(3, '0')}</span>
+                        <span className="h-1 w-1 rounded-full bg-foreground/10" />
                         <FormattedDate date={issue.createdAt} />
-                      </span>
+                      </div>
+
+                      <Link href={`/newsletter/archive/${issue.slug}`} className="block group-hover:text-accent transition-colors">
+                        <h4 className="text-xl font-black uppercase tracking-tighter leading-tight">
+                          {issue.subject}
+                        </h4>
+                      </Link>
                     </div>
 
-                    <div className="block group-hover:text-accent transition-colors">
-                      <h4 className="text-xl font-black uppercase tracking-tighter leading-tight">
-                        {issue.subject}
-                      </h4>
-                    </div>
+                    <Link 
+                      href={`/newsletter/archive/${issue.slug}`}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-0"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
-
-                  <div 
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-0"
-                  >
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </Link>
+                </article>
               )
             })
           )}
         </div>
       </section>
 
-      {/* Subscribe Footer CTA */}
-      <section className="mt-20 p-12 brutal-border bg-secondary text-center relative overflow-hidden">
-        <div className="relative z-10">
-          <h2 className="text-3xl font-black uppercase italic mb-4">Missing out on the next one?</h2>
-          <p className="text-lg font-bold mb-8 max-w-xl mx-auto">
-            Get these insights delivered straight to your inbox before they hit the archive.
+      {/* Subscribe CTA */}
+      <section className="bg-foreground text-background p-8 md:p-12 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 -mr-16 -mt-16 rounded-full blur-3xl group-hover:bg-accent/20 transition-colors" />
+        
+        <div className="relative z-10 max-w-lg">
+          <h3 className="text-3xl font-black uppercase tracking-tighter mb-4 leading-none">
+            Get them <span className="text-accent italic">Live</span>
+          </h3>
+          <p className="text-sm font-medium opacity-70 mb-8 leading-relaxed">
+            Don't wait for the archive. Join developers worldwide receiving these insights directly in their inbox.
           </p>
           <Link 
             href="/newsletter"

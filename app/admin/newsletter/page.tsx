@@ -363,28 +363,6 @@ export default function AdminNewsletter() {
               )}
             </form>
           </div>
-
-          {/* Responsive Preview Panel */}
-          <div className={`${showPreviewMobile ? 'flex' : 'hidden lg:flex'} flex-col gap-4`}>
-            <h2 className="font-black uppercase text-sm italic flex items-center gap-2">
-              <Eye size={18} className="text-accent"/> Live Email Preview
-            </h2>
-            <div className="brutal-border bg-white p-4 md:p-8 brutal-shadow overflow-y-auto max-h-[650px] text-black">
-              <div style={{ backgroundColor: '#677db7', padding: '20px', borderBottom: '4px solid #000', marginBottom: '20px' }}>
-                <h1 className="text-xl md:text-2xl font-black uppercase m-0 leading-tight">
-                  {subject || 'SUBJECT PREVIEW'}
-                </h1>
-              </div>
-              <div 
-                className="prose prose-lime max-w-none" 
-                dangerouslySetInnerHTML={{ __html: previewHtml || '<p class="text-gray-400 italic">Body content will appear here...</p>' }} 
-              />
-              <div className="mt-8 pt-8 border-t-4 border-black bg-gray-100 p-4 text-xs font-bold">
-                <p>Reply to this email directly! I read every reply.</p>
-                <p className="mt-2 text-gray-500 italic">Sent to subscribers of georgeongoro.com</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* History Section */}
@@ -403,7 +381,7 @@ export default function AdminNewsletter() {
               issues.map((issue) => (
                 <div 
                   key={issue._id} 
-                  className="brutal-border bg-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-transform"
+                  className="group flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-6"
                 >
                   <div className="min-w-0">
                     <h3 className="text-base font-black uppercase tracking-tight mb-1 truncate group-hover:text-accent transition-colors">

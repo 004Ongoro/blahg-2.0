@@ -153,26 +153,27 @@ export default function SubscribersPage() {
                 <p className="text-[10px] font-black uppercase tracking-[0.3em]">Sector is empty</p>
               </div>
             ) : (
-              <div className="grid gap-4">
-                <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-2 text-xs font-black uppercase text-muted-foreground">
-                  <div className="col-span-5">Subscriber</div>
-                  <div className="col-span-3">Joined</div>
-                  <div className="col-span-2 text-center">Status</div>
-                  <div className="col-span-2 text-right">Actions</div>
-                </div>
-                {subscribers.map((sub) => (
-                  <div 
-                    key={sub._id} 
-                    className="brutal-border bg-card p-5 flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 transition-transform"
-                  >
-                    <div className="col-span-5 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-accent flex items-center justify-center brutal-border">
-                        <Mail size={20} className="text-accent-foreground" />
+              subscribers.map((sub) => (
+                <div 
+                  key={sub._id} 
+                  className="group flex flex-col md:flex-row md:items-center justify-between gap-6 py-6 transition-all"
+                >
+                  <div className="flex-1 min-w-0 flex flex-col md:flex-row md:items-center gap-8">
+                    <div className="min-w-0 max-w-md">
+                      <h3 className="text-base font-black uppercase tracking-tight truncate mb-1">
+                        {sub.email}
+                      </h3>
+                      <div className={cn(
+                        "inline-block px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border",
+                        sub.active 
+                          ? "bg-accent/5 text-accent border-accent/10" 
+                          : "bg-foreground/5 text-muted-foreground border-foreground/10"
+                      )}>
+                        {sub.active ? 'ACTIVE_SESSION' : 'INACTIVE_NODE'}
                       </div>
-                      <span className="font-bold truncate text-sm">{sub.email}</span>
                     </div>
                     
-                    <div className="col-span-3 flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
                       <div className="flex flex-col">
                         <span>Joined</span>
                         <span className="text-foreground/60">{new Date(sub.subscribedAt).toLocaleDateString()}</span>
@@ -182,81 +183,81 @@ export default function SubscribersPage() {
                         <span className="opacity-40">{sub._id.slice(-8)}</span>
                       </div>
                     </div>
-
-                    <div className="col-span-2 md:text-center">
-                      <span className={cn(
-                        "inline-block px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-sm",
-                        sub.active 
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
-                          : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                      )}>
-                        {sub.active ? 'ACTIVE' : 'INACTIVE'}
-                      </span>
-                    </div>
-                    
-                    <div className="col-span-2 flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => toggleStatus(sub._id, sub.active)}
-                        className={cn(
-                          "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
-                          sub.active 
-                            ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
-                            : "bg-accent text-accent-foreground hover:opacity-90"
-                        )}
-                      >
-                        {sub.active ? 'DEACTIVATE' : 'RESTORE'}
-                      </button>
-                      <button 
-                        onClick={() => deleteSubscriber(sub._id)}
-                        className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
-                        title="Purge Record"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
                   </div>
-                ))}
-              </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => toggleStatus(sub._id, sub.active)}
+                      className={cn(
+                        "h-9 px-4 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+                        sub.active 
+                          ? "bg-foreground/5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive" 
+                          : "bg-accent text-accent-foreground hover:opacity-90"
+                      )}
+                    >
+                      {sub.active ? 'DEACTIVATE' : 'RESTORE'}
+                    </button>
+                    <button 
+                      onClick={() => deleteSubscriber(sub._id)}
+                      className="h-9 w-9 flex items-center justify-center rounded-full bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all"
+                      title="Purge Record"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
           </div>
 
-        {/* Enhanced Stats Footer */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="brutal-border bg-card p-6 transition-all">
-            <p className="text-xs font-black uppercase text-muted-foreground mb-1">Total Audience</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black italic text-accent">{stats.total}</span>
-              <span className="text-xs font-bold uppercase">Subscribers</span>
-            </div>
-          </div>
+          {/* Pagination */}
+          {pagination.pages > 1 && (
+            <div className="mt-12 flex justify-center border-t border-foreground/5 pt-8">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => fetchSubscribers(pagination.page - 1, search)}
+                  disabled={pagination.page === 1}
+                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all"
+                >
+                  Prev
+                </button>
+                
+                <div className="flex gap-1 px-4 border-x border-foreground/5">
+                  {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(p => {
+                    const isActive = pagination.page === p
+                    if (
+                      p === 1 || 
+                      p === pagination.pages || 
+                      (p >= pagination.page - 1 && p <= pagination.page + 1)
+                    ) {
+                      return (
+                        <button
+                          key={p}
+                          onClick={() => fetchSubscribers(p, search)}
+                          className={cn(
+                            "w-9 h-9 rounded-full text-[10px] font-black transition-all",
+                            isActive ? "bg-foreground text-background" : "text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                          )}
+                        >
+                          {p}
+                        </button>
+                      )
+                    }
+                    return null
+                  })}
+                </div>
 
-          <div className="brutal-border bg-card p-6 transition-all">
-            <p className="text-xs font-black uppercase text-muted-foreground mb-1">Health Status</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black italic text-green-600">{stats.active}</span>
-              <span className="text-xs font-bold uppercase text-green-600/80">Active Users</span>
-            </div>
-          </div>
-
-          <div className={`brutal-border p-6 transition-all ${
-            search 
-              ? 'bg-accent/10 border-accent border-dashed ' 
-              : 'bg-muted/30 border-muted-foreground/20 border-dashed opacity-60'
-          }`}>
-            <p className="text-xs font-black uppercase text-muted-foreground mb-1 flex items-center gap-2">
-              <Search size={12} /> Search Filter
-            </p>
-            {search ? (
-              <div className="flex flex-col">
-                <span className="text-xl font-black italic truncate">"{search}"</span>
-                <span className="text-[10px] font-bold uppercase text-muted-foreground mt-1">
-                  Showing {subscribers.length} of {pagination.total} results
-                </span>
+                <button
+                  onClick={() => fetchSubscribers(pagination.page + 1, search)}
+                  disabled={pagination.page === pagination.pages}
+                  className="h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-foreground/5 transition-all"
+                >
+                  Next
+                </button>
               </div>
-            ) : null}
-          </div>
-        </div>
-      </section>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   )

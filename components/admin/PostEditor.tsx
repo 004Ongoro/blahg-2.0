@@ -278,17 +278,38 @@ export function PostEditor({ post }: PostEditorProps) {
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t brutal-border border-x-0 border-b-0">
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={published}
-            onChange={(e) => setPublished(e.target.checked)}
-            className="w-5 h-5 accent-accent"
-          />
-          <span className="font-bold">publish immediately</span>
-        </label>
+      {/* Action Bar */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-full max-w-2xl px-4">
+        <div className="bg-background border border-foreground/10 rounded-full p-2 shadow-2xl flex items-center justify-between">
+          <div className="flex items-center gap-4 pl-4">
+            <Link
+              href="/admin"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft size={18} />
+            </Link>
+            <div className="h-6 w-px bg-foreground/5" />
+            <label className="flex items-center gap-3 cursor-pointer group">
+               <input
+                type="checkbox"
+                checked={published}
+                onChange={(e) => setPublished(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className={cn(
+                "w-8 h-4 rounded-full p-0.5 transition-all",
+                published ? "bg-accent" : "bg-foreground/10"
+              )}>
+                <div className={cn(
+                  "h-3 w-3 rounded-full bg-background transition-all shadow-sm",
+                  published ? "translate-x-4" : "translate-x-0"
+                )} />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest group-hover:text-foreground transition-colors">
+                Publish
+              </span>
+            </label>
+          </div>
 
           <div className="flex items-center gap-3">
             {error && <span className="text-destructive text-[8px] font-bold uppercase tracking-widest mr-2">{error}</span>}
@@ -308,6 +329,7 @@ export function PostEditor({ post }: PostEditorProps) {
             </button>
           </div>
         </div>
+      </div>
     </form>
   )
 }

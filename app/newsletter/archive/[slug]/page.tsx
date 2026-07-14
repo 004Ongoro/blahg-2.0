@@ -126,19 +126,19 @@ export default async function NewsletterIssuePage({ params }: Props) {
             </div>
           </section>
 
-        {/* Navigation bottom */}
-        <div className="flex justify-center">
-          <Link
-            href="/newsletter/archive"
-            className="brutal-border px-6 py-3 font-black uppercase text-sm hover:bg-muted transition-colors flex items-center gap-2"
-          >
-            <ArrowLeft size={16} /> All Issues
-          </Link>
-        </div>
-      </footer>
-    </main>
+          {/* Navigation bottom */}
+          <div className="pt-12 border-t border-foreground/5 flex justify-center">
+            <Link
+              href="/newsletter/archive"
+              className="group inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors"
+            >
+              <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" /> View all dispatches
+            </Link>
+          </div>
+        </footer>
+      </main>
 
-    <Footer />
-  </div>
+      <Footer />
+    </div>
   )
 }

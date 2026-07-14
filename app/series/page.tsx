@@ -56,7 +56,7 @@ export default async function SeriesPage() {
             <Link 
               key={s.name} 
               href={`/series/${encodeURIComponent(s.name)}`}
-              className="brutal-border brutal-shadow bg-card p-6 hover:-translate-y-1 transition-all"
+              className="group block py-8 border-t border-foreground/5 transition-all hover:bg-foreground/[0.01]"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-3">

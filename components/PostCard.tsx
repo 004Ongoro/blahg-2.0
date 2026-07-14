@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { FormattedDate } from './FormattedDate'
-import { cn } from '@/lib/utils'
 
 interface PostCardProps {
   title: string
@@ -11,9 +10,6 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
-  isSelected?: boolean
-  series?: string
-  views?: number
 }
 
 export function PostCard({
@@ -23,43 +19,17 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
-  isSelected = false,
-  series,
-  views = 0,
 }: PostCardProps) {
   return (
-    <article 
-      className={cn(
-        "brutal-border brutal-shadow p-6 transition-all duration-200 relative overflow-hidden",
-        isSelected 
-          ? "border-foreground ring-2 ring-foreground ring-offset-2 ring-offset-background translate-x-1 bg-accent text-accent-foreground" 
-          : "hover:-translate-y-1 bg-card"
-      )}
-    >
-      <div className="flex justify-between items-start mb-2 gap-4">
-        <div className="flex flex-wrap gap-2">
-          {series && (
-            <Link 
-              href={`/series/${encodeURIComponent(series)}`}
-              className={cn(
-                "px-2 py-0.5 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 transition-all",
-                isSelected ? "bg-background text-foreground" : "bg-accent text-accent-foreground"
-              )}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span className="shrink-0">📚</span> {series}
-            </Link>
-          )}
-          {views > 100 && (
-            <div className="bg-accent text-accent-foreground px-2 py-1 text-[10px] font-black uppercase brutal-border brutal-shadow flex items-center gap-1 animate-pulse">
-              <span>🔥</span> trending
-            </div>
-          )}
-        </div>
-      </div>
+    <article className="group relative border-b border-foreground/5 py-8 first:pt-0 last:border-0">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex-1 space-y-3">
+          <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <FormattedDate date={createdAt} />
+            <span className="h-1 w-1 rounded-full bg-accent/30" />
+            <span>{readTime} min read</span>
+          </div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-4 flex-1">
           <Link href={`/post/${slug}`} className="block group-hover:text-accent transition-colors">
             <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter leading-none">
               {title}

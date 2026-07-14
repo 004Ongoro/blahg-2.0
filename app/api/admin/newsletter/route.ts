@@ -169,7 +169,7 @@ export async function POST(req: Request) {
               border: 1px solid #eeeeee;
             }
             .content blockquote { 
-              border-left: 8px solid #677db7; 
+              border-left: 4px solid #ff3e00; 
               margin: 32px 0; 
               padding: 16px 32px; 
               background: #f9f9f9; 
@@ -250,28 +250,17 @@ export async function POST(req: Request) {
             }
           </style>
         </head>
-        <body style="margin: 0; padding: 0; background-color: #9ca3db; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-          <div style="background-color: #9ca3db; padding: 40px 0;">
-            <!--[if mso]>
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-            <tr>
-            <td align="center" valign="top" width="600">
-            <![endif]-->
-            <div class="main" style="max-width: 600px; margin: 0 auto; background-color: #9ca3db; border: 4px solid #000000; box-shadow: 16px 16px 0px #000000;">
-              
+        <body>
+          <div class="wrapper">
+            <div class="main">
               <!-- Header -->
-              <div class="header" style="background-color: #677db7; padding: 48px 40px; border-bottom: 4px solid #000000;">
-                <p style="margin: 0 0 16px 0; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.1em; color: #000;">
-                  Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}
-                </p>
-                <h1 style="margin: 0; font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; line-height: 0.9; color: #000;">
-                  ${subject}
-                </h1>
-                <div style="margin-top: 32px;">
-                  <a href="${baseUrl}/newsletter/archive/${slug}" style="display: inline-block; background-color: #9ca3db; color: #000; text-decoration: none; font-size: 13px; font-weight: 900; padding: 10px 20px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; text-transform: uppercase;">
-                    View in Browser ↗
-                  </a>
-                </div>
+              <div class="header">
+                <div class="identity">GEORGE<span>.</span>ONGORO</div>
+                <div class="issue-meta">Dispatch // Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}</div>
+                <h1>${subject}</h1>
+                <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
+                  Open in browser &rarr;
+                </a>
               </div>
               
               <!-- Main Content -->
@@ -279,55 +268,22 @@ export async function POST(req: Request) {
                 ${processedContent}
               </div>
 
-              <!-- CTA / Interaction -->
-              <div style="padding: 0 40px 48px;">
-                <div style="border: 4px solid #000; padding: 32px; background-color: #454b66; box-shadow: 8px 8px 0px #000;">
-                  <h3 style="margin: 0 0 12px 0; font-weight: 900; text-transform: uppercase; font-size: 20px; line-height: 1;">
-                    Let's Chat
-                  </h3>
-                  <p style="margin: 0; font-size: 16px; font-weight: 700; line-height: 1.4;">
-                    I love hearing from readers. Hit reply to this email to share your thoughts, questions, or just to say hi. I read and respond to every single one.
-                  </p>
-                </div>
-              </div>
-
               <!-- Footer -->
-              <div class="footer" style="background-color: #000000; color: #ffffff; padding: 48px 40px;">
-                <div style="margin-bottom: 32px;">
-                  <h2 style="margin: 0; font-size: 24px; font-weight: 900; text-transform: uppercase; color: #677db7;">
-                    George Ongoro
-                  </h2>
-                  <p style="margin: 8px 0 0 0; font-weight: 700; font-size: 16px; color: #9ca3af;">
-                    Software Engineer & Maker
-                  </p>
+              <div class="footer">
+                <div class="footer-brand">George Ongoro</div>
+                <div class="footer-sub">Software Engineer // Independent Maker</div>
+
+                <div class="social-links">
+                  <a href="https://github.com/004Ongoro" class="social-link">GitHub</a>
+                  <a href="https://x.com/ongorogeorg_e" class="social-link">Twitter</a>
+                  <a href="https://linkedin.com/in/georgeongoro2" class="social-link">LinkedIn</a>
                 </div>
 
-                <div style="margin-bottom: 40px;">
-                  <table border="0" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td style="padding-right: 20px;">
-                        <a href="https://github.com/004Ongoro" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">GitHub</a>
-                      </td>
-                      <td style="padding-right: 20px;">
-                        <a href="https://x.com/ongorogeorg_e" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">Twitter/X</a>
-                      </td>
-                      <td>
-                        <a href="https://linkedin.com/in/georgeongoro2" style="color: #ffffff; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 14px; border-bottom: 2px solid #677db7;">LinkedIn</a>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <div style="border-top: 2px solid #374151; padding-top: 32px;">
-                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #9ca3af;">
-                    You're receiving this because you subscribed to the newsletter on <a href="${baseUrl}" style="color: #677db7; text-decoration: none;">code.geohack.top</a>. 
-                    If you're no longer interested, you can unsubscribe at any time.
-                  </p>
-                  <p style="margin: 24px 0 0 0;">
-                    <a href="${baseUrl}/unsubscribe" style="display: inline-block; color: #ef4444; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 12px; border: 2px solid #ef4444; padding: 6px 12px;">
-                      Unsubscribe
-                    </a>
-                  </p>
+                <div class="unsubscribe-info">
+                  Sent to you because you joined the circle at 
+                  <a href="${baseUrl}" style="color: #999999;">george.blog</a>.<br>
+                  No longer interested? 
+                  <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">Unsubscribe here</a>.
                 </div>
               </div>
             </div>

@@ -169,17 +169,17 @@ export default function GuestbookPage() {
                 </div>
               ))}
 
-            {!isLoading && entries.length === 0 && (
-              <div className="text-center py-20 brutal-border border-dashed border-2 opacity-50">
-                <p className="font-black uppercase">No entries yet. Be the first!</p>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-    </main>
-    
-    <Footer />
-  </div>
+              {!isLoading && entries.length === 0 && (
+                <div className="py-20 text-center opacity-40">
+                  <p className="text-sm font-black uppercase tracking-widest">Buffer is empty</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
   )
 }

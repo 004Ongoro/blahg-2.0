@@ -44,10 +44,6 @@ function processCodeBlocks(html: string): string {
     /<pre><code\s+class="([^"]*?language-(\w+)[^"]*?)">/g,
     (match, fullClass, lang) => {
       const displayLang = lang.charAt(0).toUpperCase() + lang.slice(1)
-      const isRunnable = RUNNABLE_LANGS.includes(lang.toLowerCase())
-      const runButton = isRunnable 
-        ? `<button class="run-btn ml-2 px-2 py-1 bg-green-500 text-black font-black uppercase text-[10px] brutal-border hover:bg-green-400 transition-all active:scale-95" onclick="window.runCode(this)">Run</button>`
-        : ''
       
       return `<div class="code-block-wrapper"><div class="code-title-bar"><span class="code-lang font-black uppercase text-xs">${displayLang}</span><button class="copy-btn ml-auto font-black uppercase text-[10px] hover:text-accent transition-colors" onclick="navigator.clipboard.writeText(this.closest('.code-block-wrapper').querySelector('code').textContent).then(() => { window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Code copied!', type: 'success' } })); })">Copy</button></div><pre><code class="${fullClass}">`
     }

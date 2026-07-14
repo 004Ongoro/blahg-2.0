@@ -61,7 +61,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
-      <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
+      <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
         {/* Google Analytics - Moved outside ThemeProvider to prevent hydration script tag issues */}
         {gaId && (
           <>

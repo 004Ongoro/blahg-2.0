@@ -65,7 +65,7 @@ export default function GuestbookPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-mono">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
@@ -81,7 +81,7 @@ export default function GuestbookPage() {
 
         <div className="space-y-20">
           {/* Form Section */}
-          <section className="border-t-2 border-foreground pt-12">
+          <section className="border-t border-foreground/5 pt-12">
             <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-8">Sign the Log</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">

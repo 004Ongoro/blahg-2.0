@@ -96,7 +96,7 @@ export function StatusWidget() {
       href="https://code-geohack.openstatus.dev/"
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-4 brutal-border bg-card hover:-translate-y-0.5 transition-all font-mono text-left"
+      className="block p-4 border border-foreground/5 bg-card hover:-translate-y-0.5 transition-all text-left rounded-2xl shadow-sm"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
@@ -121,7 +121,7 @@ export function StatusWidget() {
         </div>
 
         <div className="flex flex-col items-end justify-between h-full min-h-[50px] shrink-0">
-          <div className="p-1 brutal-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+          <div className="p-1.5 border border-foreground/5 bg-background text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors">
             <ExternalLink size={10} />
           </div>
           

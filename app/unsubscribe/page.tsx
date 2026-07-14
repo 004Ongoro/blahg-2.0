@@ -34,7 +34,7 @@ function UnsubscribeContent() {
   }, [id])
 
   return (
-    <div className="max-w-md w-full brutal-border bg-card p-8 brutal-shadow-lg text-center">
+    <div className="max-w-md w-full border border-foreground/5 bg-card p-8 rounded-3xl shadow-sm text-center">
       <h1 className="text-3xl font-black mb-4 uppercase">Newsletter</h1>
       
       {status === 'loading' && <p className="font-bold italic">Processing your request...</p>}
@@ -45,15 +45,15 @@ function UnsubscribeContent() {
           <p className="text-sm text-muted-foreground mb-8">We're sorry to see you go! You can resubscribe anytime on the home page.</p>
         </>
       )}
-
+ 
       {status === 'error' && (
         <>
           <p className="mb-6 font-bold text-lg text-destructive">Something went wrong.</p>
           <p className="text-sm text-muted-foreground mb-8">We couldn't process your request. Please try again or contact support.</p>
         </>
       )}
-
-      <Link href="/" className="brutal-btn bg-accent text-accent-foreground px-6 py-2 font-bold inline-block">
+ 
+      <Link href="/" className="bg-accent text-accent-foreground px-6 py-2.5 font-bold inline-block rounded-xl hover:opacity-95 transition-all duration-300 shadow-sm">
         Return to Blog
       </Link>
     </div>

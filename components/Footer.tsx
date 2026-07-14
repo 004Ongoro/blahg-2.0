@@ -48,7 +48,7 @@ const secondaryLinks = [
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t-2 border-foreground/10 bg-background pb-12 pt-16">
+    <footer className="mt-20 border-t border-foreground/5 bg-background pb-12 pt-16">
       <div className="mx-auto max-w-5xl px-4">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Left Column: Brand & Nav */}

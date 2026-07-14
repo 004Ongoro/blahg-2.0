@@ -35,7 +35,7 @@ export function Newsletter() {
   }
 
   return (
-    <div className="bg-foreground text-background p-8 md:p-12 relative overflow-hidden group">
+    <div className="bg-foreground text-background p-8 md:p-12 relative overflow-hidden group rounded-3xl shadow-sm">
       <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 -mr-16 -mt-16 rounded-full blur-3xl group-hover:bg-accent/20 transition-colors" />
       
       <div className="relative z-10 max-w-lg">
@@ -54,12 +54,12 @@ export function Newsletter() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required
-            className="flex-1 bg-background text-foreground px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent"
+            className="flex-1 bg-background text-foreground px-4 py-3 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300"
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-accent text-accent-foreground px-6 py-3 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="bg-accent text-accent-foreground px-6 py-3 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl"
           >
             {loading ? 'joining...' : 'subscribe'}
             <Mail size={14} />

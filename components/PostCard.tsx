@@ -21,7 +21,7 @@ export function PostCard({
   tags,
 }: PostCardProps) {
   return (
-    <article className="group relative border-b border-foreground/5 py-8 first:pt-0 last:border-0">
+    <article className="group relative border border-foreground/5 bg-background/50 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 mb-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -55,7 +55,7 @@ export function PostCard({
 
         <Link 
           href={`/post/${slug}`}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-2"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/5 bg-background transition-all group-hover:bg-accent group-hover:text-accent-foreground md:mt-2 shrink-0"
         >
           <svg
             width="15"

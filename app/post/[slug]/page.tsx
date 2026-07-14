@@ -187,6 +187,30 @@ export default async function PostPage({ params }: Props) {
               <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 block">Share</span>
               <SocialShare title={post.title} slug={slug} />
             </div>
+
+            {(nav.prev || nav.next) && (
+              <div className="space-y-4 pt-4 border-t border-foreground/5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 block">Navigation</span>
+                <div className="space-y-4">
+                  {nav.prev && (
+                    <Link href={`/post/${nav.prev}`} className="group block space-y-1">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 block">← Previous</span>
+                      <span className="font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block normal-case">
+                        {nav.prev.replace(/-/g, ' ')}
+                      </span>
+                    </Link>
+                  )}
+                  {nav.next && (
+                    <Link href={`/post/${nav.next}`} className="group block space-y-1">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 block">Next →</span>
+                      <span className="font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block normal-case">
+                        {nav.next.replace(/-/g, ' ')}
+                      </span>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
           </aside>
 
           {/* Center Column: The Main Article */}
@@ -228,7 +252,7 @@ export default async function PostPage({ params }: Props) {
               <Newsletter />
             </div>
 
-            <div className="flex flex-col gap-8 py-12 border-y border-foreground/5 mb-16">
+            <div className="flex flex-col gap-8 py-12 border-y border-foreground/5 mb-16 lg:hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {nav.prev ? (
                   <Link href={`/post/${nav.prev}`} className="group space-y-2">
@@ -255,7 +279,9 @@ export default async function PostPage({ params }: Props) {
               initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
             />
 
-            <MoreLikeThis posts={relatedPosts} />
+            <div className="lg:hidden">
+              <MoreLikeThis posts={relatedPosts} />
+            </div>
 
             <GiscusComments />
 
@@ -276,12 +302,32 @@ export default async function PostPage({ params }: Props) {
             )}
           </article>
 
-          {/* Right Column: Sticky Table of Contents */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 w-60 shrink-0">
+          {/* Right Column: Sticky Table of Contents & Related Posts */}
+          <aside className="hidden lg:block lg:sticky lg:top-24 w-60 shrink-0 space-y-12">
             <div className="space-y-6">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 border-b border-foreground/5 pb-2">Table of Contents</h3>
               <TableOfContents content={post.content} isSidebar />
             </div>
+
+            {relatedPosts && relatedPosts.length > 0 && (
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 border-b border-foreground/5 pb-2">More Like This</h3>
+                <ul className="space-y-4">
+                  {relatedPosts.map((rPost: any) => (
+                    <li key={rPost.slug}>
+                      <Link 
+                        href={`/post/${rPost.slug}`}
+                        className="group block"
+                      >
+                        <span className="text-xs font-bold text-foreground group-hover:text-accent transition-colors leading-snug block">
+                          {rPost.title}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </aside>
 
         </div>

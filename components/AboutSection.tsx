@@ -1,6 +1,6 @@
 export function AboutSection() {
   return (
-    <section className="brutal-border brutal-shadow bg-card p-6 mb-8">
+    <section className="border border-foreground/5 bg-card p-6 mb-8 rounded-2xl shadow-sm">
       <h2 className="text-2xl font-bold mb-4">
         <span className="text-accent">$</span> whoami
       </h2>

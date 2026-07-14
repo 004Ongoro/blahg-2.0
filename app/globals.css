@@ -126,38 +126,7 @@
   }
 }
 
-/* Neo-brutalist utilities */
-.brutal-border {
-  border: 3px solid var(--foreground);
-}
 
-.brutal-shadow {
-  box-shadow: 4px 4px 0 var(--foreground);
-}
-
-.brutal-shadow-sm {
-  box-shadow: 2px 2px 0 var(--foreground);
-}
-
-.brutal-shadow-lg {
-  box-shadow: 6px 6px 0 var(--foreground);
-}
-
-.brutal-btn {
-  border: 3px solid var(--foreground);
-  box-shadow: 4px 4px 0 var(--foreground);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.brutal-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--foreground);
-}
-
-.brutal-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--foreground);
-}
 
 /* Markdown styles */
 .prose-brutal {

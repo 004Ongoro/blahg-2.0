@@ -1,0 +1,77 @@
+{
+  "hardware": [
+    {
+      "category": "Computer",
+      "name": "MacBook Pro 16\" (M3 Max, 64GB RAM, 1TB SSD)",
+      "description": "Daily driver and compiler powerhouse. Handles Docker, local language models, and heavy compilation without breaking a sweat.",
+      "link": "https://apple.com"
+    },
+    {
+      "category": "Display",
+      "name": "Dell UltraSharp 32\" 4K USB-C Hub Monitor",
+      "description": "Huge real estate for split windows. Connected via a single USB-C cable for data, video, and charging.",
+      "link": "#"
+    },
+    {
+      "category": "Keyboard",
+      "name": "Keychron Q1 Pro (ISO Layout)",
+      "description": "Mechanical keyboard with Gateron Brown switches and customized Keychron retro keycaps. Lubricated stabilizers.",
+      "link": "#"
+    },
+    {
+      "category": "Mouse",
+      "name": "Logitech MX Master 3S",
+      "description": "Ergonomic comfort with customizable gesture controls. Unbeatable horizontal scroll wheel for timeline scrub or code scrolling.",
+      "link": "#"
+    },
+    {
+      "category": "Audio",
+      "name": "Sony WH-1000XM5",
+      "description": "Active noise-canceling headphones to tune out office/home distractions when in deep work blocks.",
+      "link": "#"
+    }
+  ],
+  "software": [
+    {
+      "category": "OS",
+      "name": "macOS Sequoia / Arch Linux",
+      "description": "Dual setups: macOS for daily team collaboration and video editing; Arch Linux on a secondary ThinkPad for pure terminal work."
+    },
+    {
+      "category": "Editor",
+      "name": "Neovim (LazyVim custom config)",
+      "description": "Ultra-fast modal text editor. Highly customized with LSP, Treesitter, Copilot, and custom keymaps for productivity."
+    },
+    {
+      "category": "Terminal",
+      "name": "Kitty & Zsh",
+      "description": "GPU-accelerated terminal emulator paired with Zsh and Starship prompt. Custom colors optimized for low contrast."
+    },
+    {
+      "category": "Font",
+      "name": "JetBrains Mono / Outfit",
+      "description": "Clean, highly legible coding font with custom ligatures. The Outfit font is used for headers and body copy."
+    }
+  ],
+  "github": {
+    "username": "004Ongoro",
+    "repo": "dotfiles",
+    "files": [
+      {
+        "name": ".zshrc",
+        "path": ".zshrc",
+        "description": "Shell configurations, environment paths, and custom dev aliases."
+      },
+      {
+        "name": ".gitconfig",
+        "path": ".gitconfig",
+        "description": "Git setup, global excludes, security signings, and alias overrides."
+      },
+      {
+        "name": "init.lua (Neovim)",
+        "path": "init.lua",
+        "description": "Neovim entry point and configuration loading sequence."
+      }
+    ]
+  }
+}

@@ -10,10 +10,13 @@ import { ChevronRight, Menu, X } from 'lucide-react'
 const navLinks = [
   { name: 'posts', href: '/' },
   { name: 'dispatches', href: '/newsletter/archive' },
+  { name: 'bookmarks', href: '/bookmarks' },
+  { name: 'setup', href: '/setup' },
   { name: 'about', href: '/about' },
   { name: 'tags', href: '/tags' },
   { name: 'archive', href: '/archive' },
 ]
+
 
 export function Header() {
   const pathname = usePathname()

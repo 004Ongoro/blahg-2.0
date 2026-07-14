@@ -497,15 +497,6 @@
 }
 
 /* Reading page background pattern and animations */
-@keyframes slow-pan {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-30px, -45px, 0);
-  }
-}
-
 .reading-page-bg {
   position: relative;
   background-color: transparent !important;
@@ -514,25 +505,18 @@
 .reading-page-bg::before {
   content: "";
   position: fixed;
-  top: -45px;
-  left: -30px;
-  right: -30px;
-  bottom: -45px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: -10;
   background-color: var(--reading-bg, #E5E5F7);
-  opacity: 0.8;
   background-image: 
-    radial-gradient(circle farthest-side at 0% 50%, var(--reading-bg, #E5E5F7) 23.5%, transparent 0), 
-    radial-gradient(circle farthest-side at 0% 50%, var(--reading-pattern-color, #444CF7) 24%, transparent 0), 
-    linear-gradient(var(--reading-bg, #E5E5F7) 14%, transparent 0, transparent 85%, var(--reading-bg, #E5E5F7) 0), 
-    linear-gradient(150deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
-    linear-gradient(30deg, var(--reading-bg, #E5E5F7) 24%, var(--reading-pattern-color, #444CF7) 0 26%, transparent 0 74%, var(--reading-pattern-color, #444CF7) 0 76%, var(--reading-bg, #E5E5F7) 0), 
-    linear-gradient(90deg, var(--reading-pattern-color, #444CF7) 1.6%, var(--reading-bg, #E5E5F7) 0 98.4%, var(--reading-pattern-color, #444CF7) 0);
-  background-position: 16px 23px, 14px 23px, 0 0, 0 0, 0 0, 0 0;
-  background-size: 30px 45px;
+    linear-gradient(var(--reading-pattern-color, #444CF7) 1px, transparent 1px),
+    linear-gradient(90deg, var(--reading-pattern-color, #444CF7) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.12;
   pointer-events: none;
-  animation: slow-pan 25s linear infinite;
-  will-change: transform;
 }
 
 /* Ensure reading page articles stand out with perfect readability and neo-brutalist styling */

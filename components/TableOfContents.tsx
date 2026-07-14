@@ -116,45 +116,56 @@ export function TableOfContents({ content }: { content: string }) {
       </div>
 
       {/* Desktop Floating TOC */}
-      <div 
-        className={cn(
-          "hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-end py-4 pr-0 transition-all duration-300",
-          isDesktopOpen ? "bg-background/40 backdrop-blur-md p-6 shadow-sm border-l border-foreground/5" : ""
-        )}
-      >
-        <div 
-          className="flex flex-col items-end gap-4 border-r border-foreground/5 pr-4 pl-8"
-          onMouseEnter={() => setIsDesktopOpen(true)}
-          onMouseLeave={() => setIsDesktopOpen(false)}
+      <div className="hidden md:block fixed right-6 top-1/2 -translate-y-1/2 z-40">
+        {/* Toggle Pill Button */}
+        <button 
+          onClick={() => setIsDesktopOpen(!isDesktopOpen)}
+          className={cn(
+            "flex items-center justify-center w-10 h-10 brutal-border bg-card text-foreground hover:-translate-y-0.5 transition-all shadow-[2px_2px_0_var(--foreground)] active:translate-y-0 active:shadow-none",
+            isDesktopOpen && "bg-accent text-accent-foreground"
+          )}
+          title="Table of Contents"
         >
-          {headings.map((heading) => (
-            <button
-              key={heading.id}
-              onClick={() => scrollTo(heading.id)}
-              className="relative flex items-center justify-end group/item"
-            >
-              <span
-                className={cn(
-                  "mr-4 text-[10px] uppercase font-bold tracking-widest transition-all duration-300 whitespace-nowrap",
-                  isDesktopOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none",
-                  activeId === heading.id ? "text-accent" : "text-muted-foreground/60"
-                )}
+          <List size={16} className={cn("transition-transform duration-300", isDesktopOpen && "rotate-90")} />
+        </button>
+
+        {/* Index Panel Card */}
+        {isDesktopOpen && (
+          <div 
+            className="absolute right-14 top-1/2 -translate-y-1/2 brutal-border bg-card p-6 w-64 max-h-[70vh] overflow-y-auto shadow-[4px_4px_0_var(--foreground)] animate-in fade-in slide-in-from-right-4 duration-200"
+          >
+            <div className="flex items-center justify-between mb-4 border-b brutal-border border-x-0 border-t-0 pb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Index / Contents</span>
+              <button 
+                onClick={() => setIsDesktopOpen(false)}
+                className="text-[9px] font-black uppercase text-muted-foreground hover:text-foreground transition-colors"
               >
-                {heading.text}
-              </span>
-              
-              <div 
-                className={cn(
-                  "h-px transition-all duration-500",
-                  activeId === heading.id 
-                    ? "bg-accent w-8" 
-                    : "bg-foreground/10 w-4 group-hover/item:w-6 group-hover/item:bg-foreground/30",
-                  heading.level === 3 && "w-2 opacity-50"
-                )}
-              />
-            </button>
-          ))}
-        </div>
+                Close
+              </button>
+            </div>
+            
+            <nav className="flex flex-col gap-3">
+              {headings.map((heading) => (
+                <button
+                  key={heading.id}
+                  onClick={() => {
+                    scrollTo(heading.id)
+                    setIsDesktopOpen(false) // Close panel on click
+                  }}
+                  className={cn(
+                    "text-left text-xs font-bold transition-all hover:text-accent hover:translate-x-0.5 duration-200",
+                    activeId === heading.id 
+                      ? "text-accent pl-2 border-l-2 border-accent" 
+                      : "text-muted-foreground/80 pl-0 border-l-0",
+                    heading.level === 3 && "text-[11px] opacity-80 ml-3"
+                  )}
+                >
+                  {heading.text}
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </>
   )

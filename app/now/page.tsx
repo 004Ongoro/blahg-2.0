@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { FormattedDate } from '@/components/FormattedDate'
+import { MarkdownContent } from '@/components/MarkdownContent'
 import dbConnect from '@/lib/mongodb'
 import Activity from '@/models/Activity'
 import { 
@@ -182,9 +183,9 @@ export default async function NowPage() {
                     </div>
 
                     {/* Content text */}
-                    <p className="text-sm md:text-base leading-relaxed text-foreground/90 font-medium whitespace-pre-wrap selection:bg-accent selection:text-accent-foreground">
-                      {activity.content}
-                    </p>
+                    <div className="prose prose-neutral dark:prose-invert max-w-none text-sm md:text-base leading-relaxed text-foreground/90 font-medium selection:bg-accent selection:text-accent-foreground">
+                      <MarkdownContent content={activity.content} />
+                    </div>
                   </div>
                 </div>
               )

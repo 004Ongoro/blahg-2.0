@@ -51,6 +51,34 @@ export function Footer() {
   return (
     <footer className="mt-20 border-t border-foreground/5 bg-background pb-12 pt-16">
       <div className="mx-auto max-w-5xl px-4">
+        {/* Geodocs Promotion */}
+        <div className="mb-12 border-b border-foreground/5 pb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="max-w-2xl">
+            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
+              Documentation Hub
+            </h4>
+            <p className="text-sm font-medium leading-relaxed text-foreground">
+              I also write technical documentation, wikis, and reference guides over on{' '}
+              <a 
+                href="https://geodocs.geohack.top" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-accent font-bold hover:underline"
+              >
+                geodocs.geohack.top
+              </a>.
+            </p>
+          </div>
+          <a
+            href="https://geodocs.geohack.top"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-foreground text-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 self-start md:self-auto border border-foreground"
+          >
+            Visit Geodocs <ArrowUpRight className="h-4 w-4" />
+          </a>
+        </div>
+
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Left Column: Brand & Nav */}
           <div className="space-y-8">

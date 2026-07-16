@@ -9,7 +9,6 @@ import { ChevronRight, Menu, X } from 'lucide-react'
 
 const navLinks = [
   { name: 'posts', href: '/' },
-  { name: 'now', href: '/now' },
   { name: 'dispatches', href: '/newsletter/archive' },
   { name: 'bookmarks', href: '/bookmarks' },
   { name: 'setup', href: '/setup' },

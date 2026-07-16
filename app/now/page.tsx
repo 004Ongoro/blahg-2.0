@@ -12,8 +12,7 @@ import {
   Gamepad2, 
   MapPin, 
   Clock,
-  Sparkles,
-  Info
+  Sparkles
 } from 'lucide-react'
 
 export const metadata = {
@@ -192,14 +191,6 @@ export default async function NowPage() {
             })}
           </div>
         )}
-
-        {/* Resource Efficiency Note */}
-        <div className="mt-20 p-4 border border-foreground/5 bg-foreground/[0.01] rounded-2xl flex items-start gap-3 max-w-md mx-auto">
-          <Info size={14} className="text-accent mt-0.5 shrink-0" />
-          <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 leading-normal">
-            Optimized Core: This page uses Incremental Static Regeneration (ISR). Public visits serve static HTML from edge cache, requiring <span className="text-accent">0 dynamic database queries</span> or server CPU overhead.
-          </p>
-        </div>
       </main>
 
       <Footer />

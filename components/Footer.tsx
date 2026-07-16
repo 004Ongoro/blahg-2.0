@@ -40,7 +40,6 @@ const socials = [
 ]
 
 const secondaryLinks = [
-  { name: 'now', href: '/now' },
   { name: 'newsletter', href: '/newsletter' },
   { name: 'guestbook', href: '/guestbook' },
   { name: 'series', href: '/series' },
@@ -51,11 +50,11 @@ export function Footer() {
   return (
     <footer className="mt-20 border-t border-foreground/5 bg-background pb-12 pt-16">
       <div className="mx-auto max-w-5xl px-4">
-        {/* Geodocs Promotion */}
+        {/* Geodocs & Now Promotion */}
         <div className="mb-12 border-b border-foreground/5 pb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="max-w-2xl">
             <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
-              Documentation Hub
+              Documentation Hub & Current Focus
             </h4>
             <p className="text-sm font-medium leading-relaxed text-foreground">
               I also write technical documentation, wikis, and reference guides over on{' '}
@@ -68,15 +67,33 @@ export function Footer() {
                 geodocs.geohack.top
               </a>.
             </p>
+            <p className="text-sm font-medium leading-relaxed text-foreground mt-4">
+              Want to see what I'm working on right now? Visit my{' '}
+              <Link 
+                href="/now" 
+                className="text-accent font-bold hover:underline"
+              >
+                /now
+              </Link>{' '}
+              page for a real-time log of my current projects, learnings, and focus.
+            </p>
           </div>
-          <a
-            href="https://geodocs.geohack.top"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-foreground text-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 self-start md:self-auto border border-foreground"
-          >
-            Visit Geodocs <ArrowUpRight className="h-4 w-4" />
-          </a>
+          <div className="flex flex-col gap-2 shrink-0 self-start md:self-center w-full md:w-auto">
+            <a
+              href="https://geodocs.geohack.top"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-foreground text-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 border border-foreground w-full md:w-auto text-center"
+            >
+              Visit Geodocs <ArrowUpRight className="h-4 w-4" />
+            </a>
+            <Link
+              href="/now"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest border border-foreground/10 hover:border-foreground/30 hover:bg-foreground/5 transition-all duration-200 w-full md:w-auto text-center text-muted-foreground hover:text-foreground"
+            >
+              See what's /now <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">

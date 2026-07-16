@@ -15,7 +15,8 @@ import {
   ChevronRight,
   Globe,
   Settings,
-  Bookmark
+  Bookmark,
+  Clock
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -23,6 +24,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 const adminLinks = [
   { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={14} /> },
   { name: 'New Post', href: '/admin/new', icon: <PlusCircle size={14} /> },
+  { name: 'Now Feed', href: '/admin/now', icon: <Clock size={14} /> },
   { name: 'Bookmarks', href: '/admin/bookmarks', icon: <Bookmark size={14} /> },
   { name: 'Newsletter', href: '/admin/newsletter', icon: <Mail size={14} /> },
   { name: 'Subscribers', href: '/admin/newsletter/subscribers', icon: <Users size={14} /> },

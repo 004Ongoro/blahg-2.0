@@ -3,6 +3,7 @@ import Link from 'next/link'
 import mongoose from 'mongoose'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { FaviconImage } from '@/components/FaviconImage'
 import dbConnect from '@/lib/mongodb'
 import Bookmark from '@/models/Bookmark'
 import { getBaseUrl } from '@/lib/utils'
@@ -144,14 +145,9 @@ export default async function BookmarkDetailPage({ params }: Props) {
             </div>
             
             {favicon && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img 
+              <FaviconImage 
                 src={favicon} 
-                alt="" 
                 className="w-16 h-16 rounded-2xl bg-foreground/[0.03] border border-foreground/5 p-2 shrink-0 select-none object-contain shadow-xs animate-in zoom-in-95 duration-200"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
               />
             )}
           </div>

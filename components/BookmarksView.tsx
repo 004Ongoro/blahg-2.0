@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Search, ExternalLink, Bookmark, Sparkles, Folder, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -128,19 +129,28 @@ export function BookmarksView({ initialBookmarks }: BookmarksViewProps) {
         {filteredBookmarks.map((bookmark) => {
           const { host, favicon } = getDomainInfo(bookmark.url)
           return (
-            <a
+            <div
               key={bookmark._id}
-              href={bookmark.url}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group flex flex-col justify-between p-6 border border-foreground/5 bg-background hover:-translate-y-1 transition-all duration-300 rounded-[24px] shadow-sm hover:shadow-md relative overflow-hidden"
             >
-              {/* Subtle top corner decoration */}
-              <div className="absolute top-0 right-0 h-10 w-10 border-b border-l border-foreground/5 bg-foreground/[0.02] flex items-center justify-center rounded-bl-xl group-hover:bg-accent/10 transition-colors duration-300">
-                <ExternalLink size={10} className="text-muted-foreground/30 group-hover:text-accent transition-colors" />
-              </div>
+              {/* Local indexable page link overlay */}
+              <Link 
+                href={`/bookmarks/${bookmark._id}`}
+                className="absolute inset-0 z-0"
+              />
 
-              <div className="space-y-4">
+              {/* Direct external link icon */}
+              <a
+                href={bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute top-0 right-0 h-10 w-10 border-b border-l border-foreground/5 bg-foreground/[0.02] flex items-center justify-center rounded-bl-xl hover:bg-accent/10 transition-colors duration-300 z-10"
+                title="Visit website directly"
+              >
+                <ExternalLink size={10} className="text-muted-foreground/30 hover:text-accent transition-colors" />
+              </a>
+
+              <div className="space-y-4 relative z-0 pointer-events-none">
                 {/* Header info */}
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-xl bg-foreground/[0.03] border border-foreground/5 flex items-center justify-center p-1.5 shrink-0 select-none">
@@ -182,7 +192,7 @@ export function BookmarksView({ initialBookmarks }: BookmarksViewProps) {
 
               {/* Tags and footer */}
               {bookmark.tags && bookmark.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-5 pt-4 border-t border-foreground/5">
+                <div className="flex flex-wrap gap-1 mt-5 pt-4 border-t border-foreground/5 relative z-10">
                   {bookmark.tags.map((tag) => (
                     <span
                       key={tag}
@@ -193,7 +203,7 @@ export function BookmarksView({ initialBookmarks }: BookmarksViewProps) {
                   ))}
                 </div>
               )}
-            </a>
+            </div>
           )
         })}
       </div>

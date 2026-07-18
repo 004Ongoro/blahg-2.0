@@ -6,6 +6,7 @@ import rehypeStringify from 'rehype-stringify'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
+import { ImageGalleryModal } from './ImageGalleryModal'
 
 interface MarkdownContentProps {
   content: string
@@ -130,9 +131,17 @@ function processImages(html: string): string {
     const captionText = alt || title;
     const caption = captionText ? `<figcaption class="image-caption">${captionText}</figcaption>` : '';
     
+    // Add custom zoom class to let users know it's clickable
+    let cleanAttrs = attrs;
+    if (cleanAttrs.match(/class="([^"]*)"/)) {
+      cleanAttrs = cleanAttrs.replace(/class="([^"]*)"/, 'class="cursor-zoom-in hover:opacity-95 transition-opacity $1"');
+    } else {
+      cleanAttrs = `class="cursor-zoom-in hover:opacity-95 transition-opacity" ${cleanAttrs}`;
+    }
+    
     return `<figure class="image-figure">
       <div class="image-frame">
-        <img ${attrs}>
+        <img ${cleanAttrs}>
         ${caption}
       </div>
     </figure>`;
@@ -218,6 +227,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
         className="prose-brutal"
         dangerouslySetInnerHTML={{ __html: finalHtml }}
       />
+      <ImageGalleryModal />
     </>
   )
 }

@@ -1,13 +1,14 @@
 import { MetadataRoute } from 'next'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
+import Bookmark from '@/models/Bookmark'
 import { getBaseUrl } from '@/lib/utils'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl()
 
-
   let postUrls: any[] = []
+  let bookmarkUrls: any[] = []
 
   try {
     // Fetch all published posts for the sitemap
@@ -22,6 +23,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   } catch (error) {
     console.error('Error fetching posts for sitemap, returning static routes only:', error)
+  }
+
+  try {
+    // Fetch all bookmarks for the sitemap
+    await dbConnect()
+    const bookmarks = await Bookmark.find({}).select('_id updatedAt').lean()
+
+    bookmarkUrls = bookmarks.map((bookmark) => ({
+      url: `${baseUrl}/bookmarks/${bookmark._id.toString()}`,
+      lastModified: bookmark.updatedAt || new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.5,
+    }))
+  } catch (error) {
+    console.error('Error fetching bookmarks for sitemap:', error)
   }
 
   return [
@@ -56,5 +72,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     ...postUrls,
+    ...bookmarkUrls,
   ]
 }

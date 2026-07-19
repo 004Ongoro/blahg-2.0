@@ -43,6 +43,7 @@ const secondaryLinks = [
   { name: 'newsletter', href: '/newsletter' },
   { name: 'guestbook', href: '/guestbook' },
   { name: 'series', href: '/series' },
+  { name: 'guest logs', href: 'https://guest-blog.geohack.top' },
   { name: 'admin', href: '/admin' },
 ]
 

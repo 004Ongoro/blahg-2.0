@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
+import { Resend } from 'resend'
 
 // GET single post by slug
 export async function GET(
@@ -44,6 +45,9 @@ export async function PUT(
     const { slug } = await params
     const body = await request.json()
 
+    // Find existing post to check if its published status changed
+    const existingPost = await Post.findOne({ slug })
+
     const post = await Post.findOneAndUpdate(
       { slug },
       { ...body, updatedAt: new Date() },
@@ -52,6 +56,37 @@ export async function PUT(
 
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    }
+
+    // If a guest post has been newly published, notify the author
+    if (
+      existingPost &&
+      !existingPost.published &&
+      post.published &&
+      post.isGuest &&
+      post.authorEmail
+    ) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        await resend.emails.send({
+          from: 'Uplink Console <uplink@deepread.website>',
+          to: post.authorEmail,
+          subject: `Transmission Approved: "${post.title}"`,
+          html: `
+            <div style="font-family: monospace; padding: 20px; background-color: #efd6ac; color: #04151f; border: 3px solid #04151f; max-width: 600px;">
+              <h2 style="text-transform: uppercase; border-bottom: 2px solid #04151f; padding-bottom: 8px; color: #c44900;">Uplink Approved</h2>
+              <p>Hello ${post.authorName || 'Guest Writer'},</p>
+              <p>Your log transmission <strong>"${post.title}"</strong> has been approved by the core console and is now live on the public net!</p>
+              <p>You can view the published entry here:</p>
+              <p><a href="https://geohack.top/post/${post.slug}" style="color: #c44900; font-weight: bold; text-decoration: underline;">https://geohack.top/post/${post.slug}</a></p>
+              <br/>
+              <p style="opacity: 0.6; font-size: 10px;">CORE_UPLINK_SYSTEM v2.0</p>
+            </div>
+          `,
+        })
+      } catch (emailError) {
+        console.error('Failed to send approval email notification:', emailError)
+      }
     }
 
     // Clear caches

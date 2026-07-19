@@ -15,6 +15,7 @@ const navLinks = [
   { name: 'about', href: '/about' },
   { name: 'tags', href: '/tags' },
   { name: 'archive', href: '/archive' },
+  { name: 'guest logs', href: 'https://guest-blog.geohack.top' },
 ]
 
 

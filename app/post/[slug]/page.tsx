@@ -137,8 +137,8 @@ export default async function PostPage({ params }: Props) {
     dateModified: post.updatedAt || post.createdAt,
     author: {
       '@type': 'Person',
-      name: 'George Ongoro',
-      url: baseUrl,
+      name: post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro',
+      url: post.isGuest && post.authorBio ? (post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`) : baseUrl,
     },
   }
 
@@ -166,6 +166,28 @@ export default async function PostPage({ params }: Props) {
               <ChevronLeft className="h-4 w-4" /> back to logs
             </Link>
             
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Author</span>
+              <p className="font-bold text-foreground">
+                {post.isGuest ? (
+                  post.authorBio ? (
+                    <a 
+                      href={post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-accent hover:underline break-words"
+                    >
+                      {post.authorName || 'Guest Author'}
+                    </a>
+                  ) : (
+                    post.authorName || 'Guest Author'
+                  )
+                ) : (
+                  'George Ongoro'
+                )}
+              </p>
+            </div>
+
             <div className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Published</span>
               <p className="font-bold text-foreground"><FormattedDate date={post.createdAt} /></p>
@@ -232,6 +254,8 @@ export default async function PostPage({ params }: Props) {
               </h1>
               
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground/60 lg:hidden">
+                <span>By {post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro'}</span>
+                <span className="h-1 w-1 rounded-full bg-foreground/10" />
                 <FormattedDate date={post.createdAt} />
                 <span className="h-1 w-1 rounded-full bg-foreground/10" />
                 <span>{post.readTime} min read</span>

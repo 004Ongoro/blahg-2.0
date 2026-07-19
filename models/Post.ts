@@ -13,6 +13,10 @@ export interface IPost extends Document {
   series?: string
   seriesOrder?: number
   reactions?: Record<string, number>
+  authorName?: string
+  authorBio?: string
+  authorEmail?: string
+  isGuest?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -40,7 +44,11 @@ const PostSchema: Schema = new Schema(
       type: Map,
       of: Number,
       default: { 'like': 0, 'mindblown': 0, 'rocket': 0 }
-    }
+    },
+    authorName: { type: String, trim: true },
+    authorBio: { type: String, trim: true },
+    authorEmail: { type: String, trim: true },
+    isGuest: { type: Boolean, default: false }
   },
   { timestamps: true }
 )

@@ -33,6 +33,10 @@ interface Post {
   published: boolean
   series?: string
   seriesOrder?: number
+  authorName?: string
+  authorBio?: string
+  authorEmail?: string
+  isGuest?: boolean
 }
 
 interface PostEditorProps {
@@ -51,6 +55,10 @@ export function PostEditor({ post }: PostEditorProps) {
   const [published, setPublished] = useState(post?.published || false)
   const [series, setSeries] = useState(post?.series || '')
   const [seriesOrder, setSeriesOrder] = useState(post?.seriesOrder?.toString() || '0')
+  const [authorName, setAuthorName] = useState(post?.authorName || '')
+  const [authorBio, setAuthorBio] = useState(post?.authorBio || '')
+  const [authorEmail, setAuthorEmail] = useState(post?.authorEmail || '')
+  const [isGuest, setIsGuest] = useState(post?.isGuest || false)
   const [allSeries, setAllSeries] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -114,6 +122,10 @@ export function PostEditor({ post }: PostEditorProps) {
       published,
       series: series.trim() || undefined,
       seriesOrder: parseInt(seriesOrder) || 0,
+      authorName: authorName.trim() || undefined,
+      authorBio: authorBio.trim() || undefined,
+      authorEmail: authorEmail.trim() || undefined,
+      isGuest,
     }
 
     try {
@@ -230,6 +242,59 @@ export function PostEditor({ post }: PostEditorProps) {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Guest Author Section */}
+            <div className="border border-foreground/10 rounded-2xl p-6 bg-foreground/[0.01] space-y-6 mt-8">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isGuest"
+                  checked={isGuest}
+                  onChange={(e) => setIsGuest(e.target.checked)}
+                  className="rounded border-foreground/20 text-accent focus:ring-accent"
+                />
+                <label htmlFor="isGuest" className="text-xs font-black uppercase tracking-widest cursor-pointer select-none">
+                  Guest Author Transmission
+                </label>
+              </div>
+
+              {isGuest && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Guest Author Name</label>
+                      <input
+                        type="text"
+                        value={authorName}
+                        onChange={(e) => setAuthorName(e.target.value)}
+                        placeholder="e.g. Jane Doe"
+                        className="w-full bg-background border-b-2 border-foreground/10 py-1.5 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Guest Author Bio / Link</label>
+                      <input
+                        type="text"
+                        value={authorBio}
+                        onChange={(e) => setAuthorBio(e.target.value)}
+                        placeholder="e.g. Developer & Writer"
+                        className="w-full bg-background border-b-2 border-foreground/10 py-1.5 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Guest Contact Email</label>
+                    <input
+                      type="email"
+                      value={authorEmail}
+                      onChange={(e) => setAuthorEmail(e.target.value)}
+                      placeholder="e.g. user@domain.com"
+                      className="w-full bg-background border-b-2 border-foreground/10 py-1.5 text-sm font-bold focus:outline-none focus:border-accent transition-all"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

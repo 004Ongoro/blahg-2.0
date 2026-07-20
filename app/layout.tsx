@@ -83,7 +83,7 @@ export default function RootLayout({
 
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme={new Date() <= new Date('2026-07-25T23:59:59+03:00') ? 'spain' : 'light'}
           themes={['light', 'dark', 'spain']}
           enableSystem={false}
           enableColorScheme={false}

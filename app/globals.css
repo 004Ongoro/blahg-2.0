@@ -93,11 +93,11 @@
   --reading-pattern-color: var(--spain-red);
 }
 
-/* Custom Football Cursor for Spain Victory Theme */
+/* Custom Football Arrow Pointer Cursor for Spain Victory Theme */
 html.spain,
 html.spain body,
 html.spain body * {
-  cursor: url('/soccer-ball.svg') 12 12, auto;
+  cursor: url('/soccer-pointer.svg') 1 1, auto;
 }
 
 html.spain a,
@@ -108,7 +108,7 @@ html.spain select,
 html.spain textarea,
 html.spain a *,
 html.spain button * {
-  cursor: url('/soccer-ball-pointer.svg') 14 14, pointer !important;
+  cursor: url('/soccer-pointer-hover.svg') 1 1, pointer !important;
 }
 
 @theme inline {

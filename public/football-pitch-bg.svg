@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200" viewBox="0 0 800 1200" fill="none">
+  <!-- Base Pitch Background & Turf Stripes -->
+  <rect x="0" y="0" width="800" height="1200" fill="#120306"/>
+  <g opacity="0.07">
+    <rect x="0" y="0" width="800" height="150" fill="#C60B1E"/>
+    <rect x="0" y="300" width="800" height="150" fill="#C60B1E"/>
+    <rect x="0" y="600" width="800" height="150" fill="#C60B1E"/>
+    <rect x="0" y="900" width="800" height="150" fill="#C60B1E"/>
+  </g>
+
+  <!-- Stadium Pitch Markings in Spanish Gold -->
+  <g stroke="#FFC400" stroke-width="2.5" opacity="0.22" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Touchlines -->
+    <rect x="50" y="50" width="700" height="1100" rx="6"/>
+    
+    <!-- Halfway Line -->
+    <line x1="50" y1="600" x2="750" y2="600"/>
+    
+    <!-- Center Circle & Center Spot -->
+    <circle cx="400" cy="600" r="120"/>
+    <circle cx="400" cy="600" r="5" fill="#FFC400"/>
+    
+    <!-- Top Penalty Box -->
+    <rect x="220" y="50" width="360" height="190"/>
+    <!-- Top Goal Box -->
+    <rect x="300" y="50" width="200" height="65"/>
+    <!-- Top Penalty Spot & Arc -->
+    <circle cx="400" cy="165" r="4" fill="#FFC400"/>
+    <path d="M 312 240 A 120 120 0 0 0 488 240"/>
+    
+    <!-- Bottom Penalty Box -->
+    <rect x="220" y="960" width="360" height="190"/>
+    <!-- Bottom Goal Box -->
+    <rect x="300" y="1085" width="200" height="65"/>
+    <!-- Bottom Penalty Spot & Arc -->
+    <circle cx="400" cy="1035" r="4" fill="#FFC400"/>
+    <path d="M 312 960 A 120 120 0 0 1 488 960"/>
+
+    <!-- Corner Arcs -->
+    <path d="M 50 75 A 25 25 0 0 0 75 50"/>
+    <path d="M 725 50 A 25 25 0 0 0 750 75"/>
+    <path d="M 50 1125 A 25 25 0 0 0 75 1150"/>
+    <path d="M 725 1150 A 25 25 0 0 0 750 1125"/>
+  </g>
+</svg>

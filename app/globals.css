@@ -537,6 +537,25 @@ html.spain button * {
   pointer-events: none;
 }
 
+/* Football Pitch Background for Spain Victory Theme (replaces graph squares) */
+html.spain body::before,
+html.spain .reading-page-bg::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -10;
+  background-color: var(--spain-dark, #120306);
+  background-image: url('/football-pitch-bg.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: min(92vw, 850px) auto;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
 /* Ensure reading page articles stand out with perfect readability and clean minimal modern styling */
 .reading-page-bg article {
   background-color: var(--background);

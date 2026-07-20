@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { triggerSpainConfetti } from '@/lib/confetti'
+import { ExternalLink, X } from 'lucide-react'
 
 interface TrailParticle {
   x: number
@@ -19,6 +20,7 @@ export function SpainCelebration() {
   const { theme } = useTheme()
   const prevTheme = useRef<string | undefined>(undefined)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [showBanner, setShowBanner] = useState(true)
 
   useEffect(() => {
     if (theme === 'spain' && prevTheme.current !== 'spain') {
@@ -120,6 +122,35 @@ export function SpainCelebration() {
         ref={canvasRef}
         className="pointer-events-none fixed inset-0 z-40 select-none"
       />
+
+      {showBanner && (
+        <aside 
+          aria-label="Spain 2026 Theme Information"
+          className="fixed bottom-6 left-6 z-40 flex items-center gap-3 px-4 py-2.5 rounded-full border border-amber-400/40 bg-[#120306]/90 backdrop-blur-md shadow-lg text-xs font-medium text-amber-100 animate-in fade-in slide-in-from-bottom-4 duration-300 pointer-events-auto"
+        >
+          <span className="flex items-center gap-1.5 font-bold text-amber-400 whitespace-nowrap">
+            <span className="animate-pulse">🏆</span> Spain 2026 Theme
+          </span>
+          <span className="hidden sm:inline text-amber-200/50">|</span>
+          <a
+            href="https://georgeongoro.is-a.dev/spain-2026.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-amber-400 font-bold underline underline-offset-4 hover:text-white transition-colors whitespace-nowrap"
+          >
+            Learn more <ExternalLink className="h-3 w-3 inline" />
+          </a>
+          <button
+            onClick={() => setShowBanner(false)}
+            className="ml-1 p-1 rounded-full text-amber-400/60 hover:text-amber-100 hover:bg-white/10 transition-colors"
+            title="Dismiss banner"
+            aria-label="Dismiss banner"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </aside>
+      )}
+
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-30 select-none">
         <div className="absolute top-10 left-10 text-yellow-400/30 text-xs animate-bounce delay-100">⭐</div>
         <div className="absolute top-1/4 right-12 text-amber-300/30 text-sm animate-pulse delay-300">🏆</div>

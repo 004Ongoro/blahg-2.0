@@ -520,6 +520,8 @@ html.spain button * {
   background-color: transparent !important;
 }
 
+/* Graph squares background pattern for Light and Dark themes */
+html:not(.spain) body::before,
 .reading-page-bg::before {
   content: "";
   position: fixed;
@@ -528,12 +530,12 @@ html.spain button * {
   right: 0;
   bottom: 0;
   z-index: -10;
-  background-color: var(--reading-bg, #E5E5F7);
+  background-color: var(--reading-bg, var(--background));
   background-image: 
-    linear-gradient(var(--reading-pattern-color, #444CF7) 1px, transparent 1px),
-    linear-gradient(90deg, var(--reading-pattern-color, #444CF7) 1px, transparent 1px);
+    linear-gradient(var(--reading-pattern-color, var(--burnt-orange)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--reading-pattern-color, var(--burnt-orange)) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.12;
+  opacity: 0.14;
   pointer-events: none;
 }
 

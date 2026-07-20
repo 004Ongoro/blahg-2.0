@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant spain (&:is(.spain *));
 
 /* Neo-brutalist design system */
 :root {
@@ -60,6 +61,36 @@
   --ring: var(--burnt-orange);
   --reading-bg: var(--ink-black);
   --reading-pattern-color: var(--dark-slate-grey);
+}
+
+.spain {
+  /* Theme mapping (Spain World Cup Champions Mode - Red & Gold) */
+  --spain-red: #c60b1e;
+  --spain-gold: #ffc400;
+  --spain-dark: #120306;
+  --spain-card: #220609;
+
+  --background: var(--spain-dark);
+  --foreground: #fff8eb;
+  --card: var(--spain-card);
+  --card-foreground: #fff8eb;
+  --popover: var(--spain-card);
+  --popover-foreground: #fff8eb;
+  --primary: var(--spain-gold);
+  --primary-foreground: var(--spain-dark);
+  --secondary: var(--spain-red);
+  --secondary-foreground: #ffffff;
+  --muted: #330b0f;
+  --muted-foreground: #ffe08a;
+  --accent: var(--spain-gold);
+  --accent-foreground: var(--spain-dark);
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 196, 0, 0.3);
+  --input: var(--spain-gold);
+  --ring: var(--spain-gold);
+  --reading-bg: var(--spain-dark);
+  --reading-pattern-color: var(--spain-red);
 }
 
 @theme inline {

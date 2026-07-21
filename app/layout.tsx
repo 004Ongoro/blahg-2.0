@@ -63,6 +63,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
+        {/* GoatCounter Analytics */}
+        <Script
+          data-goatcounter="https://geohack.goatcounter.com/count"
+          async
+          src="//gc.zgo.at/count.js"
+          strategy="afterInteractive"
+        />
+
         {/* Google Analytics - Moved outside ThemeProvider to prevent hydration script tag issues */}
         {gaId && (
           <>

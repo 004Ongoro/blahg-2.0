@@ -7,6 +7,7 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
 import { ImageGalleryModal } from './ImageGalleryModal'
+import { LinkPreview } from './LinkPreview'
 
 interface MarkdownContentProps {
   content: string
@@ -228,6 +229,7 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
         dangerouslySetInnerHTML={{ __html: finalHtml }}
       />
       <ImageGalleryModal />
+      <LinkPreview />
     </>
   )
 }

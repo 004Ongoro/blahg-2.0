@@ -27,7 +27,7 @@ function extractYouTubeId(url: string): string | null {
   return null
 }
 
-// Process YouTube embeds in markdown
+// Process YouTube embeds in markdown into custom styled facade video cards
 function processYouTubeEmbeds(content: string): string {
   const youtubeRegex = /(?:^|\n)(?:\[.*?\]\()?(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[\w-]+)(?:\))?(?:\n|$)/g
   
@@ -35,7 +35,37 @@ function processYouTubeEmbeds(content: string): string {
     const videoId = extractYouTubeId(url)
     if (!videoId) return match
     
-    return `\n<div class="youtube-embed"><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>\n`
+    return `\n<div class="custom-youtube-card group my-8" onclick="this.outerHTML='<div class=\\'youtube-embed aspect-video my-8 rounded-2xl overflow-hidden shadow-xl border border-foreground/15\\'><iframe src=\\'https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0\\' frameborder=\\'0\\' allow=\\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\\' allowfullscreen class=\\'w-full h-full rounded-2xl\\'></iframe></div>';">
+  <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-foreground/15 dark:border-white/15 bg-black/90 shadow-xl cursor-pointer">
+    <img 
+      src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
+      onError="this.onerror=null;this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg';"
+      alt="YouTube Video Thumbnail"
+      class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20 flex flex-col justify-between p-4 md:p-6">
+      <div class="flex items-center justify-between">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-600/90 text-white shadow-md backdrop-blur-xs">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube Video
+        </span>
+        <span class="text-[10px] font-extrabold uppercase tracking-widest text-white/70 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-xs">
+          Click to play
+        </span>
+      </div>
+      <div class="flex items-center justify-center my-auto">
+        <div class="custom-play-button flex items-center gap-3 px-6 py-3.5 rounded-full bg-accent text-accent-foreground font-black text-xs uppercase tracking-widest shadow-2xl group-hover:scale-110 active:scale-95 transition-all duration-300 ring-4 ring-accent/30">
+          <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <span>Play Video</span>
+        </div>
+      </div>
+      <div class="text-[11px] font-semibold text-white/80 truncate">
+        ▶ Tap anywhere to start playback
+      </div>
+    </div>
+  </div>
+</div>\n`
   })
 }
 

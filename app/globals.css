@@ -2,8 +2,6 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
-@custom-variant spain (&:is(.spain *));
-
 /* Neo-brutalist design system */
 :root {
   /* Color Palette */
@@ -61,54 +59,6 @@
   --ring: var(--burnt-orange);
   --reading-bg: var(--ink-black);
   --reading-pattern-color: var(--dark-slate-grey);
-}
-
-.spain {
-  /* Theme mapping (Spain World Cup Champions Mode - Red & Gold) */
-  --spain-red: #c60b1e;
-  --spain-gold: #ffc400;
-  --spain-dark: #120306;
-  --spain-card: #220609;
-
-  --background: var(--spain-dark);
-  --foreground: #fff8eb;
-  --card: var(--spain-card);
-  --card-foreground: #fff8eb;
-  --popover: var(--spain-card);
-  --popover-foreground: #fff8eb;
-  --primary: var(--spain-gold);
-  --primary-foreground: var(--spain-dark);
-  --secondary: var(--spain-red);
-  --secondary-foreground: #ffffff;
-  --muted: #330b0f;
-  --muted-foreground: #ffe08a;
-  --accent: var(--spain-gold);
-  --accent-foreground: var(--spain-dark);
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 196, 0, 0.3);
-  --input: var(--spain-gold);
-  --ring: var(--spain-gold);
-  --reading-bg: var(--spain-dark);
-  --reading-pattern-color: var(--spain-red);
-}
-
-/* Custom Football Arrow Pointer Cursor for Spain Victory Theme */
-html.spain,
-html.spain body,
-html.spain body * {
-  cursor: url('/soccer-pointer.svg') 1 1, auto;
-}
-
-html.spain a,
-html.spain button,
-html.spain [role="button"],
-html.spain input,
-html.spain select,
-html.spain textarea,
-html.spain a *,
-html.spain button * {
-  cursor: url('/soccer-pointer-hover.svg') 1 1, pointer !important;
 }
 
 @theme inline {
@@ -520,8 +470,8 @@ html.spain button * {
   background-color: transparent !important;
 }
 
-/* Graph squares background pattern for Light and Dark themes */
-html:not(.spain) body::before,
+/* Graph squares background pattern */
+body::before,
 .reading-page-bg::before {
   content: "";
   position: fixed;
@@ -536,25 +486,6 @@ html:not(.spain) body::before,
     linear-gradient(90deg, var(--reading-pattern-color, var(--burnt-orange)) 1px, transparent 1px);
   background-size: 24px 24px;
   opacity: 0.14;
-  pointer-events: none;
-}
-
-/* Football Pitch Background for Spain Victory Theme (replaces graph squares) */
-html.spain body::before,
-html.spain .reading-page-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -10;
-  background-color: var(--spain-dark, #120306);
-  background-image: url('/football-pitch-bg.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: min(92vw, 850px) auto;
-  opacity: 0.9;
   pointer-events: none;
 }
 

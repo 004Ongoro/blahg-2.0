@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
-import { SpainCelebration } from '@/components/SpainCelebration'
 import { Toaster } from '@/components/ui/sonner'
 import { ScrollProgress } from '@/components/ScrollProgress'
 import { ContactDialog } from '@/components/ContactDialog'
@@ -91,14 +90,11 @@ export default function RootLayout({
 
         <ThemeProvider
           attribute="class"
-          defaultTheme={new Date() <= new Date('2026-07-25T23:59:59+03:00') ? 'spain' : 'light'}
-          themes={['light', 'dark', 'spain']}
-          enableSystem={false}
-          enableColorScheme={false}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           {children}
-          <SpainCelebration />
           <Toaster />
           <ScrollProgress />
           <ContactDialog trigger={

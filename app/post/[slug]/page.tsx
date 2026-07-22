@@ -15,7 +15,6 @@ import { PostReactions } from '@/components/PostReactions'
 import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
-import { FeaturedLinks } from '@/components/FeaturedLinks'
 import { CommunityCallout } from '@/components/CommunityCallout'
 
 export const dynamic = 'force-static'
@@ -270,29 +269,34 @@ export default async function PostPage({ params }: Props) {
               </div>
             </header>
 
-            <div className="prose prose-neutral dark:prose-invert max-w-none mb-16">
+            <div className="prose prose-neutral dark:prose-invert max-w-none mb-12">
               <MarkdownContent content={post.content} />
             </div>
 
-            <div className="mb-16">
-              <Newsletter />
+            {/* Post Reactions */}
+            <div className="mb-12">
+              <PostReactions 
+                slug={slug} 
+                initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
+              />
             </div>
 
-            <div className="flex flex-col gap-8 py-12 border-y border-foreground/5 mb-16 lg:hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Prev / Next Navigation */}
+            <div className="flex flex-col gap-8 py-8 border-y border-foreground/10 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {nav.prev ? (
-                  <Link href={`/post/${nav.prev}`} className="group space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous</span>
-                    <p className="font-bold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
+                  <Link href={`/post/${nav.prev}`} className="group space-y-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous Article</span>
+                    <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
                       <ChevronLeft className="h-4 w-4 shrink-0" /> {nav.prev.replace(/-/g, ' ')}
                     </p>
                   </Link>
                 ) : <div />}
 
                 {nav.next ? (
-                  <Link href={`/post/${nav.next}`} className="group space-y-2 md:text-right">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next</span>
-                    <p className="font-bold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
+                  <Link href={`/post/${nav.next}`} className="group space-y-1.5 md:text-right">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next Article</span>
+                    <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
                       {nav.next.replace(/-/g, ' ')} <ChevronRight className="h-4 w-4 shrink-0" />
                     </p>
                   </Link>
@@ -300,25 +304,24 @@ export default async function PostPage({ params }: Props) {
               </div>
             </div>
 
-            <PostReactions 
-              slug={slug} 
-              initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
-            />
+            {/* Newsletter & Community Callout */}
+            <div className="space-y-8 mb-16">
+              <Newsletter />
+              <CommunityCallout />
+            </div>
 
-            <CommunityCallout />
-
-            <div className="lg:hidden">
+            {/* Mobile Related Posts */}
+            <div className="lg:hidden mb-12">
               <MoreLikeThis posts={relatedPosts} />
             </div>
 
-            <GiscusComments />
-
-            <div className="lg:hidden">
-              <FeaturedLinks content={post.content} isMobileAccordion />
+            {/* Comments Section (Uncollapsed) */}
+            <div className="mb-16">
+              <GiscusComments />
             </div>
 
             {post.tags && post.tags.length > 0 && (
-              <div className="mt-20 pt-12 border-t border-foreground/5">
+              <div className="pt-8 border-t border-foreground/10">
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   {post.tags.map((tag: string) => (
                     <Link
@@ -335,23 +338,23 @@ export default async function PostPage({ params }: Props) {
           </article>
 
           {/* Right Column: Sticky Table of Contents & Related Posts */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 w-60 shrink-0 space-y-12">
-            <div className="space-y-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 border-b border-foreground/5 pb-2">Table of Contents</h3>
+          <aside className="hidden lg:block lg:sticky lg:top-24 w-60 shrink-0 space-y-10">
+            <div className="space-y-4">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 border-b border-foreground/10 pb-2">Table of Contents</h3>
               <TableOfContents content={post.content} isSidebar />
             </div>
 
             {relatedPosts && relatedPosts.length > 0 && (
-              <div className="space-y-6">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/45 border-b border-foreground/5 pb-2">More Like This</h3>
-                <ul className="space-y-4">
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 border-b border-foreground/10 pb-2">More Like This</h3>
+                <ul className="space-y-3">
                   {relatedPosts.map((rPost: any) => (
                     <li key={rPost.slug}>
                       <Link 
                         href={`/post/${rPost.slug}`}
                         className="group block"
                       >
-                        <span className="text-xs font-bold text-foreground group-hover:text-accent transition-colors leading-snug block">
+                        <span className="text-xs font-extrabold text-foreground group-hover:text-accent transition-colors leading-snug block">
                           {rPost.title}
                         </span>
                       </Link>
@@ -360,8 +363,6 @@ export default async function PostPage({ params }: Props) {
                 </ul>
               </div>
             )}
-
-            <FeaturedLinks content={post.content} isSidebar />
           </aside>
 
         </div>

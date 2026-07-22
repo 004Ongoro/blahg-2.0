@@ -63,20 +63,40 @@ export function LinkPreview() {
   const isHoveringCardRef = useRef(false)
   const currentHrefRef = useRef<string | null>(null)
 
-  // Fetch preview data without calling serverless endpoints
+  // Helper to clean tracking params from URL before querying preview data
+  const cleanUrl = (urlStr: string) => {
+    try {
+      const url = new URL(urlStr)
+      const keysToRemove: string[] = []
+      url.searchParams.forEach((_, key) => {
+        if (key.startsWith('utm_') || key === 'fbclid' || key === 'gclid' || key === 'ref') {
+          keysToRemove.push(key)
+        }
+      })
+      keysToRemove.forEach((k) => url.searchParams.delete(k))
+      url.hash = ''
+      return url.toString()
+    } catch {
+      return urlStr
+    }
+  }
+
+  // Fetch preview data without calling serverless endpoints or creating new API routes
   const fetchPreviewData = async (href: string) => {
+    const targetHref = cleanUrl(href)
+
     // 1. Check in-memory cache
-    if (memoryCache.has(href)) {
-      setPreviewData(memoryCache.get(href)!)
+    if (memoryCache.has(targetHref)) {
+      setPreviewData(memoryCache.get(targetHref)!)
       return
     }
 
     // 2. Check sessionStorage cache
     try {
-      const stored = sessionStorage.getItem(`lp_cache_${href}`)
+      const stored = sessionStorage.getItem(`lp_cache_${targetHref}`)
       if (stored) {
         const parsed = JSON.parse(stored) as PreviewData
-        memoryCache.set(href, parsed)
+        memoryCache.set(targetHref, parsed)
         setPreviewData(parsed)
         return
       }
@@ -134,9 +154,9 @@ export function LinkPreview() {
           loading: false,
         }
 
-        memoryCache.set(href, result)
+        memoryCache.set(targetHref, result)
         try {
-          sessionStorage.setItem(`lp_cache_${href}`, JSON.stringify(result))
+          sessionStorage.setItem(`lp_cache_${targetHref}`, JSON.stringify(result))
         } catch {}
 
         if (currentHrefRef.current === href) {
@@ -152,70 +172,220 @@ export function LinkPreview() {
           loading: false,
           error: true,
         }
-        memoryCache.set(href, fallback)
+        memoryCache.set(targetHref, fallback)
         if (currentHrefRef.current === href) {
           setPreviewData(fallback)
         }
       }
     } else {
-      // For external links: Client-side fetch to Microlink API directly from browser
-      const domain = getDomain(href)
+      // For external links: Client-side fetch pipeline (oEmbed -> CORS HTML extraction -> Microlink -> Dub Meta -> Fallback)
+      const domain = getDomain(targetHref)
       const fallbackIcon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
 
+      // Strategy 1: YouTube oEmbed (Fast & native CORS)
+      if (targetHref.includes('youtube.com/watch') || targetHref.includes('youtu.be/')) {
+        try {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 3000)
+          const res = await fetch(
+            `https://www.youtube.com/oembed?url=${encodeURIComponent(targetHref)}&format=json`,
+            { signal: controller.signal }
+          )
+          clearTimeout(timeoutId)
+          if (res.ok) {
+            const data = await res.json()
+            const result: PreviewData = {
+              url: href,
+              title: data.title || domain,
+              description: `Video by ${data.author_name || 'YouTube creator'}`,
+              image: data.thumbnail_url,
+              icon: 'https://www.youtube.com/favicon.ico',
+              siteName: 'YouTube',
+              isInternal: false,
+              loading: false,
+            }
+            memoryCache.set(targetHref, result)
+            try {
+              sessionStorage.setItem(`lp_cache_${targetHref}`, JSON.stringify(result))
+            } catch {}
+            if (currentHrefRef.current === href) setPreviewData(result)
+            return
+          }
+        } catch {}
+      }
+
+      // Strategy 2: CORS Proxy HTML fetching (Parses actual OpenGraph tags like internal links!)
+      const corsProxies = [
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(targetHref)}`,
+        `https://corsproxy.io/?${encodeURIComponent(targetHref)}`,
+      ]
+
+      for (const proxyUrl of corsProxies) {
+        try {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 3500)
+          const res = await fetch(proxyUrl, { signal: controller.signal })
+          clearTimeout(timeoutId)
+
+          if (res.ok) {
+            const html = await res.text()
+            if (html && html.length > 100) {
+              const parser = new DOMParser()
+              const doc = parser.parseFromString(html, 'text/html')
+
+              const title =
+                doc.querySelector('meta[property="og:title"]')?.getAttribute('content') ||
+                doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content') ||
+                doc.querySelector('title')?.textContent?.trim() ||
+                domain
+
+              const description =
+                doc.querySelector('meta[property="og:description"]')?.getAttribute('content') ||
+                doc.querySelector('meta[name="twitter:description"]')?.getAttribute('content') ||
+                doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+                doc.querySelector('p')?.textContent?.trim() ||
+                ''
+
+              let image =
+                doc.querySelector('meta[property="og:image"]')?.getAttribute('content') ||
+                doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
+                doc.querySelector('meta[name="twitter:image:src"]')?.getAttribute('content') ||
+                undefined
+
+              if (image && !image.startsWith('http')) {
+                try {
+                  image = new URL(image, targetHref).toString()
+                } catch {
+                  image = undefined
+                }
+              }
+
+              const siteName =
+                doc.querySelector('meta[property="og:site_name"]')?.getAttribute('content') ||
+                domain
+
+              let icon =
+                doc.querySelector('link[rel~="icon"]')?.getAttribute('href') ||
+                doc.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') ||
+                fallbackIcon
+
+              if (icon && !icon.startsWith('http')) {
+                try {
+                  icon = new URL(icon, targetHref).toString()
+                } catch {
+                  icon = fallbackIcon
+                }
+              }
+
+              if (title && (description || image)) {
+                const result: PreviewData = {
+                  url: href,
+                  title: title.trim(),
+                  description:
+                    description.trim().length > 140
+                      ? `${description.trim().slice(0, 140)}...`
+                      : description.trim(),
+                  image,
+                  icon,
+                  siteName: siteName.trim(),
+                  isInternal: false,
+                  loading: false,
+                }
+                memoryCache.set(targetHref, result)
+                try {
+                  sessionStorage.setItem(`lp_cache_${targetHref}`, JSON.stringify(result))
+                } catch {}
+                if (currentHrefRef.current === href) setPreviewData(result)
+                return
+              }
+            }
+          }
+        } catch {}
+      }
+
+      // Strategy 3: Microlink API
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3500)
-
-        const res = await fetch(`https://api.microlink.io?url=${encodeURIComponent(href)}`, {
+        const timeoutId = setTimeout(() => controller.abort(), 4000)
+        const res = await fetch(`https://api.microlink.io?url=${encodeURIComponent(targetHref)}`, {
           signal: controller.signal,
         })
         clearTimeout(timeoutId)
 
-        if (!res.ok) throw new Error('Microlink request failed')
-        const json = await res.json()
-
-        if (json.status === 'success' && json.data) {
-          const data = json.data
-          const result: PreviewData = {
-            url: href,
-            title: data.title || domain,
-            description:
-              data.description && data.description.length > 140
-                ? `${data.description.slice(0, 140)}...`
-                : data.description,
-            image: data.image?.url,
-            icon: data.logo?.url || data.icon?.url || fallbackIcon,
-            siteName: data.publisher || domain,
-            isInternal: false,
-            loading: false,
+        if (res.ok) {
+          const json = await res.json()
+          if (json.status === 'success' && json.data) {
+            const data = json.data
+            const result: PreviewData = {
+              url: href,
+              title: data.title || domain,
+              description:
+                data.description && data.description.length > 140
+                  ? `${data.description.slice(0, 140)}...`
+                  : data.description,
+              image: data.image?.url,
+              icon: data.logo?.url || data.icon?.url || fallbackIcon,
+              siteName: data.publisher || domain,
+              isInternal: false,
+              loading: false,
+            }
+            memoryCache.set(targetHref, result)
+            try {
+              sessionStorage.setItem(`lp_cache_${targetHref}`, JSON.stringify(result))
+            } catch {}
+            if (currentHrefRef.current === href) setPreviewData(result)
+            return
           }
+        }
+      } catch {}
 
-          memoryCache.set(href, result)
-          try {
-            sessionStorage.setItem(`lp_cache_${href}`, JSON.stringify(result))
-          } catch {}
-
-          if (currentHrefRef.current === href) {
-            setPreviewData(result)
+      // Strategy 4: Dub Meta API
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3500)
+        const res = await fetch(`https://api.dub.co/metatags?url=${encodeURIComponent(targetHref)}`, {
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+        if (res.ok) {
+          const json = await res.json()
+          if (json.title || json.description || json.image) {
+            const result: PreviewData = {
+              url: href,
+              title: json.title || domain,
+              description:
+                json.description && json.description.length > 140
+                  ? `${json.description.slice(0, 140)}...`
+                  : json.description,
+              image: json.image,
+              icon: json.icon || fallbackIcon,
+              siteName: json.siteName || domain,
+              isInternal: false,
+              loading: false,
+            }
+            memoryCache.set(targetHref, result)
+            try {
+              sessionStorage.setItem(`lp_cache_${targetHref}`, JSON.stringify(result))
+            } catch {}
+            if (currentHrefRef.current === href) setPreviewData(result)
+            return
           }
-          return
         }
-        throw new Error('No microlink metadata')
-      } catch (e) {
-        // High quality fallback using domain name and google favicon
-        const result: PreviewData = {
-          url: href,
-          title: domain,
-          description: `External link to ${domain}`,
-          icon: fallbackIcon,
-          siteName: domain,
-          isInternal: false,
-          loading: false,
-        }
-        memoryCache.set(href, result)
-        if (currentHrefRef.current === href) {
-          setPreviewData(result)
-        }
+      } catch {}
+
+      // Strategy 5: High-quality domain fallback
+      const fallbackResult: PreviewData = {
+        url: href,
+        title: domain,
+        description: `External link to ${domain}`,
+        icon: fallbackIcon,
+        siteName: domain,
+        isInternal: false,
+        loading: false,
+      }
+      memoryCache.set(targetHref, fallbackResult)
+      if (currentHrefRef.current === href) {
+        setPreviewData(fallbackResult)
       }
     }
   }

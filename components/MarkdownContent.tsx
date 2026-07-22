@@ -36,12 +36,12 @@ function processYouTubeEmbeds(content: string): string {
     if (!videoId) return match
     
     return `\n<div class="custom-youtube-card group my-8" onclick="this.outerHTML='<div class=\\'youtube-embed aspect-video my-8 rounded-2xl overflow-hidden shadow-xl border border-foreground/15\\'><iframe src=\\'https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0\\' frameborder=\\'0\\' allow=\\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\\' allowfullscreen class=\\'w-full h-full rounded-2xl\\'></iframe></div>';">
-  <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-foreground/15 dark:border-white/15 bg-black/90 shadow-xl cursor-pointer">
+  <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-foreground/15 dark:border-white/15 bg-black shadow-xl cursor-pointer">
     <img 
-      src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
-      onError="this.onerror=null;this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg';"
+      src="https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg" 
+      onError="this.onerror=null;this.src='https://i.ytimg.com/vi/${videoId}/hqdefault.jpg';this.classList.add('scale-[1.35]');"
       alt="Video Thumbnail"
-      class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-out"
+      class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ease-out"
       loading="lazy"
     />
     <div class="absolute inset-0 bg-black/25 group-hover:bg-black/35 transition-colors flex items-center justify-center">

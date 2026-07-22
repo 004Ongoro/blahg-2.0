@@ -269,72 +269,9 @@ export default async function PostPage({ params }: Props) {
               </div>
             </header>
 
-            <div className="prose prose-neutral dark:prose-invert max-w-none mb-12">
+            <div className="prose prose-neutral dark:prose-invert max-w-none">
               <MarkdownContent content={post.content} />
             </div>
-
-            {/* Post Reactions */}
-            <div className="mb-12">
-              <PostReactions 
-                slug={slug} 
-                initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
-              />
-            </div>
-
-            {/* Prev / Next Navigation */}
-            <div className="flex flex-col gap-8 py-8 border-y border-foreground/10 mb-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nav.prev ? (
-                  <Link href={`/post/${nav.prev}`} className="group space-y-1.5">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous Article</span>
-                    <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
-                      <ChevronLeft className="h-4 w-4 shrink-0" /> {nav.prev.replace(/-/g, ' ')}
-                    </p>
-                  </Link>
-                ) : <div />}
-
-                {nav.next ? (
-                  <Link href={`/post/${nav.next}`} className="group space-y-1.5 md:text-right">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next Article</span>
-                    <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
-                      {nav.next.replace(/-/g, ' ')} <ChevronRight className="h-4 w-4 shrink-0" />
-                    </p>
-                  </Link>
-                ) : <div />}
-              </div>
-            </div>
-
-            {/* Newsletter & Community Callout */}
-            <div className="space-y-8 mb-16">
-              <Newsletter />
-              <CommunityCallout />
-            </div>
-
-            {/* Mobile Related Posts */}
-            <div className="lg:hidden mb-12">
-              <MoreLikeThis posts={relatedPosts} />
-            </div>
-
-            {/* Comments Section (Uncollapsed) */}
-            <div className="mb-16">
-              <GiscusComments />
-            </div>
-
-            {post.tags && post.tags.length > 0 && (
-              <div className="pt-8 border-t border-foreground/10">
-                <div className="flex flex-wrap gap-x-6 gap-y-2">
-                  {post.tags.map((tag: string) => (
-                    <Link
-                      key={tag}
-                      href={`/tags?tag=${encodeURIComponent(tag)}`}
-                      className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </article>
 
           {/* Right Column: Sticky Table of Contents & Related Posts */}
@@ -365,6 +302,68 @@ export default async function PostPage({ params }: Props) {
             )}
           </aside>
 
+        </div>
+
+        {/* Post-Article Engagement Section (Unsticky Sidebars Scroll Out Cleanly Here) */}
+        <div className="max-w-2xl mx-auto w-full mt-16 space-y-12">
+          {/* Post Reactions */}
+          <PostReactions 
+            slug={slug} 
+            initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
+          />
+
+          {/* Prev / Next Navigation */}
+          <div className="flex flex-col gap-8 py-8 border-y border-foreground/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {nav.prev ? (
+                <Link href={`/post/${nav.prev}`} className="group space-y-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous Article</span>
+                  <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
+                    <ChevronLeft className="h-4 w-4 shrink-0" /> {nav.prev.replace(/-/g, ' ')}
+                  </p>
+                </Link>
+              ) : <div />}
+
+              {nav.next ? (
+                <Link href={`/post/${nav.next}`} className="group space-y-1.5 md:text-right">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next Article</span>
+                  <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
+                    {nav.next.replace(/-/g, ' ')} <ChevronRight className="h-4 w-4 shrink-0" />
+                  </p>
+                </Link>
+              ) : <div />}
+            </div>
+          </div>
+
+          {/* Newsletter & Community Callout */}
+          <div className="space-y-8">
+            <Newsletter />
+            <CommunityCallout />
+          </div>
+
+          {/* Mobile Related Posts */}
+          <div className="lg:hidden">
+            <MoreLikeThis posts={relatedPosts} />
+          </div>
+
+          {/* Comments Section (Uncollapsed) */}
+          <GiscusComments />
+
+          {post.tags && post.tags.length > 0 && (
+            <div className="pt-8 border-t border-foreground/10">
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                {post.tags.map((tag: string) => (
+                  <Link
+                    key={tag}
+                    href={`/tags?tag=${encodeURIComponent(tag)}`}
+                    className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

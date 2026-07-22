@@ -15,6 +15,7 @@ import { PostReactions } from '@/components/PostReactions'
 import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
+import { FeaturedLinks } from '@/components/FeaturedLinks'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -309,6 +310,10 @@ export default async function PostPage({ params }: Props) {
 
             <GiscusComments />
 
+            <div className="lg:hidden">
+              <FeaturedLinks content={post.content} isMobileAccordion />
+            </div>
+
             {post.tags && post.tags.length > 0 && (
               <div className="mt-20 pt-12 border-t border-foreground/5">
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
@@ -352,6 +357,8 @@ export default async function PostPage({ params }: Props) {
                 </ul>
               </div>
             )}
+
+            <FeaturedLinks content={post.content} isSidebar />
           </aside>
 
         </div>

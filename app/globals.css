@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 html, body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Neo-brutalist design system */

@@ -159,7 +159,7 @@ export default async function PostPage({ params }: Props) {
         <div className="flex flex-col lg:flex-row gap-12 items-start justify-center relative">
           
           {/* Left Column: Sticky Metadata & Socials */}
-          <aside className="hidden lg:flex flex-col gap-8 lg:sticky lg:top-24 w-48 shrink-0 text-xs font-sans text-muted-foreground/80">
+          <aside className="hidden lg:flex flex-col gap-8 lg:sticky lg:top-24 self-start w-48 shrink-0 text-xs font-sans text-muted-foreground/80">
             <Link
               href="/"
               className="text-muted-foreground hover:text-accent font-bold uppercase tracking-wider flex items-center gap-1 transition-colors pb-4 border-b border-foreground/5"
@@ -275,7 +275,7 @@ export default async function PostPage({ params }: Props) {
           </article>
 
           {/* Right Column: Sticky Table of Contents & Related Posts */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 w-60 shrink-0 space-y-10">
+          <aside className="hidden lg:block lg:sticky lg:top-24 self-start w-60 shrink-0 space-y-10">
             <div className="space-y-4">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 border-b border-foreground/10 pb-2">Table of Contents</h3>
               <TableOfContents content={post.content} isSidebar />

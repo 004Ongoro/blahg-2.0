@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { CommunityCallout } from '@/components/CommunityCallout'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
@@ -46,13 +47,9 @@ export default function AboutPage() {
               I started this blog to document what I learn, share my opinions (sometimes spicy, always honest), 
               and create a hub where other developers can hang out.
             </p>
-
-            <p>
-              If you've found something useful here, or if you just want to talk tech, I'd love to hear from you. 
-              Swing by the <Link href="/guestbook" className="text-accent hover:underline decoration-2 underline-offset-4">guestbook</Link> 
-              to say hello or drop me a message.
-            </p>
           </div>
+
+          <CommunityCallout />
 
           <footer className="pt-12 border-t border-foreground/5">
             <Link 

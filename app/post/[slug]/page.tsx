@@ -16,6 +16,7 @@ import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 import { FeaturedLinks } from '@/components/FeaturedLinks'
+import { CommunityCallout } from '@/components/CommunityCallout'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -303,6 +304,8 @@ export default async function PostPage({ params }: Props) {
               slug={slug} 
               initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
             />
+
+            <CommunityCallout />
 
             <div className="lg:hidden">
               <MoreLikeThis posts={relatedPosts} />

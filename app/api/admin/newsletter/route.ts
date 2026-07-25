@@ -344,12 +344,18 @@ export async function POST(req: Request) {
     // Process each chunk
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i]
-      const batchRequest = chunk.map(email => ({
-        from: 'George Ongoro <george@geohack.top>',
-        to: email,
-        subject: subject,
-        html: trackedEmailHtml,
-      }))
+      const batchRequest = chunk.map(email => {
+        const personalizedHtml = trackedEmailHtml.replace(
+          new RegExp(`${baseUrl}/unsubscribe`, 'g'),
+          `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
+        )
+        return {
+          from: 'George Ongoro <george@geohack.top>',
+          to: email,
+          subject: subject,
+          html: personalizedHtml,
+        }
+      })
 
       const { error } = await resend.batch.send(batchRequest)
       

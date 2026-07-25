@@ -6,10 +6,13 @@ import Link from 'next/link'
 
 function UnsubscribeContent() {
   const searchParams = useSearchParams()
-  const emailParam = searchParams.get('email') || ''
+  let rawEmail = searchParams.get('email') || ''
+  if (rawEmail.includes('?')) rawEmail = rawEmail.split('?')[0]
+  if (rawEmail.includes('&')) rawEmail = rawEmail.split('&')[0]
+
   const idParam = searchParams.get('id') || ''
 
-  const [email, setEmail] = useState(emailParam)
+  const [email, setEmail] = useState(rawEmail)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 

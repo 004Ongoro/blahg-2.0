@@ -322,14 +322,6 @@ export async function POST(req: Request) {
       utm_campaign: slug,
     }
 
-    const trackedEmailHtml = emailHtml.replace(/href=(["'])([^"']+)\1/g, (match, quote, url) => {
-      if (url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith('#')) {
-        return match
-      }
-      return `href=${quote}${addTrackingParams(url, trackingParams)}${quote}`
-    })
-
-
     const CHUNK_SIZE = 45
     const DELAY_MS = 1000 // 1 second delay between batches
     
@@ -345,15 +337,26 @@ export async function POST(req: Request) {
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i]
       const batchRequest = chunk.map(email => {
-        const personalizedHtml = trackedEmailHtml.replace(
+        // Personalize unsubscribe link first
+        const personalizedUnsubscribe = `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
+        const emailWithUnsubscribe = emailHtml.replace(
           new RegExp(`${baseUrl}/unsubscribe`, 'g'),
-          `${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}`
+          personalizedUnsubscribe
         )
+
+        // Add tracking params to all URLs cleanly
+        const trackedEmailHtml = emailWithUnsubscribe.replace(/href=(["'])([^"']+)\1/g, (match, quote, url) => {
+          if (url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith('#')) {
+            return match
+          }
+          return `href=${quote}${addTrackingParams(url, trackingParams)}${quote}`
+        })
+
         return {
           from: 'George Ongoro <george@geohack.top>',
           to: email,
           subject: subject,
-          html: personalizedHtml,
+          html: trackedEmailHtml,
         }
       })
 

@@ -91,162 +91,180 @@ export async function POST(req: Request) {
           <title>${subject}</title>
           <style>
             body {
-              background-color: #ffffff;
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-              color: #000000;
+              background-color: #f8fafc;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+              color: #374151;
               margin: 0;
               padding: 0;
               -webkit-font-smoothing: antialiased;
             }
             .wrapper {
-              padding: 20px;
+              padding: 24px 12px;
             }
             .main {
               max-width: 600px;
               margin: 0 auto;
-              border: 1px solid #eeeeee;
+              background-color: #ffffff;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              overflow: hidden;
             }
             .header {
-              padding: 40px;
-              border-bottom: 1px solid #000000;
+              padding: 32px 32px 24px 32px;
+              border-bottom: 1px solid #f1f5f9;
+            }
+            .header-top {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
             }
             .identity {
-              font-size: 10px;
-              font-weight: 900;
+              font-size: 13px;
+              font-weight: 700;
+              letter-spacing: 0.05em;
+              color: #0f172a;
               text-transform: uppercase;
-              letter-spacing: 0.3em;
-              margin-bottom: 40px;
-            }
-            .identity span { color: #ff3e00; }
-            .issue-meta {
-              font-size: 10px;
-              font-weight: 800;
-              text-transform: uppercase;
-              letter-spacing: 0.1em;
-              color: #999999;
-              margin-bottom: 12px;
-            }
-            h1 {
-              color: #000000;
-              font-size: 32px;
-              font-weight: 900;
-              line-height: 1.1;
-              margin: 0 0 24px 0;
-              text-transform: uppercase;
-              letter-spacing: -0.02em;
             }
             .view-online {
-              font-size: 10px;
-              color: #ff3e00;
+              font-size: 13px;
+              color: #2563eb;
               text-decoration: none;
-              font-weight: 800;
+              font-weight: 500;
+              display: inline-block;
+            }
+            .view-online:hover {
+              text-decoration: underline;
+            }
+            .issue-meta {
+              font-size: 12px;
+              font-weight: 600;
+              color: #64748b;
+              margin-bottom: 8px;
               text-transform: uppercase;
-              letter-spacing: 0.1em;
+              letter-spacing: 0.05em;
+            }
+            h1.issue-title {
+              color: #0f172a;
+              font-size: 26px;
+              font-weight: 800;
+              line-height: 1.25;
+              margin: 0;
             }
             .content {
-              padding: 40px;
-              font-size: 15px;
-              line-height: 1.6;
-              color: #333333;
+              padding: 32px;
+              font-size: 16px;
+              line-height: 1.65;
+              color: #334155;
             }
-            .content p { margin-bottom: 24px; }
-            .content h1, .content h2, .content h3 { 
-              color: #000000;
-              margin-top: 48px; 
-              margin-bottom: 16px; 
-              line-height: 1.2;
-              text-transform: uppercase;
-              font-weight: 900;
+            .content p {
+              margin-top: 0;
+              margin-bottom: 20px;
             }
-            .content h1 { font-size: 24px; }
-            .content h2 { font-size: 20px; }
-            .content h3 { font-size: 18px; }
-            .content img { 
-              max-width: 100%; 
-              height: auto; 
-              margin: 32px 0;
-              display: block;
-              border: 1px solid #eeeeee;
-            }
-            .content blockquote { 
-              border-left: 4px solid #ff3e00; 
-              margin: 32px 0; 
-              padding: 16px 32px; 
-              background: #f9f9f9; 
-              font-style: italic;
-              color: #555555;
-            }
-            .content code { 
-              background: #f1f1f1; 
-              padding: 2px 6px; 
-              font-family: inherit;
-              font-size: 0.9em;
-              color: #000000;
+            .content h1, .content h2, .content h3 {
+              color: #0f172a;
               font-weight: 700;
+              line-height: 1.3;
+              margin-top: 32px;
+              margin-bottom: 12px;
+            }
+            .content h1 { font-size: 22px; }
+            .content h2 { font-size: 19px; }
+            .content h3 { font-size: 17px; }
+            .content img {
+              max-width: 100%;
+              height: auto;
+              margin: 24px 0;
+              display: block;
+              border-radius: 6px;
+            }
+            .content blockquote {
+              border-left: 3px solid #cbd5e1;
+              margin: 20px 0;
+              padding: 12px 18px;
+              background: #f8fafc;
+              font-style: italic;
+              color: #475569;
+              border-radius: 0 4px 4px 0;
+            }
+            .content code {
+              background: #f1f5f9;
+              color: #0f172a;
+              padding: 2px 6px;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+              font-size: 0.9em;
+              border-radius: 4px;
             }
             .content pre {
-              background: #000000;
-              color: #ffffff;
-              padding: 32px;
+              background: #0f172a;
+              color: #f8fafc;
+              padding: 20px;
               overflow-x: auto;
-              margin: 32px 0;
-              font-size: 13px;
+              margin: 24px 0;
+              font-size: 14px;
               line-height: 1.5;
+              border-radius: 6px;
+              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             }
-            .content ul, .content ol { margin-bottom: 24px; padding-left: 20px; }
-            .content li { margin-bottom: 12px; }
-            .content hr { border: none; border-top: 1px solid #eeeeee; margin: 48px 0; }
+            .content ul, .content ol {
+              margin-top: 0;
+              margin-bottom: 20px;
+              padding-left: 24px;
+            }
+            .content li {
+              margin-bottom: 8px;
+            }
+            .content a {
+              color: #2563eb;
+              text-decoration: underline;
+            }
+            .content hr {
+              border: none;
+              border-top: 1px solid #e2e8f0;
+              margin: 32px 0;
+            }
             
             .footer {
-              background-color: #f9f9f9;
-              padding: 40px;
-              border-top: 1px solid #eeeeee;
+              background-color: #f8fafc;
+              padding: 32px;
+              border-top: 1px solid #e2e8f0;
               text-align: left;
             }
             .footer-brand {
-              font-size: 12px;
-              font-weight: 900;
-              text-transform: uppercase;
-              letter-spacing: 0.2em;
-              margin-bottom: 8px;
+              font-size: 14px;
+              font-weight: 700;
+              color: #0f172a;
+              margin-bottom: 4px;
             }
             .footer-sub {
-              font-size: 10px;
-              font-weight: 700;
-              color: #999999;
-              text-transform: uppercase;
-              letter-spacing: 0.1em;
-              margin-bottom: 24px;
+              font-size: 12px;
+              color: #64748b;
+              margin-bottom: 20px;
             }
             .social-links {
-              margin-bottom: 32px;
+              margin-bottom: 24px;
             }
             .social-link {
-              color: #000000;
+              color: #2563eb;
               text-decoration: none;
-              font-weight: 800;
-              font-size: 10px;
-              margin-right: 20px;
-              text-transform: uppercase;
-              letter-spacing: 0.1em;
+              font-weight: 500;
+              font-size: 12px;
+              margin-right: 16px;
             }
             .unsubscribe-info {
-              color: #bbbbbb;
-              font-size: 10px;
-              line-height: 1.8;
-              text-transform: uppercase;
-              letter-spacing: 0.05em;
-              font-weight: 600;
+              color: #64748b;
+              font-size: 12px;
+              line-height: 1.6;
             }
             .unsubscribe-link {
-              color: #999999;
+              color: #475569;
               text-decoration: underline;
             }
             
             @media only screen and (max-width: 600px) {
-              .main { border: none; }
-              .header, .content, .footer { padding: 24px; }
-              h1 { font-size: 28px; }
+              .wrapper { padding: 12px 6px; }
+              .header, .content, .footer { padding: 20px; }
+              h1.issue-title { font-size: 22px; }
             }
           </style>
         </head>
@@ -255,12 +273,20 @@ export async function POST(req: Request) {
             <div class="main">
               <!-- Header -->
               <div class="header">
-                <div class="identity">GEORGE<span>.</span>ONGORO</div>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 16px;">
+                  <tr>
+                    <td align="left" style="font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">
+                      George Ongoro
+                    </td>
+                    <td align="right">
+                      <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
+                        View in browser &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                </table>
                 <div class="issue-meta">Dispatch // Issue #${issue.slug.split('-').pop()?.substring(0, 6) || 'Latest'}</div>
-                <h1>${subject}</h1>
-                <a href="${baseUrl}/newsletter/archive/${slug}" class="view-online">
-                  Open in browser &rarr;
-                </a>
+                <h1 class="issue-title">${subject}</h1>
               </div>
               
               <!-- Main Content -->
@@ -280,10 +306,8 @@ export async function POST(req: Request) {
                 </div>
 
                 <div class="unsubscribe-info">
-                  Sent to you because you joined the circle at 
-                  <a href="${baseUrl}" style="color: #999999;">george.blog</a>.<br>
-                  No longer interested? 
-                  <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">Unsubscribe here</a>.
+                  Sent to you because you subscribed at <a href="${baseUrl}" style="color: #2563eb; text-decoration: none;">geohack.top</a>.<br>
+                  No longer interested? <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">Unsubscribe here</a>.
                 </div>
               </div>
             </div>
@@ -321,7 +345,7 @@ export async function POST(req: Request) {
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i]
       const batchRequest = chunk.map(email => ({
-        from: 'George Ongoro <george.blog@deepread.website>',
+        from: 'George Ongoro <george@geohack.top>',
         to: email,
         subject: subject,
         html: trackedEmailHtml,

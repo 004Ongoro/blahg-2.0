@@ -69,19 +69,36 @@ export async function PUT(
       try {
         const resend = new Resend(process.env.RESEND_API_KEY)
         await resend.emails.send({
-          from: 'Uplink Console <uplink@deepread.website>',
+          from: 'Uplink Console <uplink@geohack.top>',
           to: post.authorEmail,
           subject: `Transmission Approved: "${post.title}"`,
           html: `
-            <div style="font-family: monospace; padding: 20px; background-color: #efd6ac; color: #04151f; border: 3px solid #04151f; max-width: 600px;">
-              <h2 style="text-transform: uppercase; border-bottom: 2px solid #04151f; padding-bottom: 8px; color: #c44900;">Uplink Approved</h2>
-              <p>Hello ${post.authorName || 'Guest Writer'},</p>
-              <p>Your log transmission <strong>"${post.title}"</strong> has been approved by the core console and is now live on the public net!</p>
-              <p>You can view the published entry here:</p>
-              <p><a href="https://geohack.top/post/${post.slug}" style="color: #c44900; font-weight: bold; text-decoration: underline;">https://geohack.top/post/${post.slug}</a></p>
-              <br/>
-              <p style="opacity: 0.6; font-size: 10px;">CORE_UPLINK_SYSTEM v2.0</p>
-            </div>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Transmission Approved</title>
+            </head>
+            <body style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #374151; margin: 0; padding: 24px 12px; -webkit-font-smoothing: antialiased;">
+              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; padding: 32px;">
+                <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+                  <h1 style="margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Transmission Approved
+                  </h1>
+                </div>
+                <p style="font-size: 16px; line-height: 1.65; color: #334155; margin-top: 0; margin-bottom: 16px;">Hello ${post.authorName || 'Guest Writer'},</p>
+                <p style="font-size: 16px; line-height: 1.65; color: #334155; margin-bottom: 16px;">Your log transmission <strong>"${post.title}"</strong> has been approved and is now live on the public network!</p>
+                <p style="font-size: 16px; line-height: 1.65; color: #334155; margin-bottom: 24px;">You can view the published entry here:</p>
+                <div style="margin-bottom: 32px;">
+                  <a href="https://geohack.top/post/${post.slug}" style="display: inline-block; background-color: #2563eb; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 6px;">View Published Entry &rarr;</a>
+                </div>
+                <div style="padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: left;">
+                  <p style="margin: 0; color: #94a3b8; font-size: 12px;">CORE_UPLINK_SYSTEM v2.0 // geohack.top</p>
+                </div>
+              </div>
+            </body>
+            </html>
           `,
         })
       } catch (emailError) {

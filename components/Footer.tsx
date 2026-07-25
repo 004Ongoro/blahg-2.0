@@ -31,7 +31,7 @@ const MastodonIcon = ({ size = 18 }: { size?: number }) => (
 
 const socials = [
   { name: 'Twitter', href: 'https://x.com/ongorogeorg_e', icon: <Twitter size={18} /> },
-  { name: 'Bluesky', href: 'https://bsky.app/profile/deepread.website', icon: <MessageSquare size={18} /> },
+  { name: 'Bluesky', href: 'https://bsky.app/profile/geohack.top', icon: <MessageSquare size={18} /> },
   { name: 'GitHub', href: 'https://github.com/004Ongoro', icon: <Github size={18} /> },
   { name: 'LinkedIn', href: 'https://linkedin.com/in/georgeongoro2', icon: <Linkedin size={18} /> },
   { name: 'Mastodon', href: 'https://mastodon.social/@ongoro_ge', icon: <MastodonIcon size={18} /> },

@@ -6,12 +6,13 @@ export const runtime = 'edge'
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const title = searchParams.get('title') || 'George Ongoro Blog'
+    const title = searchParams.get('title') || 'Ongoro Blog'
     const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
     const readTime = searchParams.get('readTime')
+    const author = searchParams.get('author') || 'George Ongoro'
 
     return new ImageResponse(
-      <OgCard title={title} tags={tags} readTime={readTime || undefined} />,
+      <OgCard title={title} tags={tags} readTime={readTime || undefined} authorName={author} />,
       {
         width: 1200,
         height: 630,

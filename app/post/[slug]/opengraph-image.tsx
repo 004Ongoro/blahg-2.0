@@ -5,7 +5,7 @@ import { OgCard } from '@/components/OgCard'
 
 export const runtime = 'nodejs'
 
-export const alt = 'George Ongoro Blog'
+export const alt = 'Ongoro Blog'
 export const size = {
   width: 1200,
   height: 630,
@@ -20,7 +20,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     await dbConnect()
     const post = await Post.findOne({ slug, published: true }).select('title tags readTime').lean()
 
-    const title = post?.title || 'George Ongoro Blog'
+    const title = post?.title || 'Ongoro Blog'
     const tags = (post?.tags as string[]) || []
     const readTime = post?.readTime
 
@@ -28,12 +28,20 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       <OgCard title={title} tags={tags} readTime={readTime} />,
       {
         ...size,
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
       }
     )
   } catch (e: any) {
     return new ImageResponse(
-      <OgCard title="George Ongoro Blog" />,
-      { ...size }
+      <OgCard title="Ongoro Blog" />,
+      {
+        ...size,
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      }
     )
   }
 }

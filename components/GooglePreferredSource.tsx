@@ -30,7 +30,7 @@ interface GooglePreferredSourceProps {
 
 export function GooglePreferredSource({ className = '' }: GooglePreferredSourceProps) {
   const domain = 'code.geohack.top'
-  const followUrl = `https://news.google.com/search?q=site%3A${encodeURIComponent(domain)}`
+  const followUrl = `https://www.google.com/search?q=site%3A${encodeURIComponent(domain)}`
 
   return (
     <a

@@ -52,6 +52,9 @@ export const metadata: Metadata = {
       'application/rss+xml': `${baseUrl}/rss.xml`,
     },
   },
+  other: {
+    'opensearch-description': `${baseUrl}/opensearch.xml`,
+  },
 }
 
 export default function RootLayout({
@@ -61,6 +64,46 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
+      <head>
+        <link rel="search" type="application/opensearchdescription+xml" title="George Ongoro Blog" href="/opensearch.xml" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'WebSite',
+                  '@id': `${baseUrl}/#website`,
+                  url: baseUrl,
+                  name: 'George Ongoro Blog',
+                  description: 'Technical insights on web development, clean architecture, and modern coding practices.',
+                  publisher: {
+                    '@id': `${baseUrl}/#organization`,
+                  },
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: `https://www.google.com/search?q=site%3Acode.geohack.top+{search_term_string}`,
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+                {
+                  '@type': 'NewsMediaOrganization',
+                  '@id': `${baseUrl}/#organization`,
+                  name: 'George Ongoro Blog',
+                  url: baseUrl,
+                  logo: `${baseUrl}/api/og?title=George+Ongoro`,
+                  sameAs: [
+                    'https://x.com/ongorogeorg_e',
+                    'https://github.com/004Ongoro',
+                    'https://news.google.com/search?q=site%3Acode.geohack.top',
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
+      </head>
       <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
         {/* GoatCounter Analytics */}
         <Script

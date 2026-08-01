@@ -16,6 +16,7 @@ import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
+import { GooglePreferredSource } from '@/components/GooglePreferredSource'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -300,6 +301,8 @@ export default async function PostPage({ params }: Props) {
                 </ul>
               </div>
             )}
+
+            <GooglePreferredSource variant="compact" />
           </aside>
 
         </div>

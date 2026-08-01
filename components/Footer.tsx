@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
 import { StatusWidget } from './StatusWidget'
+import { GooglePreferredSource } from './GooglePreferredSource'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -96,6 +97,9 @@ export function Footer() {
             </Link>
           </div>
         </div>
+
+        {/* Google Preferred Source Promotion */}
+        <GooglePreferredSource variant="card" className="mb-12" />
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Left Column: Brand & Nav */}

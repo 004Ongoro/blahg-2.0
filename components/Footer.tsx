@@ -98,9 +98,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Google Preferred Source Promotion */}
-        <GooglePreferredSource variant="card" className="mb-12" />
-
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Left Column: Brand & Nav */}
           <div className="space-y-8">
@@ -139,7 +136,8 @@ export function Footer() {
               </button>
             } />
 
-            <div className="flex gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <GooglePreferredSource />
               {socials.map((social) => (
                 <a
                   key={social.name}

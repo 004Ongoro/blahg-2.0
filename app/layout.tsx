@@ -7,6 +7,7 @@ import { ScrollProgress } from '@/components/ScrollProgress'
 import { ContactDialog } from '@/components/ContactDialog'
 import { MessageSquare } from 'lucide-react'
 import { getBaseUrl } from '@/lib/utils'
+import { FallingGlyphs } from '@/components/FallingGlyphs'
 import './globals.css'
 
 const jetbrainsMono = {
@@ -137,6 +138,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <FallingGlyphs />
           {children}
           <Toaster />
           <ScrollProgress />

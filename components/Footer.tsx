@@ -1,10 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Github, Twitter, Linkedin, Rss, MessageSquare, Video, ArrowUpRight } from 'lucide-react'
+import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
-import { StatusWidget } from './StatusWidget'
-import { GooglePreferredSource } from './GooglePreferredSource'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -27,6 +25,15 @@ const MastodonIcon = ({ size = 18 }: { size?: number }) => (
     fill="currentColor"
   >
     <path d="M23.268 5.313c-.35-2.578-2.617-2.91-4.884-2.96-3.013-.068-6.03-.068-9.043 0-2.267.05-4.534.382-4.884 2.96-.18 1.482-.232 3.942-.012 5.617.22 1.675.815 3.322.9 5.38.074 1.8 1.487 3.29 3.014 3.524 1.77.272 3.542.456 5.316.556 1.77.1 3.54-.084 5.313-.272 1.527-.162 2.502-1.576 2.56-3.082.023-.602.044-1.206.064-1.81.077-2.26.155-4.52.078-6.78-.04-1.157-.272-2.247-.417-3.133zm-4.66 8.358c-.372.585-.923.948-1.65 1.086-1.077.204-2.153.25-3.23.136-.364-.04-.728-.106-1.09-.2-.733-.19-1.3-.593-1.7-1.21-.1-.157-.184-.325-.262-.5-.1-.225-.19-.46-.264-.7-.033-.1-.06-.2-.086-.3a4.992 4.992 0 0 1-.06-.75c.01-.767.143-1.517.4-2.25.263-.75.688-1.393 1.272-1.928.536-.492 1.173-.804 1.884-.935 1.077-.204 2.153-.25 3.23-.136.363.04.727.106 1.09.2.732.19 1.3.593 1.7 1.21.1.157.185.325.263.5.1.225.19.46.264.7.032.1.06.2.086.3.048.25.07.5.06.75-.01.767-.143 1.517-.4 2.25-.262.75-.687 1.393-1.27 1.928-.538.492-1.175.804-1.886.935zm-2.02-3.195c-.007.45-.143.834-.41 1.152-.295.352-.693.528-1.193.528-.485 0-.877-.17-1.174-.51-.277-.318-.42-.705-.43-1.16-.017-1.054.385-1.58 1.206-1.58.37 0 .668.12.894.364.227.243.344.576.353 1 .006.27-.083.473-.266.61-.137.102-.303.153-.5.153-.207 0-.374-.05-.5-.153a.58.58 0 0 1-.226-.457c0-.233.166-.35.5-.35h.063c.27 0 .42-.1.453-.3a1.442 1.442 0 0 0-.256-1.002.825.825 0 0 0-.677-.318.825.825 0 0 0-.678.318c-.244.3-.367.668-.37 1.103v.25c0 .546.173.985.52 1.316.347.33.784.497 1.313.497.522 0 .953-.163 1.293-.49.34-.326.516-.76.527-1.303v-.25c.01-.433-.11-.8-.36-1.102a.825.825 0 0 0-.677-.318.825.825 0 0 0-.677.318c-.22.246-.34.58-.354 1.002.033.2-.12.3-.455.3h-.063c-.333 0-.5.117-.5.35a.58.58 0 0 0 .227.457c.127.102.293.153.5.153.197 0 .363-.05.5-.153.183-.137.272-.34.266-.61z" />
+  </svg>
+)
+
+const GoogleIcon = ({ className = "h-3.5 w-3.5" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
   </svg>
 )
 
@@ -99,9 +106,9 @@ export function Footer() {
         </div>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-          {/* Left Column: Brand & Nav */}
-          <div className="space-y-8">
-            <div className="space-y-4">
+          {/* Left Column: Brand, Status, Nav */}
+          <div className="space-y-6">
+            <div className="space-y-3">
               <Link href="/" className="text-2xl font-black uppercase tracking-tighter">
                 george<span className="text-accent">.</span>2.0
               </Link>
@@ -111,7 +118,25 @@ export function Footer() {
               </p>
             </div>
 
-            <nav className="flex flex-wrap gap-x-6 gap-y-2">
+            {/* Single Line Collapsed OpenStatus Indicator */}
+            <a
+              href="https://code-geohack.openstatus.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-card hover:border-foreground/20 text-xs font-bold transition-all"
+              title="OpenStatus telemetry status"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-foreground">
+                All Systems Operational
+              </span>
+              <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+            </a>
+
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
               {secondaryLinks.map((link) => (
                 <Link 
                   key={link.name} 
@@ -122,10 +147,6 @@ export function Footer() {
                 </Link>
               ))}
             </nav>
-
-            <div className="max-w-xs pt-4">
-              <StatusWidget />
-            </div>
           </div>
 
           {/* Right Column: Contact & Socials */}
@@ -136,8 +157,19 @@ export function Footer() {
               </button>
             } />
 
-            <div className="flex flex-wrap items-center gap-4">
-              <GooglePreferredSource />
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Inlined Google Follow button */}
+              <a
+                href="https://www.google.com/search?q=site%3Acode.geohack.top"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-background/80 hover:bg-foreground/5 text-xs font-bold text-foreground transition-all cursor-pointer"
+                title="Follow on Google"
+              >
+                <GoogleIcon />
+                <span className="font-mono text-[10px] uppercase tracking-wider">Follow</span>
+              </a>
+
               {socials.map((social) => (
                 <a
                   key={social.name}
@@ -155,7 +187,7 @@ export function Footer() {
         </div>
 
         {/* Badges Row */}
-        <div className="mt-20 flex flex-wrap items-center justify-center gap-4 opacity-75 hover:opacity-100 transition-opacity duration-300">
+        <div className="mt-16 flex flex-wrap items-center justify-center gap-4 opacity-75 hover:opacity-100 transition-opacity duration-300">
           <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:scale-105 transition-transform duration-200" title="Ongoro · The Underground Dev">
             <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
           </a>

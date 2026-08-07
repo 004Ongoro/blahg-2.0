@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
@@ -7,7 +6,6 @@ import { ScrollProgress } from '@/components/ScrollProgress'
 import { ContactDialog } from '@/components/ContactDialog'
 import { MessageSquare } from 'lucide-react'
 import { getBaseUrl } from '@/lib/utils'
-import { FallingGlyphs } from '@/components/FallingGlyphs'
 import './globals.css'
 
 const jetbrainsMono = {
@@ -106,15 +104,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
-        {/* GoatCounter Analytics */}
-        <Script
-          data-goatcounter="https://geohack.goatcounter.com/count"
-          async
-          src="//gc.zgo.at/count.js"
-          strategy="afterInteractive"
-        />
-
-        {/* Google Analytics - Moved outside ThemeProvider to prevent hydration script tag issues */}
+        {/* Google Analytics */}
         {gaId && (
           <>
             <Script
@@ -138,7 +128,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <FallingGlyphs />
           {children}
           <Toaster />
           <ScrollProgress />
@@ -150,7 +139,6 @@ export default function RootLayout({
               <MessageSquare className="h-5 w-5" />
             </button>
           } />
-          {process.env.NODE_ENV === 'production' && <Analytics />}
         </ThemeProvider>
       </body>
     </html>

@@ -22,7 +22,7 @@ export const revalidate = 3600
 export async function GET() {
   try {
     await dbConnect()
-    const posts = await Post.find({ published: true })
+    const posts = await Post.find({ published: true, isDraft: { $ne: true } })
       .sort({ createdAt: -1 })
       .select('title slug tags excerpt views')
       .lean()
@@ -43,15 +43,76 @@ export async function POST(req: Request) {
 
     await dbConnect()
     const body = await req.json()
-    const { title, content, excerpt, coverImage, tags, published, series, seriesOrder } = body
+    const { title, content, excerpt, coverImage, tags, published, series, seriesOrder, isDraft, draftSlug } = body
+
+    if (isDraft) {
+      const draftTitle = title || 'Untitled Post Draft'
+      const draftContent = content || ''
+      const slug = draftSlug || body.slug || `${generateSlug(draftTitle)}-${Date.now()}`
+
+      let post = await Post.findOne({ slug })
+      if (post) {
+        post = await Post.findOneAndUpdate(
+          { slug },
+          {
+            title: draftTitle,
+            content: draftContent,
+            excerpt: excerpt || draftContent.substring(0, 150),
+            coverImage,
+            tags: tags || [],
+            published: false,
+            isDraft: true,
+            series,
+            seriesOrder: seriesOrder || 0,
+            updatedAt: new Date(),
+          },
+          { new: true }
+        )
+      } else {
+        const readTime = calculateReadTime(draftContent)
+        post = await Post.create({
+          title: draftTitle,
+          content: draftContent,
+          excerpt: excerpt || draftContent.substring(0, 150),
+          slug,
+          coverImage,
+          tags: tags || [],
+          published: false,
+          isDraft: true,
+          readTime,
+          series,
+          seriesOrder: seriesOrder || 0,
+        })
+      }
+
+      return NextResponse.json(post, { status: 200 })
+    }
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
+    // Clean up temporary draft post if draftSlug was passed and differs from target slug
+    if (draftSlug && draftSlug !== body.slug) {
+      try {
+        await Post.findOneAndDelete({ slug: draftSlug, isDraft: true })
+      } catch (e) {
+        console.error('Failed to clean up post draft:', e)
+      }
+    }
+
     const slug = body.slug || generateSlug(title)
     const existingPost = await Post.findOne({ slug })
-    const finalSlug = existingPost ? `${slug}-${Date.now()}` : slug
+    let finalSlug = slug
+
+    if (existingPost) {
+      if (existingPost.isDraft) {
+        // Overwrite/convert existing draft post
+        await Post.findOneAndDelete({ slug })
+      } else if (!draftSlug) {
+        finalSlug = `${slug}-${Date.now()}`
+      }
+    }
 
     const readTime = calculateReadTime(content)
 
@@ -62,7 +123,8 @@ export async function POST(req: Request) {
       slug: finalSlug,
       coverImage,
       tags: tags || [],
-      published: published ?? false,
+      published: published ?? true,
+      isDraft: false,
       readTime,
       series,
       seriesOrder: seriesOrder || 0,

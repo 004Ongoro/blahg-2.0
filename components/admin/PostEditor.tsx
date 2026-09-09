@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { slugify, calculateReadTime } from '@/lib/utils'
+import { slugify, calculateReadTime, cn } from '@/lib/utils'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -21,7 +21,9 @@ import {
   Settings,
   Monitor
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useAutoSaveDraft } from '@/hooks/useAutoSaveDraft'
+import { DraftSyncBadge } from '@/components/admin/DraftSyncBadge'
+import { useCallback } from 'react'
 
 interface Post {
   _id: string
@@ -51,7 +53,7 @@ export function PostEditor({ post }: PostEditorProps) {
   const [slug, setSlug] = useState(post?.slug || '')
   const [content, setContent] = useState(post?.content || '')
   const [excerpt, setExcerpt] = useState(post?.excerpt || '')
-  const [tagsInput, setTagsInput] = useState(post?.tags.join(', ') || '')
+  const [tagsInput, setTagsInput] = useState(post?.tags?.join(', ') || '')
   const [published, setPublished] = useState(post?.published || false)
   const [series, setSeries] = useState(post?.series || '')
   const [seriesOrder, setSeriesOrder] = useState(post?.seriesOrder?.toString() || '0')
@@ -63,6 +65,120 @@ export function PostEditor({ post }: PostEditorProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPreview, setShowPreview] = useState(false)
+
+  const draftKey = isEditing ? `draft_admin_post_${post._id}` : 'draft_admin_post_new'
+
+  const formData = useMemo(
+    () => ({
+      title,
+      slug,
+      content,
+      excerpt,
+      tagsInput,
+      published,
+      series,
+      seriesOrder,
+      authorName,
+      authorBio,
+      authorEmail,
+      isGuest,
+    }),
+    [
+      title,
+      slug,
+      content,
+      excerpt,
+      tagsInput,
+      published,
+      series,
+      seriesOrder,
+      authorName,
+      authorBio,
+      authorEmail,
+      isGuest,
+    ]
+  )
+
+  const handleRestore = useCallback((restored: typeof formData) => {
+    if (restored.title !== undefined) setTitle(restored.title)
+    if (restored.slug !== undefined) setSlug(restored.slug)
+    if (restored.content !== undefined) setContent(restored.content)
+    if (restored.excerpt !== undefined) setExcerpt(restored.excerpt)
+    if (restored.tagsInput !== undefined) setTagsInput(restored.tagsInput)
+    if (restored.published !== undefined) setPublished(restored.published)
+    if (restored.series !== undefined) setSeries(restored.series)
+    if (restored.seriesOrder !== undefined) setSeriesOrder(restored.seriesOrder)
+    if (restored.authorName !== undefined) setAuthorName(restored.authorName)
+    if (restored.authorBio !== undefined) setAuthorBio(restored.authorBio)
+    if (restored.authorEmail !== undefined) setAuthorEmail(restored.authorEmail)
+    if (restored.isGuest !== undefined) setIsGuest(restored.isGuest)
+  }, [])
+
+  const handleSyncToDb = useCallback(
+    async (
+      data: typeof formData,
+      currentDraftId: string | null,
+      currentDraftSlug: string | null
+    ) => {
+      const tags = data.tagsInput
+        .split(',')
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean)
+
+      const payload = {
+        title: data.title,
+        slug: data.slug,
+        content: data.content,
+        excerpt: data.excerpt,
+        tags,
+        published: false,
+        isDraft: true,
+        series: data.series.trim() || undefined,
+        seriesOrder: parseInt(data.seriesOrder) || 0,
+        authorName: data.authorName.trim() || undefined,
+        authorBio: data.authorBio.trim() || undefined,
+        authorEmail: data.authorEmail.trim() || undefined,
+        isGuest: data.isGuest,
+        draftSlug: currentDraftSlug || (isEditing ? post.slug : undefined),
+      }
+
+      if (isEditing) {
+        const res = await fetch(`/api/posts/${post.slug}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        const resData = await res.json()
+        return { draftSlug: resData.slug, draftId: resData._id }
+      } else {
+        const targetSlug = currentDraftSlug || (data.slug.trim() ? data.slug : undefined)
+        const url = targetSlug ? `/api/posts/${targetSlug}` : '/api/posts'
+        const method = targetSlug ? 'PUT' : 'POST'
+
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        const resData = await res.json()
+        return { draftSlug: resData.slug, draftId: resData._id }
+      }
+    },
+    [isEditing, post]
+  )
+
+  const hasContent = useCallback(
+    (data: typeof formData) => !!(data.title.trim() || data.content.trim()),
+    []
+  )
+
+  const { syncStatus, lastSyncedTime, clearDraft, triggerSync } = useAutoSaveDraft({
+    key: draftKey,
+    data: formData,
+    onRestore: handleRestore,
+    onSyncToDb: handleSyncToDb,
+    hasContent,
+  })
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -108,6 +224,8 @@ export function PostEditor({ post }: PostEditorProps) {
     setError('')
     setLoading(true)
 
+    const { draftSlug: activeDraftSlug } = clearDraft()
+
     const tags = tagsInput
       .split(',')
       .map((t) => t.trim().toLowerCase())
@@ -120,6 +238,8 @@ export function PostEditor({ post }: PostEditorProps) {
       excerpt,
       tags,
       published,
+      isDraft: false,
+      draftSlug: activeDraftSlug || slug,
       series: series.trim() || undefined,
       seriesOrder: parseInt(seriesOrder) || 0,
       authorName: authorName.trim() || undefined,
@@ -160,7 +280,10 @@ export function PostEditor({ post }: PostEditorProps) {
         {/* Editor Side */}
         <div className="space-y-12">
           <div className="space-y-8">
-            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">1. Metadata</h2>
+            <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">1. Metadata</h2>
+              <DraftSyncBadge status={syncStatus} lastSyncedTime={lastSyncedTime} onManualSync={triggerSync} />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">

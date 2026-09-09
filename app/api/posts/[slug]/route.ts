@@ -48,9 +48,11 @@ export async function PUT(
     // Find existing post to check if its published status changed
     const existingPost = await Post.findOne({ slug })
 
+    const isDraftState = body.isDraft ?? (body.published === true ? false : existingPost?.isDraft ?? false)
+
     const post = await Post.findOneAndUpdate(
       { slug },
-      { ...body, updatedAt: new Date() },
+      { ...body, isDraft: isDraftState, updatedAt: new Date() },
       { new: true, runValidators: true }
     )
 

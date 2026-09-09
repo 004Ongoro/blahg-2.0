@@ -6,6 +6,7 @@ export interface IBookmark extends Document {
   description: string
   category: 'tools' | 'libraries' | 'reads' | 'design' | 'inspiration' | 'other'
   tags: string[]
+  isDraft?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -22,6 +23,7 @@ const BookmarkSchema: Schema = new Schema(
       default: 'other',
     },
     tags: [{ type: String, trim: true }],
+    isDraft: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

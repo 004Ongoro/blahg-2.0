@@ -26,6 +26,10 @@ import {
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
+import { useAutoSaveDraft } from '@/hooks/useAutoSaveDraft'
+import { DraftSyncBadge } from '@/components/admin/DraftSyncBadge'
+import { useCallback } from 'react'
+
 export default function AdminNewsletter() {
   const [subject, setSubject] = useState('')
   const [content, setContent] = useState('')
@@ -42,6 +46,54 @@ export default function AdminNewsletter() {
   const [subscribers, setSubscribers] = useState<any[]>([])
   const [selectedSubscribers, setSelectedSubscribers] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+
+  const formData = useMemo(
+    () => ({ subject, content, isMarkdown, publishToArchive }),
+    [subject, content, isMarkdown, publishToArchive]
+  )
+
+  const handleRestore = useCallback((restored: typeof formData) => {
+    if (restored.subject !== undefined) setSubject(restored.subject)
+    if (restored.content !== undefined) setContent(restored.content)
+    if (restored.isMarkdown !== undefined) setIsMarkdown(restored.isMarkdown)
+    if (restored.publishToArchive !== undefined) setPublishToArchive(restored.publishToArchive)
+  }, [])
+
+  const handleSyncToDb = useCallback(
+    async (data: typeof formData, currentDraftId: string | null) => {
+      const payload = {
+        subject: data.subject,
+        content: data.content,
+        isMarkdown: data.isMarkdown,
+        publishToArchive: data.publishToArchive,
+        isDraft: true,
+        draftId: currentDraftId,
+      }
+
+      const res = await fetch('/api/admin/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      const resData = await res.json()
+      return { draftId: resData.issue?._id || resData._id }
+    },
+    []
+  )
+
+  const hasContent = useCallback(
+    (data: typeof formData) => !!(data.subject.trim() || data.content.trim()),
+    []
+  )
+
+  const { syncStatus, lastSyncedTime, clearDraft, triggerSync } = useAutoSaveDraft({
+    key: 'draft_admin_newsletter_issue',
+    data: formData,
+    onRestore: handleRestore,
+    onSyncToDb: handleSyncToDb,
+    hasContent,
+  })
 
   // Fetch existing issues and subscribers
   const fetchData = async () => {
@@ -117,6 +169,8 @@ export default function AdminNewsletter() {
     setSending(true)
     setStatus({ type: '', msg: '' })
 
+    const { draftId: currentDraftId } = clearDraft()
+
     try {
       const res = await fetch('/api/admin/newsletter', {
         method: 'POST',
@@ -126,7 +180,9 @@ export default function AdminNewsletter() {
           content, 
           isMarkdown, 
           publishToArchive,
-          recipients: selectedSubscribers
+          recipients: selectedSubscribers,
+          isDraft: false,
+          draftId: currentDraftId,
         }),
       })
       const data = await res.json()
@@ -194,7 +250,10 @@ export default function AdminNewsletter() {
           <div className={cn("space-y-12", showPreviewMobile && "hidden lg:block")}>
             <form onSubmit={handleSend} className="space-y-12">
               <div className="space-y-8">
-                <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground border-b border-foreground/5 pb-2">1. Message Configuration</h2>
+                <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
+                  <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">1. Message Configuration</h2>
+                  <DraftSyncBadge status={syncStatus} lastSyncedTime={lastSyncedTime} onManualSync={triggerSync} />
+                </div>
                 
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">Subject</label>

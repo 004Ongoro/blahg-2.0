@@ -17,6 +17,7 @@ export interface IPost extends Document {
   authorBio?: string
   authorEmail?: string
   isGuest?: boolean
+  isDraft?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -36,6 +37,7 @@ const PostSchema: Schema = new Schema(
     coverImage: { type: String },
     tags: { type: [String], default: [] },
     published: { type: Boolean, default: false },
+    isDraft: { type: Boolean, default: false },
     readTime: { type: Number, default: 0 },
     views: { type: Number, default: 0 },
     series: { type: String, trim: true },

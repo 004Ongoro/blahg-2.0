@@ -32,8 +32,8 @@ export async function GET() {
     }
 
     await dbConnect()
-    // Fetch all issues, sorted by newest first
-    const issues = await NewsletterIssue.find({}).sort({ createdAt: -1 }).lean()
+    // Fetch all non-draft issues, sorted by newest first
+    const issues = await NewsletterIssue.find({ isDraft: { $ne: true } }).sort({ createdAt: -1 }).lean()
     
     return NextResponse.json(issues)
   } catch (error) {
@@ -43,18 +43,62 @@ export async function GET() {
 }
 
 /**
- * POST: Blast a new newsletter and save to archive
+ * POST: Blast a new newsletter or auto-save a draft
  */
 export async function POST(req: Request) {
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { subject, content, isMarkdown = true, publishToArchive = true, recipients } = await req.json()
+    const { subject, content, isMarkdown = true, publishToArchive = true, recipients, isDraft, draftId } = await req.json()
     const baseUrl = getBaseUrl()
-    const slug = `${slugify(subject)}-${Date.now()}`
 
     await dbConnect()
+
+    if (isDraft) {
+      const draftSubject = subject || 'Untitled Newsletter Draft'
+      const draftContent = content || ''
+      const draftSlug = `draft-issue-${draftId || Date.now()}`
+
+      let issue
+      if (draftId) {
+        issue = await NewsletterIssue.findByIdAndUpdate(
+          draftId,
+          {
+            subject: draftSubject,
+            content: draftContent,
+            isMarkdown,
+            published: false,
+            isDraft: true,
+          },
+          { new: true }
+        )
+      }
+
+      if (!issue) {
+        issue = await NewsletterIssue.create({
+          subject: draftSubject,
+          content: draftContent,
+          isMarkdown,
+          slug: draftSlug,
+          published: false,
+          isDraft: true,
+        })
+      }
+
+      return NextResponse.json({ success: true, isDraft: true, issue }, { status: 200 })
+    }
+
+    // Clean up temporary draft from DB if present before dispatching
+    if (draftId) {
+      try {
+        await NewsletterIssue.findByIdAndDelete(draftId)
+      } catch (e) {
+        console.error('Failed to clean up newsletter draft:', e)
+      }
+    }
+
+    const slug = `${slugify(subject || 'broadcast')}-${Date.now()}`
     
     // Save to database first so the slug is reserved and "View in Browser" link works
     const issue = await NewsletterIssue.create({
@@ -62,7 +106,8 @@ export async function POST(req: Request) {
       content,
       isMarkdown,
       slug,
-      published: publishToArchive
+      published: publishToArchive,
+      isDraft: false
     })
 
     let recipientEmails: string[] = []

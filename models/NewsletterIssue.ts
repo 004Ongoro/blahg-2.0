@@ -6,6 +6,7 @@ export interface INewsletterIssue extends Document {
   isMarkdown: boolean
   slug: string
   published: boolean
+  isDraft?: boolean
   createdAt: Date
 }
 
@@ -16,6 +17,7 @@ const NewsletterIssueSchema: Schema = new Schema(
     isMarkdown: { type: Boolean, default: true },
     slug: { type: String, required: true, unique: true },
     published: { type: Boolean, default: true },
+    isDraft: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

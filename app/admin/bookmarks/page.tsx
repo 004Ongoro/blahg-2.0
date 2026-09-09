@@ -5,6 +5,10 @@ import { AdminHeader } from '@/components/admin/AdminHeader'
 import { PlusCircle, Trash2, ExternalLink, Bookmark, ShieldAlert, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+import { useAutoSaveDraft } from '@/hooks/useAutoSaveDraft'
+import { DraftSyncBadge } from '@/components/admin/DraftSyncBadge'
+import { useCallback, useMemo } from 'react'
+
 interface BookmarkItem {
   _id: string
   title: string
@@ -28,6 +32,62 @@ export default function AdminBookmarksPage() {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState<'tools' | 'libraries' | 'reads' | 'design' | 'inspiration' | 'other'>('tools')
   const [tagsInput, setTagsInput] = useState('')
+
+  const formData = useMemo(
+    () => ({ title, url, description, category, tagsInput }),
+    [title, url, description, category, tagsInput]
+  )
+
+  const handleRestore = useCallback((restored: typeof formData) => {
+    if (restored.title !== undefined) setTitle(restored.title)
+    if (restored.url !== undefined) setUrl(restored.url)
+    if (restored.description !== undefined) setDescription(restored.description)
+    if (restored.category !== undefined) setCategory(restored.category)
+    if (restored.tagsInput !== undefined) setTagsInput(restored.tagsInput)
+  }, [])
+
+  const handleSyncToDb = useCallback(
+    async (data: typeof formData, currentDraftId: string | null) => {
+      const tags = data.tagsInput
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+
+      const payload = {
+        title: data.title,
+        url: data.url,
+        description: data.description,
+        category: data.category,
+        tags,
+        isDraft: true,
+        draftId: currentDraftId,
+      }
+
+      const res = await fetch('/api/bookmarks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      const resData = await res.json()
+      return { draftId: resData._id }
+    },
+    []
+  )
+
+  const hasContent = useCallback(
+    (data: typeof formData) =>
+      !!(data.title.trim() || data.url.trim() || data.description.trim()),
+    []
+  )
+
+  const { syncStatus, lastSyncedTime, clearDraft, triggerSync } = useAutoSaveDraft({
+    key: 'draft_admin_bookmark',
+    data: formData,
+    onRestore: handleRestore,
+    onSyncToDb: handleSyncToDb,
+    hasContent,
+  })
 
   useEffect(() => {
     fetchBookmarks()
@@ -58,6 +118,8 @@ export default function AdminBookmarksPage() {
     }
 
     setSubmitting(true)
+    const { draftId: currentDraftId } = clearDraft()
+
     const tags = tagsInput
       .split(',')
       .map((t) => t.trim())
@@ -67,7 +129,15 @@ export default function AdminBookmarksPage() {
       const res = await fetch('/api/bookmarks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, url, description, category, tags }),
+        body: JSON.stringify({
+          title,
+          url,
+          description,
+          category,
+          tags,
+          isDraft: false,
+          draftId: currentDraftId,
+        }),
       })
 
       const data = await res.json()
@@ -133,10 +203,13 @@ export default function AdminBookmarksPage() {
           <section className="lg:col-span-5 p-6 border border-foreground/5 bg-background rounded-3xl shadow-sm relative overflow-hidden">
             <div className="absolute -top-12 -right-12 w-24 h-24 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
             
-            <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-              <PlusCircle size={14} className="text-accent" />
-              Log New Bookmark
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <PlusCircle size={14} className="text-accent" />
+                Log New Bookmark
+              </h2>
+              <DraftSyncBadge status={syncStatus} lastSyncedTime={lastSyncedTime} onManualSync={triggerSync} />
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-1.5">

@@ -93,10 +93,10 @@ export async function PUT(
                 <p style="font-size: 16px; line-height: 1.65; color: #334155; margin-bottom: 16px;">Your log transmission <strong>"${post.title}"</strong> has been approved and is now live on the public network!</p>
                 <p style="font-size: 16px; line-height: 1.65; color: #334155; margin-bottom: 24px;">You can view the published entry here:</p>
                 <div style="margin-bottom: 32px;">
-                  <a href="https://geohack.top/post/${post.slug}" style="display: inline-block; background-color: #2563eb; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 6px;">View Published Entry &rarr;</a>
+                  <a href="https://code.geohack.top/post/${post.slug}" style="display: inline-block; background-color: #2563eb; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 6px;">View Published Entry &rarr;</a>
                 </div>
                 <div style="padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: left;">
-                  <p style="margin: 0; color: #94a3b8; font-size: 12px;">CORE_UPLINK_SYSTEM v2.0 // geohack.top</p>
+                  <p style="margin: 0; color: #94a3b8; font-size: 12px;">CORE_UPLINK_SYSTEM v2.0 // code.geohack.top</p>
                 </div>
               </div>
             </body>

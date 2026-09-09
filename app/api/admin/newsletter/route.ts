@@ -351,7 +351,7 @@ export async function POST(req: Request) {
                 </div>
 
                 <div class="unsubscribe-info">
-                  Sent to you because you subscribed at <a href="${baseUrl}" style="color: #2563eb; text-decoration: none;">geohack.top</a>.<br>
+                  Sent to you because you subscribed at <a href="${baseUrl}" style="color: #2563eb; text-decoration: none;">code.geohack.top</a>.<br>
                   No longer interested? <a href="${baseUrl}/unsubscribe" class="unsubscribe-link">Unsubscribe here</a>.
                 </div>
               </div>

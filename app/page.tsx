@@ -2,6 +2,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { PostList } from '@/components/PostList'
 import { Newsletter } from '@/components/Newsletter'
+import { GooglePreferredSourceButton } from '@/components/GooglePreferredSourceButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import {
@@ -63,6 +64,7 @@ export default async function HomePage({ searchParams }: Props) {
             <p className="text-muted-foreground font-medium">
               Thoughts on software, design, and building things.
             </p>
+            <GooglePreferredSourceButton className="mt-3" />
           </header>
 
           <PostList posts={posts} />

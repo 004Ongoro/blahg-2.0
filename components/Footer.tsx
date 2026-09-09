@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
+import { GooglePreferredSourceButton } from './GooglePreferredSourceButton'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -159,17 +160,8 @@ export function Footer() {
             } />
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Inlined Google Follow button */}
-              <a
-                href="https://www.google.com/search?q=site%3Acode.geohack.top"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-background/80 hover:bg-foreground/5 text-xs font-bold text-foreground transition-all cursor-pointer"
-                title="Follow on Google"
-              >
-                <GoogleIcon />
-                <span className="font-mono text-[10px] uppercase tracking-wider">Follow</span>
-              </a>
+              {/* Google Preferred Source button */}
+              <GooglePreferredSourceButton showFallbackText={false} />
 
               {socials.map((social) => (
                 <a

@@ -16,7 +16,7 @@ import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
-import { GooglePreferredSourceButton } from '@/components/GooglePreferredSourceButton'
+
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -273,8 +273,6 @@ export default async function PostPage({ params }: Props) {
               <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold tracking-tight mb-4 leading-tight text-balance">
                 {post.title}
               </h1>
-
-              <GooglePreferredSourceButton className="mb-6" />
               
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground/60 lg:hidden">
                 <span>By {post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro'}</span>
@@ -322,8 +320,6 @@ export default async function PostPage({ params }: Props) {
                 </ul>
               </div>
             )}
-
-            <GooglePreferredSourceButton showFallbackText={false} />
           </aside>
 
         </div>

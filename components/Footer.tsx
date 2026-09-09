@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
-import { GooglePreferredSourceButton } from './GooglePreferredSourceButton'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -162,8 +161,6 @@ export function Footer() {
             } />
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Google Preferred Source button */}
-              <GooglePreferredSourceButton showFallbackText={false} />
 
               {socials.map((social) => (
                 <a

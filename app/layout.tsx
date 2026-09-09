@@ -105,12 +105,6 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
-        {/* Google Preferred Sources SDK */}
-        <Script
-          src="https://news.google.com/swg/js/v1/publisher.js"
-          strategy="afterInteractive"
-        />
-
         {/* Google Analytics */}
         {gaId && (
           <>

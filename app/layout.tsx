@@ -6,6 +6,7 @@ import { ScrollProgress } from '@/components/ScrollProgress'
 import { ContactDialog } from '@/components/ContactDialog'
 import { MessageSquare } from 'lucide-react'
 import { getBaseUrl } from '@/lib/utils'
+import { CookieBanner } from '@/components/CookieBanner'
 import './globals.css'
 
 const jetbrainsMono = {
@@ -131,6 +132,7 @@ export default function RootLayout({
           {children}
           <Toaster />
           <ScrollProgress />
+          <CookieBanner />
           <ContactDialog trigger={
             <button
               className="fixed bottom-24 right-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-foreground/5 bg-background/70 backdrop-blur-md shadow-sm text-foreground hover:bg-foreground/5 hover:scale-105 active:scale-95 transition-all cursor-pointer"

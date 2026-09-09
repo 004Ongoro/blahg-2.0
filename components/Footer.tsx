@@ -49,6 +49,8 @@ const socials = [
 ]
 
 const secondaryLinks = [
+  { name: 'about', href: '/about' },
+  { name: 'contact', href: '/contact' },
   { name: 'newsletter', href: '/newsletter' },
   { name: 'guestbook', href: '/guestbook' },
   { name: 'series', href: '/series' },

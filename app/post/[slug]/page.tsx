@@ -133,14 +133,33 @@ export default async function PostPage({ params }: Props) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${baseUrl}/post/${slug}`,
+    },
     headline: post.title,
     description: post.excerpt,
-    datePublished: post.createdAt,
-    dateModified: post.updatedAt || post.createdAt,
+    image: post.coverImage ? [post.coverImage] : [`${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`],
+    datePublished: new Date(post.createdAt).toISOString(),
+    dateModified: new Date(post.updatedAt || post.createdAt).toISOString(),
     author: {
       '@type': 'Person',
       name: post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro',
-      url: post.isGuest && post.authorBio ? (post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`) : baseUrl,
+      url: post.isGuest && post.authorBio ? (post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`) : `${baseUrl}/about`,
+      sameAs: post.isGuest ? undefined : [
+        'https://x.com/ongorogeorg_e',
+        'https://github.com/004Ongoro',
+        'https://linkedin.com/in/georgeongoro2',
+      ],
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'George Ongoro Blog',
+      url: baseUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/api/og?title=George+Ongoro`,
+      },
     },
   }
 

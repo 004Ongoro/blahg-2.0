@@ -85,6 +85,7 @@ export async function POST(req: Request) {
         })
       }
 
+      revalidatePath('/admin')
       return NextResponse.json(post, { status: 200 })
     }
 
@@ -130,6 +131,7 @@ export async function POST(req: Request) {
       seriesOrder: seriesOrder || 0,
     })
 
+    revalidatePath('/admin')
     // If the post is published, clear the cache for the homepage and tags
     if (post.published) {
       // revalidate

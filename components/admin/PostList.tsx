@@ -13,7 +13,9 @@ interface Post {
   slug: string
   excerpt: string
   published: boolean
+  isDraft?: boolean
   createdAt: string
+  updatedAt?: string
   readTime: number
   tags: string[]
   series?: string
@@ -65,22 +67,22 @@ export function PostList({ posts }: PostListProps) {
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-center gap-3">
               <div className={cn(
-                "px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border",
+                "px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border",
                 post.published 
-                  ? "bg-accent/5 text-accent border-accent/10" 
-                  : "bg-foreground/5 text-muted-foreground border-foreground/10"
+                  ? "bg-accent/10 text-accent border-accent/20" 
+                  : "bg-amber-500/10 text-amber-500 border-amber-500/20"
               )}>
-                {post.published ? 'LIVE' : 'DRAFT'}
+                {post.published ? 'LIVE' : (post.isDraft ? 'AUTO-SAVED DRAFT' : 'DRAFT')}
               </div>
               <h3 className="text-base font-black uppercase tracking-tight truncate leading-none group-hover:text-accent transition-colors">
-                {post.title}
+                {post.title || 'Untitled Post'}
               </h3>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
               <span className="flex items-center gap-1.5">
                 <Clock size={12} className="opacity-40" />
-                {formatDate(post.createdAt)}
+                {formatDate(post.updatedAt || post.createdAt)}
               </span>
               
               <span className="flex items-center gap-1.5">

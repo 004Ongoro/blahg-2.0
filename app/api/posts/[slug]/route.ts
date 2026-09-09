@@ -109,6 +109,7 @@ export async function PUT(
     }
 
     // Clear caches
+    revalidatePath('/admin')
     revalidatePath('/')
     revalidatePath('/archive')
     revalidatePath(`/post/${slug}`) // Old slug

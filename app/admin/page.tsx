@@ -38,7 +38,7 @@ async function getPosts() {
   try {
     await dbConnect()
     const posts = await Post.find({})
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .select('-content')
       .lean()
     return JSON.parse(JSON.stringify(posts))
@@ -46,6 +46,9 @@ async function getPosts() {
     return []
   }
 }
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata = {
   title: 'Admin Dashboard | George Ongoro',

@@ -73,27 +73,7 @@ export function useAutoSaveDraft<T>({
     return () => clearTimeout(timer)
   }, [key, enabled])
 
-  // 2. Save to Local Storage on every change
-  useEffect(() => {
-    if (isInitialMount.current || !enabled) return
-    if (!hasContent(data)) return
-
-    try {
-      const payload = {
-        ...data,
-        _draftId: draftIdRef.current,
-        _draftSlug: draftSlugRef.current,
-        _updatedAt: Date.now(),
-      }
-      localStorage.setItem(key, JSON.stringify(payload))
-      hasPendingChanges.current = true
-      setSyncStatus('local_saved')
-    } catch (err) {
-      console.error(`Failed to save local draft for key ${key}:`, err)
-    }
-  }, [data, key, enabled])
-
-  // 3. Periodic Auto-Sync to Database
+  // 3. Periodic & Flush Auto-Sync to Database
   const triggerSync = useCallback(async () => {
     if (!hasPendingChanges.current || !hasContent(dataRef.current)) return
 
@@ -133,8 +113,38 @@ export function useAutoSaveDraft<T>({
       console.error(`Auto-sync to DB failed for key ${key}:`, err)
       setSyncStatus('sync_error')
     }
-  }, [key, onSyncToDb])
+  }, [key, onSyncToDb, hasContent])
 
+  // 2. Save to Local Storage on every change & trigger debounced DB sync
+  useEffect(() => {
+    if (isInitialMount.current || !enabled) return
+    if (!hasContent(data)) return
+
+    try {
+      const payload = {
+        ...data,
+        _draftId: draftIdRef.current,
+        _draftSlug: draftSlugRef.current,
+        _updatedAt: Date.now(),
+      }
+      localStorage.setItem(key, JSON.stringify(payload))
+      hasPendingChanges.current = true
+      setSyncStatus('local_saved')
+    } catch (err) {
+      console.error(`Failed to save local draft for key ${key}:`, err)
+    }
+
+    // Debounced sync after typing stops (1.5s)
+    const debounceTimer = setTimeout(() => {
+      if (hasPendingChanges.current) {
+        triggerSync()
+      }
+    }, 1500)
+
+    return () => clearTimeout(debounceTimer)
+  }, [data, key, enabled, hasContent, triggerSync])
+
+  // Periodic fallback interval & unload listener
   useEffect(() => {
     if (!enabled) return
 
@@ -144,7 +154,22 @@ export function useAutoSaveDraft<T>({
       }
     }, intervalMs)
 
-    return () => clearInterval(interval)
+    const handleVisibilityOrUnload = () => {
+      if (hasPendingChanges.current) {
+        triggerSync()
+      }
+    }
+
+    window.addEventListener('visibilitychange', handleVisibilityOrUnload)
+    window.addEventListener('pagehide', handleVisibilityOrUnload)
+    window.addEventListener('beforeunload', handleVisibilityOrUnload)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('visibilitychange', handleVisibilityOrUnload)
+      window.removeEventListener('pagehide', handleVisibilityOrUnload)
+      window.removeEventListener('beforeunload', handleVisibilityOrUnload)
+    }
   }, [intervalMs, triggerSync, enabled])
 
   // 4. Clear Draft (on Publish/Submit)

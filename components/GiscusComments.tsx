@@ -4,10 +4,17 @@
 import Giscus from '@giscus/react'
 import { useTheme } from 'next-themes'
 
+import { useEffect, useState } from 'react'
+
 export default function GiscusComments() {
   const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
-  const giscusTheme = resolvedTheme === 'dark' ? 'dark' : 'light'
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const giscusTheme = mounted && resolvedTheme === 'dark' ? 'dark' : 'light'
 
   return (
     <div className="mt-20 border border-foreground/5 bg-background/50 backdrop-blur-md p-8 rounded-[32px] shadow-xs">

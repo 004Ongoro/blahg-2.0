@@ -19,7 +19,7 @@ async function getPosts(page: number = 1, limit: number = 10) {
   try {
     await dbConnect()
     const skip = (page - 1) * limit
-    
+
     const [posts, total] = await Promise.all([
       Post.find({ published: true })
         .sort({ createdAt: -1 })
@@ -29,7 +29,7 @@ async function getPosts(page: number = 1, limit: number = 10) {
         .lean(),
       Post.countDocuments({ published: true })
     ])
-    
+
     return {
       posts: JSON.parse(JSON.stringify(posts)),
       totalPages: Math.ceil(total / limit),
@@ -49,28 +49,34 @@ export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams
   const page = typeof params.page === 'string' ? parseInt(params.page) : 1
   const limit = 10
-  
+
   const { posts, totalPages, currentPage } = await getPosts(page, limit)
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
-      <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
-        <section className="mb-20">
-          <header className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-              Latest <span className="text-accent italic">Posts</span>
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-20 md:py-28 w-full space-y-16">
+        {/* Hero Section Header */}
+        <section className="space-y-4">
+          <div className="space-y-3">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans font-black tracking-tight text-foreground leading-[1.1]">
+              Latest <span className="text-accent italic font-serif">Articles</span>
             </h1>
-            <p className="text-muted-foreground font-medium">
-              Thoughts on software, design, and building things.
+            <p className="text-base md:text-lg font-sans text-muted-foreground leading-relaxed max-w-xl">
+              Writing on software engineering, distributed systems, clean architecture, and modern web tech.
             </p>
-            <GooglePreferredSourceButton className="mt-3" />
-          </header>
+          </div>
+          <div className="pt-2">
+            <GooglePreferredSourceButton />
+          </div>
+        </section>
 
+        {/* Post Feed Grid/List */}
+        <section>
           <PostList posts={posts} />
 
           {totalPages > 1 && (
-            <div className="mt-16 pt-8 border-t border-foreground/5">
+            <div className="mt-14 pt-8 border-t border-border">
               <Pagination>
                 <PaginationContent>
                   {currentPage > 1 && (
@@ -78,7 +84,7 @@ export default async function HomePage({ searchParams }: Props) {
                       <PaginationPrevious href={`/?page=${currentPage - 1}`} />
                     </PaginationItem>
                   )}
-                  
+
                   {[...Array(totalPages)].map((_, i) => {
                     const pageNum = i + 1
                     if (
@@ -88,7 +94,7 @@ export default async function HomePage({ searchParams }: Props) {
                     ) {
                       return (
                         <PaginationItem key={pageNum}>
-                          <PaginationLink 
+                          <PaginationLink
                             href={`/?page=${pageNum}`}
                             isActive={currentPage === pageNum}
                           >
@@ -120,6 +126,7 @@ export default async function HomePage({ searchParams }: Props) {
           )}
         </section>
 
+        {/* Newsletter Subscription Feature */}
         <Newsletter />
       </main>
       <Footer />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail } from 'lucide-react'
+import { Mail, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 export function Newsletter() {
@@ -35,34 +35,45 @@ export function Newsletter() {
   }
 
   return (
-    <div className="bg-foreground text-background p-8 md:p-12 relative overflow-hidden group rounded-3xl shadow-sm">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 -mr-16 -mt-16 rounded-full blur-3xl group-hover:bg-accent/20 transition-colors" />
-      
-      <div className="relative z-10 max-w-lg">
-        <h3 className="text-3xl font-black uppercase tracking-tighter mb-4 leading-none">
-          Join the <span className="text-accent italic">Underground</span>
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10 shadow-sm">
+      <div className="absolute top-0 right-0 w-48 h-48 bg-accent/10 -mr-20 -mt-20 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 max-w-xl space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-mono font-bold uppercase tracking-wider">
+          <Mail className="h-3.5 w-3.5" />
+          <span>Newsletter</span>
+        </div>
+
+        <h3 className="text-2xl md:text-3xl font-sans font-extrabold tracking-tight text-foreground">
+          Join the <span className="text-accent">Weekly Dispatches</span>
         </h3>
-        <p className="text-sm font-medium opacity-70 mb-8 leading-relaxed">
-          Weekly-ish dispatches on software, design, and building in the open. 
-          No spam, just signal.
+
+        <p className="text-sm md:text-base leading-relaxed text-muted-foreground font-sans">
+          Deep dives on software engineering, web architecture, and building modern systems. Direct to your inbox, no spam.
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
+            placeholder="enter your email..."
             required
-            className="flex-1 bg-background text-foreground px-4 py-3 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-300"
+            className="flex-1 bg-background text-foreground px-4 py-3 text-sm font-sans rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-accent text-accent-foreground px-6 py-3 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl"
+            className="bg-accent text-accent-foreground px-6 py-3 font-mono font-bold uppercase tracking-wider text-xs hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {loading ? 'joining...' : 'subscribe'}
-            <Mail size={14} />
+            {loading ? (
+              'Subscribing...'
+            ) : (
+              <>
+                <span>Subscribe</span>
+                <CheckCircle2 size={16} />
+              </>
+            )}
           </button>
         </form>
       </div>

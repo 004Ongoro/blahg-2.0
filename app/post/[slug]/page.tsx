@@ -271,28 +271,28 @@ export default async function PostPage({ params }: Props) {
                 <SocialShare title={post.title} slug={slug} />
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold tracking-tight mb-4 leading-tight text-balance">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black tracking-tight mb-6 leading-[1.15] text-foreground">
                 {post.title}
               </h1>
 
               <GooglePreferredSourceButton className="mb-6" />
               
-              <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground/60 lg:hidden">
+              <div className="flex flex-wrap items-center gap-3 text-xs font-mono font-medium text-muted-foreground lg:hidden mb-8 pb-6 border-b border-border">
                 <span>By {post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro'}</span>
-                <span className="h-1 w-1 rounded-full bg-foreground/10" />
+                <span className="h-1 w-1 rounded-full bg-accent/30" />
                 <FormattedDate date={post.createdAt} />
-                <span className="h-1 w-1 rounded-full bg-foreground/10" />
+                <span className="h-1 w-1 rounded-full bg-accent/30" />
                 <span>{post.readTime} min read</span>
                 {isUpdated && (
                   <>
-                    <span className="h-1 w-1 rounded-full bg-foreground/10" />
-                    <span className="italic text-muted-foreground/40">Updated <FormattedDate date={post.updatedAt} /></span>
+                    <span className="h-1 w-1 rounded-full bg-accent/30" />
+                    <span className="italic">Updated <FormattedDate date={post.updatedAt} /></span>
                   </>
                 )}
               </div>
             </header>
 
-            <div className="prose prose-neutral dark:prose-invert max-w-none">
+            <div className="prose-brutal">
               <MarkdownContent content={post.content} />
             </div>
           </article>

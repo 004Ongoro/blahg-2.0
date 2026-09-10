@@ -29,15 +29,6 @@ const MastodonIcon = ({ size = 18 }: { size?: number }) => (
   </svg>
 )
 
-const GoogleIcon = ({ className = "h-3.5 w-3.5" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-  </svg>
-)
-
 const socials = [
   { name: 'Twitter', href: 'https://x.com/ongorogeorg_e', icon: <Twitter size={18} /> },
   { name: 'Bluesky', href: 'https://bsky.app/profile/geohack.top', icon: <MessageSquare size={18} /> },
@@ -61,91 +52,91 @@ const secondaryLinks = [
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-foreground/5 bg-background pb-12 pt-16">
-      <div className="mx-auto max-w-5xl px-4">
-        {/* Geodocs & Now Promotion */}
-        <div className="mb-12 border-b border-foreground/5 pb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="max-w-2xl">
-            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-2">
+    <footer className="mt-24 border-t border-border bg-card/40 pt-16 pb-12">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        {/* Geodocs & Current Focus Feature Box */}
+        <div className="mb-14 border border-border bg-card/80 p-6 md:p-8 rounded-2xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="max-w-2xl space-y-2">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
               Documentation Hub & Current Focus
             </h4>
-            <p className="text-sm font-medium leading-relaxed text-foreground">
-              I also write technical documentation, wikis, and reference guides over on{' '}
-              <a 
-                href="https://geodocs.geohack.top" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-accent font-bold hover:underline"
+            <p className="text-sm font-sans leading-relaxed text-foreground/90">
+              Technical documentation, wikis, and reference guides available on{' '}
+              <a
+                href="https://geodocs.geohack.top"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent font-semibold hover:underline"
               >
                 geodocs.geohack.top
               </a>.
             </p>
-            <p className="text-sm font-medium leading-relaxed text-foreground mt-4">
-              Want to see what I'm working on right now? Visit my{' '}
-              <Link 
-                href="/now" 
-                className="text-accent font-bold hover:underline"
+            <p className="text-sm font-sans leading-relaxed text-foreground/90 pt-1">
+              Interested in ongoing projects and active learnings? Check the{' '}
+              <Link
+                href="/now"
+                className="text-accent font-semibold hover:underline"
               >
                 /now
               </Link>{' '}
-              page for a real-time log of my current projects, learnings, and focus.
+              log.
             </p>
           </div>
-          <div className="flex flex-col gap-2 shrink-0 self-start md:self-center w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 self-start md:self-center w-full sm:w-auto">
             <a
               href="https://geodocs.geohack.top"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest bg-foreground text-background hover:bg-accent hover:text-accent-foreground transition-all duration-200 border border-foreground w-full md:w-auto text-center"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-xl w-full sm:w-auto text-center shadow-xs"
             >
               Visit Geodocs <ArrowUpRight className="h-4 w-4" />
             </a>
             <Link
               href="/now"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-black uppercase tracking-widest border border-foreground/10 hover:border-foreground/30 hover:bg-foreground/5 transition-all duration-200 w-full md:w-auto text-center text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-border bg-background hover:bg-secondary transition-all duration-200 rounded-xl w-full sm:w-auto text-center text-foreground"
             >
               See what's /now <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-          {/* Left Column: Brand, Status, Nav */}
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <Link href="/" className="text-2xl font-black uppercase tracking-tighter">
+        {/* Footer Navigation Columns */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+          {/* Left Column: Brand & Status */}
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <Link href="/" className="text-2xl font-sans font-extrabold tracking-tight text-foreground">
                 george<span className="text-accent">.</span>2.0
               </Link>
-              <p className="max-w-xs text-sm font-medium leading-relaxed text-muted-foreground">
-                Software engineer, occasional writer, and professional over-thinker. 
-                Building things that (mostly) work.
+              <p className="max-w-xs text-sm font-sans leading-relaxed text-muted-foreground">
+                Software engineer, technical writer, and systems builder.
               </p>
             </div>
 
-            {/* Single Line Collapsed OpenStatus Indicator */}
+            {/* System Status Pill */}
             <a
               href="https://code-geohack.openstatus.dev/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-card hover:border-foreground/20 text-xs font-bold transition-all"
-              title="OpenStatus telemetry status"
+              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent/40 text-xs transition-all"
+              title="OpenStatus Telemetry Status"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-foreground">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground">
                 All Systems Operational
               </span>
-              <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+              <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
             </a>
 
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+            <nav className="flex flex-wrap gap-x-5 gap-y-2 pt-2">
               {secondaryLinks.map((link) => (
-                <Link 
-                  key={link.name} 
-                  href={link.href} 
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
                 >
                   {link.name}
                 </Link>
@@ -153,11 +144,11 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* Right Column: Contact & Socials */}
-          <div className="flex flex-col items-start md:items-end justify-between gap-8">
+          {/* Right Column: Contact & Social Channels */}
+          <div className="flex flex-col items-start md:items-end justify-between gap-6">
             <ContactDialog trigger={
-              <button className="group flex items-center gap-2 text-lg font-black uppercase tracking-tighter hover:text-accent transition-colors">
-                Say Hello <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+              <button className="group flex items-center gap-2 text-lg font-sans font-bold tracking-tight text-foreground hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg px-1">
+                Say Hello <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </button>
             } />
 
@@ -170,8 +161,9 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 text-muted-foreground hover:text-accent hover:bg-accent/5 rounded-md transition-all"
+                  className="p-2 text-muted-foreground hover:text-accent hover:bg-secondary rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   title={social.name}
+                  aria-label={social.name}
                 >
                   {social.icon}
                 </a>
@@ -181,7 +173,7 @@ export function Footer() {
         </div>
 
         {/* Badges Row */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-4 opacity-75 hover:opacity-100 transition-opacity duration-300">
+        <div className="mt-14 flex flex-wrap items-center justify-center gap-4 opacity-80 hover:opacity-100 transition-opacity duration-300">
           <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:scale-105 transition-transform duration-200" title="Ongoro · The Underground Dev">
             <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
           </a>
@@ -206,13 +198,13 @@ export function Footer() {
         </div>
 
         {/* Copyright Bottom Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/5 pt-8 md:flex-row">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-            © {new Date().getFullYear()} George Ongoro — Built with Next.js & Pure Spite
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-8 text-center md:flex-row">
+          <p className="text-xs font-mono font-medium text-muted-foreground">
+            © {new Date().getFullYear()} George Ongoro — Built with Next.js & Modern Systems
           </p>
-          <div className="h-1 w-1 rounded-full bg-accent/20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-            No rights reserved — Steal everything
+          <div className="hidden md:block h-1 w-1 rounded-full bg-accent/30" />
+          <p className="text-xs font-mono font-medium text-muted-foreground">
+            Open Source & Independent
           </p>
         </div>
       </div>

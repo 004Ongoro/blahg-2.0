@@ -18,7 +18,6 @@ const navLinks = [
   { name: 'guest logs', href: 'https://guest-blog.geohack.top' },
 ]
 
-
 export function Header() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -37,51 +36,59 @@ export function Header() {
   }, [pathname])
 
   const pathPieces = pathname.split('/').filter(Boolean)
-  
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
-      {/* Desktop HUD */}
-      <div className="hidden md:flex items-center gap-2 max-w-full">
-        {/* Identity Pill */}
-        <div className={cn(
-          "pointer-events-auto h-10 px-4 flex items-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-500",
-          isScrolled ? "opacity-100 translate-y-0" : "opacity-100"
-        )}>
-          <Link href="/" className="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap">
-            George <span className="text-accent">Ongoro</span>
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center p-3 md:p-4 pointer-events-none">
+      {/* Desktop Navigation HUD */}
+      <div className="hidden md:flex items-center gap-3 max-w-full">
+        {/* Brand & Identity Pill */}
+        <div
+          className={cn(
+            "pointer-events-auto h-11 px-5 flex items-center bg-card/85 backdrop-blur-md border border-border rounded-full shadow-sm transition-all duration-300 hover:border-accent/40",
+            isScrolled ? "shadow-md bg-card/95" : ""
+          )}
+        >
+          <Link
+            href="/"
+            className="text-xs font-mono font-bold uppercase tracking-wider text-foreground hover:text-accent transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full px-1"
+          >
+            <span>George</span>
+            <span className="text-accent font-black">Ongoro</span>
           </Link>
         </div>
 
-        {/* Context & Navigation Pill */}
-        <div className="pointer-events-auto group relative flex items-center h-10 bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm transition-all duration-300 hover:px-2">
+        {/* Dynamic Context & Hover Navigation Pill */}
+        <div className="pointer-events-auto group relative flex items-center h-11 bg-card/85 backdrop-blur-md border border-border rounded-full shadow-sm transition-all duration-300 hover:border-accent/40">
+          {/* Default Breadcrumb Context View */}
           <div className="flex items-center px-4 group-hover:hidden transition-all duration-300">
-            <span className="text-[10px] font-bold text-muted-foreground/40">GO</span>
-            <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
-            <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[150px]">
+            <span className="text-xs font-mono font-bold text-muted-foreground/60">GO</span>
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 mx-1" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-foreground truncate max-w-[160px]">
               {pathPieces.length === 0 ? 'Home' : pathPieces[0]}
             </span>
             {pathPieces.length > 1 && (
               <>
-                <ChevronRight className="h-3 w-3 text-muted-foreground/20 mx-1" />
-                <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[80px]">
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 mx-1" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground truncate max-w-[100px]">
                   {pathPieces[pathPieces.length - 1].replace(/-/g, ' ')}
                 </span>
               </>
             )}
           </div>
 
-          <div className="hidden group-hover:flex items-center gap-1 animate-in fade-in zoom-in-95 duration-200">
+          {/* Hover Expanded Navigation Links */}
+          <div className="hidden group-hover:flex items-center gap-1 px-1.5 animate-in fade-in zoom-in-95 duration-200">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
               return (
-                <Link 
-                  key={link.name} 
+                <Link
+                  key={link.name}
                   href={link.href}
                   className={cn(
-                    "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
-                    isActive 
-                      ? "bg-foreground text-background" 
-                      : "hover:bg-foreground/5 text-muted-foreground/60 hover:text-foreground"
+                    "px-3 py-1.5 rounded-full text-xs font-mono font-semibold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive
+                      ? "bg-primary text-primary-foreground font-bold shadow-xs"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
                   {link.name}
@@ -91,53 +98,60 @@ export function Header() {
           </div>
         </div>
 
-        {/* Utility Pill */}
-        <div className="pointer-events-auto h-10 w-10 flex items-center justify-center bg-background/70 backdrop-blur-md border border-foreground/5 rounded-full shadow-sm">
+        {/* Theme Toggle Utility Pill */}
+        <div className="pointer-events-auto h-11 w-11 flex items-center justify-center bg-card/85 backdrop-blur-md border border-border rounded-full shadow-sm hover:border-accent/40 transition-all">
           <ThemeToggle />
         </div>
       </div>
 
-      {/* Mobile HUD */}
+      {/* Mobile Navigation HUD */}
       <div className="md:hidden w-full flex flex-col items-center pointer-events-none">
-        <div className={cn(
-          "pointer-events-auto relative flex flex-col items-center bg-background/80 backdrop-blur-lg border border-foreground/5 shadow-lg transition-all duration-500 overflow-hidden",
-          isMobileMenuOpen ? "rounded-3xl w-full max-w-[280px]" : "rounded-full w-[200px]"
-        )}>
-          {/* Main Bar */}
-          <div className="flex items-center justify-between w-full h-11 px-4">
-            <Link href="/" className="text-[9px] font-black uppercase tracking-tighter truncate max-w-[80px]">
-              {isMobileMenuOpen ? "George" : (pathPieces[0] || "Home")}
-            </Link>
-            
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex items-center justify-center h-8 w-8 rounded-full bg-foreground/5 text-foreground transition-transform active:scale-90"
+        <div
+          className={cn(
+            "pointer-events-auto relative flex flex-col items-center bg-card/95 backdrop-blur-xl border border-border shadow-lg transition-all duration-300 overflow-hidden",
+            isMobileMenuOpen ? "rounded-3xl w-full max-w-[320px]" : "rounded-full w-[240px]"
+          )}
+        >
+          {/* Mobile Main Navigation Bar */}
+          <div className="flex items-center justify-between w-full h-12 px-4">
+            <Link
+              href="/"
+              className="text-xs font-mono font-bold uppercase tracking-wider text-foreground truncate max-w-[120px]"
             >
-              {isMobileMenuOpen ? <X size={14} /> : <Menu size={14} />}
-            </button>
+              {isMobileMenuOpen ? "George Ongoro" : (pathPieces[0] || "Home")}
+            </Link>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <ThemeToggle />
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="flex items-center justify-center h-8 w-8 rounded-full bg-secondary text-foreground transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={isMobileMenuOpen ? "Close Navigation Menu" : "Open Navigation Menu"}
+              >
+                {isMobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
             </div>
           </div>
 
-          {/* Expanded Menu */}
-          <div className={cn(
-            "w-full flex flex-col items-center gap-2 transition-all duration-300",
-            isMobileMenuOpen ? "p-4 pt-0 max-h-[300px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-          )}>
-            <div className="w-full h-px bg-foreground/5 mb-2" />
+          {/* Mobile Expanded Menu Panel */}
+          <div
+            className={cn(
+              "w-full flex flex-col items-center gap-1.5 transition-all duration-300",
+              isMobileMenuOpen ? "p-4 pt-0 max-h-[400px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+            )}
+          >
+            <div className="w-full h-px bg-border my-2" />
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
               return (
-                <Link 
-                  key={link.name} 
+                <Link
+                  key={link.name}
                   href={link.href}
                   className={cn(
-                    "w-full py-3 px-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-center transition-all",
-                    isActive 
-                      ? "bg-accent text-accent-foreground" 
-                      : "bg-foreground/5 text-muted-foreground"
+                    "w-full py-2.5 px-4 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive
+                      ? "bg-accent text-accent-foreground shadow-xs"
+                      : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
                   {link.name}

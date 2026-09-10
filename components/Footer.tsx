@@ -36,177 +36,176 @@ const socials = [
   { name: 'LinkedIn', href: 'https://linkedin.com/in/georgeongoro2', icon: <Linkedin size={18} /> },
   { name: 'Mastodon', href: 'https://mastodon.social/@ongoro_ge', icon: <MastodonIcon size={18} /> },
   { name: 'Discord', href: 'https://discord.gg/ekqkBkc7', icon: <DiscordIcon size={18} /> },
-  { name: 'RSS', href: '/rss.xml', icon: <Rss size={18} /> },
+  { name: 'RSS Feed', href: '/rss.xml', icon: <Rss size={18} /> },
 ]
 
-const secondaryLinks = [
-  { name: 'about', href: '/about' },
-  { name: 'contact', href: '/contact' },
-  { name: 'newsletter', href: '/newsletter' },
-  { name: 'guestbook', href: '/guestbook' },
-  { name: 'series', href: '/series' },
-  { name: 'privacy policy', href: '/privacy' },
-  { name: 'guest logs', href: 'https://guest-blog.geohack.top' },
-  { name: 'admin', href: '/admin' },
+// Organized Navigation Links Across All Pages
+const navGroups = [
+  {
+    title: 'Explore',
+    links: [
+      { name: 'Posts', href: '/' },
+      { name: 'Dispatches', href: '/newsletter/archive' },
+      { name: 'Series', href: '/series' },
+      { name: 'Bookmarks', href: '/bookmarks' },
+      { name: 'Tag Library', href: '/tags' },
+      { name: 'Archive', href: '/archive' },
+    ],
+  },
+  {
+    title: 'Pages & Focus',
+    links: [
+      { name: 'About', href: '/about' },
+      { name: '/now Log', href: '/now' },
+      { name: 'Contact', href: '/contact' },
+      { name: 'Guestbook', href: '/guestbook' },
+      { name: 'Developer Setup', href: '/setup' },
+      { name: 'Guest Logs', href: 'https://guest-blog.geohack.top' },
+      { name: 'Geodocs Hub', href: 'https://geodocs.geohack.top' },
+    ],
+  },
+  {
+    title: 'Connect & Legal',
+    links: [
+      { name: 'Newsletter', href: '/newsletter' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Admin Console', href: '/admin' },
+    ],
+  },
 ]
 
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-border bg-card/40 pt-16 pb-12">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        {/* Geodocs & Current Focus Feature Box */}
-        <div className="mb-14 border border-border bg-card/80 p-6 md:p-8 rounded-2xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="max-w-2xl space-y-2">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
-              Documentation Hub & Current Focus
-            </h4>
-            <p className="text-sm font-sans leading-relaxed text-foreground/90">
-              Technical documentation, wikis, and reference guides available on{' '}
-              <a
-                href="https://geodocs.geohack.top"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent font-semibold hover:underline"
-              >
-                geodocs.geohack.top
-              </a>.
-            </p>
-            <p className="text-sm font-sans leading-relaxed text-foreground/90 pt-1">
-              Interested in ongoing projects and active learnings? Check the{' '}
-              <Link
-                href="/now"
-                className="text-accent font-semibold hover:underline"
-              >
-                /now
-              </Link>{' '}
-              log.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 self-start md:self-center w-full sm:w-auto">
-            <a
-              href="https://geodocs.geohack.top"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-xl w-full sm:w-auto text-center shadow-xs"
-            >
-              Visit Geodocs <ArrowUpRight className="h-4 w-4" />
-            </a>
-            <Link
-              href="/now"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-border bg-background hover:bg-secondary transition-all duration-200 rounded-xl w-full sm:w-auto text-center text-foreground"
-            >
-              See what's /now <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Footer Navigation Columns */}
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-          {/* Left Column: Brand & Status */}
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <Link href="/" className="text-2xl font-sans font-extrabold tracking-tight text-foreground">
-                george<span className="text-accent">.</span>2.0
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        
+        {/* Main Footer Section: Brand & Structured Navigation */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 pb-14 border-b border-border">
+          
+          {/* Brand Column (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="space-y-3">
+              <Link href="/" className="text-2xl font-sans font-extrabold tracking-tight text-foreground block">
+                George Ongoro <span className="text-accent">Blog</span>
               </Link>
-              <p className="max-w-xs text-sm font-sans leading-relaxed text-muted-foreground">
-                Software engineer, technical writer, and systems builder.
+              <p className="text-sm font-sans leading-relaxed text-muted-foreground max-w-sm">
+                Technical writings on web architecture, software engineering, and modern systems. 
+                Independent & open source.
               </p>
             </div>
 
-            {/* System Status Pill */}
-            <a
-              href="https://code-geohack.openstatus.dev/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent/40 text-xs transition-all"
-              title="OpenStatus Telemetry Status"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground">
-                All Systems Operational
-              </span>
-              <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
-            </a>
+            {/* Say Hello Action & Preferred Source */}
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <ContactDialog trigger={
+                <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-mono font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  Say Hello <ArrowUpRight className="h-4 w-4" />
+                </button>
+              } />
 
-            <nav className="flex flex-wrap gap-x-5 gap-y-2 pt-2">
-              {secondaryLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground hover:text-accent transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Right Column: Contact & Social Channels */}
-          <div className="flex flex-col items-start md:items-end justify-between gap-6">
-            <ContactDialog trigger={
-              <button className="group flex items-center gap-2 text-lg font-sans font-bold tracking-tight text-foreground hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg px-1">
-                Say Hello <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </button>
-            } />
-
-            <div className="flex flex-wrap items-center gap-3">
               <GooglePreferredSourceButton />
+            </div>
 
-              {socials.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 text-muted-foreground hover:text-accent hover:bg-secondary rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  title={social.name}
-                  aria-label={social.name}
-                >
-                  {social.icon}
-                </a>
-              ))}
+            {/* Social Icons Row */}
+            <div className="space-y-2 pt-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground/70 block">
+                Connect Across The Web
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {socials.map((social) => (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 text-muted-foreground hover:text-accent hover:bg-secondary rounded-xl transition-all border border-transparent hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    title={social.name}
+                    aria-label={social.name}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Nav Links Column Matrix (7 cols) */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {navGroups.map((group) => (
+              <div key={group.title} className="space-y-4">
+                <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
+                  {group.title}
+                </h4>
+                <ul className="space-y-2.5">
+                  {group.links.map((link) => (
+                    <li key={link.name}>
+                      {link.href.startsWith('http') ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-mono text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1 group"
+                        >
+                          <span>{link.name}</span>
+                          <ArrowUpRight className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="text-xs font-mono text-muted-foreground hover:text-accent transition-colors"
+                        >
+                          {link.name}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
         </div>
 
-        {/* Badges Row */}
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-4 opacity-80 hover:opacity-100 transition-opacity duration-300">
-          <a href="https://code.geohack.top" target="_blank" rel="noopener noreferrer" className="hover:scale-105 transition-transform duration-200" title="Ongoro · The Underground Dev">
-            <img src="/ongoro-badge.svg" alt="Ongoro · The Underground Dev" width="88" height="31" />
+        {/* Bottom Bar: Copyright, Single Official Badge, & System Status */}
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 text-center md:flex-row">
+          
+          {/* Copyright */}
+          <p className="text-xs font-mono font-medium text-muted-foreground">
+            © {new Date().getFullYear()} George Ongoro Blog — All rights reserved.
+          </p>
+
+          {/* Single Official Blog Badge */}
+          <div className="flex items-center justify-center">
+            <a
+              href="https://code.geohack.top"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-transform duration-200"
+              title="George Ongoro Blog"
+            >
+              <img src="/ongoro-badge.svg" alt="George Ongoro Blog Badge" width="88" height="31" />
+            </a>
+          </div>
+
+          {/* Telemetry Status Indicator */}
+          <a
+            href="https://code-geohack.openstatus.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card hover:border-accent/40 text-xs transition-all shadow-xs"
+            title="OpenStatus Telemetry Status"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground">
+              Systems Operational
+            </span>
+            <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
           </a>
-          <div className="hover:scale-105 transition-transform duration-200" title="Next.js App">
-            <img src="/nextjs-badge.svg" alt="Next.js App" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="MongoDB Database">
-            <img src="/mongodb-badge.svg" alt="MongoDB Database" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Termux Android CLI">
-            <img src="/termux-badge.svg" alt="Termux Android CLI" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Pure Spite Driven">
-            <img src="/spite-badge.svg" alt="Pure Spite Driven" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Nairobi Silicon Savannah">
-            <img src="/nairobi-badge.svg" alt="Nairobi Silicon Savannah" width="88" height="31" />
-          </div>
-          <div className="hover:scale-105 transition-transform duration-200" title="Copyleft - Share Alike">
-            <img src="/copyleft-badge.svg" alt="Copyleft - Share Alike" width="88" height="31" />
-          </div>
+
         </div>
 
-        {/* Copyright Bottom Bar */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-8 text-center md:flex-row">
-          <p className="text-xs font-mono font-medium text-muted-foreground">
-            © {new Date().getFullYear()} George Ongoro — Built with Next.js & Modern Systems
-          </p>
-          <div className="hidden md:block h-1 w-1 rounded-full bg-accent/30" />
-          <p className="text-xs font-mono font-medium text-muted-foreground">
-            Open Source & Independent
-          </p>
-        </div>
       </div>
     </footer>
   )

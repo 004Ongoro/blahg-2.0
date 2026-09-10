@@ -10,6 +10,10 @@ interface Post {
   createdAt: string
   readTime: number
   tags: string[]
+  series?: string
+  authorName?: string
+  isGuest?: boolean
+  coverImage?: string
 }
 
 interface PostListProps {
@@ -38,6 +42,10 @@ export function PostList({ posts }: PostListProps) {
           createdAt={new Date(post.createdAt)}
           readTime={post.readTime}
           tags={post.tags}
+          series={post.series}
+          authorName={post.authorName}
+          isGuest={post.isGuest}
+          coverImage={post.coverImage}
         />
       ))}
     </div>

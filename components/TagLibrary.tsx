@@ -139,6 +139,10 @@ function TagLibraryContent({ posts }: TagLibraryProps) {
               createdAt={new Date(post.createdAt)}
               readTime={post.readTime}
               tags={post.tags}
+              series={(post as any).series}
+              authorName={(post as any).authorName}
+              isGuest={(post as any).isGuest}
+              coverImage={(post as any).coverImage}
             />
           ))}
         </div>

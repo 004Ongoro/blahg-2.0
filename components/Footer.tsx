@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight } from 'lucide-react'
+import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight, Heart } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
 import { GooglePreferredSourceButton } from './GooglePreferredSourceButton'
 
@@ -65,8 +65,9 @@ const navGroups = [
     ],
   },
   {
-    title: 'Connect & Legal',
+    title: 'Connect & Support',
     links: [
+      { name: 'GitHub Sponsors', href: 'https://github.com/sponsors/004Ongoro' },
       { name: 'Newsletter', href: '/newsletter' },
       { name: 'Privacy Policy', href: '/privacy' },
       { name: 'Admin Console', href: '/admin' },
@@ -94,13 +95,25 @@ export function Footer() {
               </p>
             </div>
 
-            {/* Say Hello Action & Preferred Source */}
-            <div className="flex flex-wrap items-center gap-4 pt-1">
+            {/* Actions Row: Say Hello, GitHub Sponsors, & Google Preferred Source */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
               <ContactDialog trigger={
                 <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-mono font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                   Say Hello <ArrowUpRight className="h-4 w-4" />
                 </button>
               } />
+
+              <a
+                href="https://github.com/sponsors/004Ongoro"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-pink-500/30 bg-pink-500/10 text-pink-600 dark:text-pink-400 hover:bg-pink-500/20 text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                title="Sponsor George Ongoro on GitHub"
+              >
+                <Heart className="h-4 w-4 fill-current text-pink-500" />
+                <span>Sponsor</span>
+                <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
+              </a>
 
               <GooglePreferredSourceButton />
             </div>

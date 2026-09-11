@@ -1,12 +1,35 @@
 'use client'
 
-import Giscus from '@giscus/react'
 import { useTheme } from 'next-themes'
+import { useEffect, useRef, useState } from 'react'
 
 export default function GiscusComments() {
   const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const commentsRef = useRef<HTMLDivElement>(null)
 
-  const giscusTheme = resolvedTheme === 'dark' ? 'dark' : 'light'
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const utterancesTheme = mounted && resolvedTheme === 'dark' ? 'github-dark' : 'github-light'
+
+  useEffect(() => {
+    if (!mounted || !commentsRef.current) return
+
+    // Clear previous widget before inserting
+    commentsRef.current.innerHTML = ''
+
+    const script = document.createElement('script')
+    script.src = 'https://utteranc.es/client.js'
+    script.setAttribute('repo', '004Ongoro/blog-comments')
+    script.setAttribute('issue-term', 'url')
+    script.setAttribute('theme', utterancesTheme)
+    script.setAttribute('crossorigin', 'anonymous')
+    script.async = true
+
+    commentsRef.current.appendChild(script)
+  }, [mounted, utterancesTheme])
 
   return (
     <section className="mt-16 border border-border bg-card/80 backdrop-blur-xs p-6 md:p-8 rounded-2xl shadow-xs">
@@ -14,26 +37,17 @@ export default function GiscusComments() {
         <h2 className="text-lg md:text-xl font-sans font-bold text-foreground tracking-tight">
           Discussions & Comments
         </h2>
-        <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">
-          GitHub Powered
-        </span>
+        <a
+          href="https://utteranc.es"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-mono font-medium text-muted-foreground hover:text-accent uppercase tracking-wider transition-colors"
+        >
+          Utterances / GitHub ↗
+        </a>
       </div>
 
-      <Giscus
-        id="comments"
-        repo="004Ongoro/blahg-2.0"
-        repoId="R_kgDOSCcO5Q"
-        category="Announcements"
-        categoryId="DIC_kwDOSCcO5c4C65oX"
-        mapping="pathname"
-        term="Welcome to giscus!"
-        reactionsEnabled="1"
-        emitMetadata="0"
-        inputPosition="top"
-        theme={giscusTheme}
-        lang="en"
-        loading="lazy"
-      />
+      <div ref={commentsRef} className="utterances-container min-h-[160px] w-full" />
     </section>
   )
 }

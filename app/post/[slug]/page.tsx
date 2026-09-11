@@ -10,7 +10,7 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getBaseUrl } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Clock, User, BookOpen } from 'lucide-react'
 import { PostReactions } from '@/components/PostReactions'
 import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
@@ -31,7 +31,7 @@ export async function generateStaticParams() {
       slug: post.slug,
     }))
   } catch (error) {
-    console.error('Error in generateStaticParams:', error)
+    console.error('Error generating static params:', error)
     return []
   }
 }
@@ -52,42 +52,18 @@ async function getPost(slug: string) {
   }
 }
 
-// Navigation data fetching
-async function getNavigation(currentCreatedAt: Date) {
-  try {
-    await dbConnect()
-    
-    const prevPost = await Post.findOne({ 
-      published: true, 
-      createdAt: { $lt: currentCreatedAt } 
-    }).sort({ createdAt: -1 }).select('slug').lean()
-
-    const nextPost = await Post.findOne({ 
-      published: true, 
-      createdAt: { $gt: currentCreatedAt } 
-    }).sort({ createdAt: 1 }).select('slug').lean()
-
-    return {
-      prev: prevPost ? String(prevPost.slug) : null,
-      next: nextPost ? String(nextPost.slug) : null,
-    }
-  } catch (error) {
-    console.error('Error fetching navigation:', error)
-    return { prev: null, next: null }
-  }
-}
-
-async function getRelatedPosts(tags: string[], currentSlug: string) {
+async function getRelatedPosts(currentSlug: string, tags: string[]) {
   try {
     await dbConnect()
     const posts = await Post.find({
-      slug: { $ne: currentSlug },
       published: true,
+      slug: { $ne: currentSlug },
       tags: { $in: tags }
     })
-    .select('title slug')
-    .limit(5)
+    .select('title slug excerpt createdAt readTime tags')
+    .limit(3)
     .lean()
+    
     return JSON.parse(JSON.stringify(posts))
   } catch (error) {
     console.error('Error fetching related posts:', error)
@@ -95,26 +71,65 @@ async function getRelatedPosts(tags: string[], currentSlug: string) {
   }
 }
 
+async function getPrevNextPosts(createdAt: Date) {
+  try {
+    await dbConnect()
+    const [prevPost, nextPost] = await Promise.all([
+      Post.findOne({ published: true, createdAt: { $lt: createdAt } })
+        .sort({ createdAt: -1 })
+        .select('slug title')
+        .lean(),
+      Post.findOne({ published: true, createdAt: { $gt: createdAt } })
+        .sort({ createdAt: 1 })
+        .select('slug title')
+        .lean()
+    ])
+
+    return {
+      prev: prevPost ? String(prevPost.slug) : null,
+      next: nextPost ? String(nextPost.slug) : null,
+    }
+  } catch (error) {
+    console.error('Error fetching prev/next posts:', error)
+    return { prev: null, next: null }
+  }
+}
+
 // Metadata generation
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
+
+  if (!post) {
+    return { title: 'Post Not Found' }
+  }
+
   const baseUrl = getBaseUrl()
-  
-  if (!post) return { title: 'Post Not Found' }
-  
+
   return {
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: `${baseUrl}/post/${slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: 'article',
-      url: `${baseUrl}/post/${slug}`,
+      publishedTime: post.createdAt,
+      authors: [post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro'],
+      tags: post.tags,
+      images: [
+        {
+          url: post.coverImage || `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [post.coverImage || `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`],
     },
   }
 }
@@ -124,12 +139,15 @@ export default async function PostPage({ params }: Props) {
   const { slug } = await params
   const post = await getPost(slug)
 
-  if (!post) notFound()
+  if (!post) {
+    notFound()
+  }
 
-  const relatedPosts = await getRelatedPosts(post.tags || [], slug)
-  const nav = await getNavigation(new Date(post.createdAt))
-
+  const relatedPosts = await getRelatedPosts(slug, post.tags || [])
+  const nav = await getPrevNextPosts(post.createdAt)
   const baseUrl = getBaseUrl()
+
+  const isUpdated = post.updatedAt && new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 86400000
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -164,9 +182,6 @@ export default async function PostPage({ params }: Props) {
     },
   }
 
-  const isUpdated = post.updatedAt && 
-    new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 1000 * 60 * 5
-
   return (
     <div className="min-h-screen flex flex-col relative reading-page-bg">
       <script
@@ -180,24 +195,26 @@ export default async function PostPage({ params }: Props) {
         <div className="flex flex-col lg:flex-row gap-12 items-start justify-center relative">
           
           {/* Left Column: Sticky Metadata & Socials */}
-          <aside className="hidden lg:flex flex-col gap-8 lg:sticky lg:top-24 self-start w-48 shrink-0 text-xs font-sans text-muted-foreground/80">
+          <aside className="hidden lg:flex flex-col gap-6 lg:sticky lg:top-24 self-start w-52 shrink-0 text-xs font-sans text-muted-foreground">
             <Link
               href="/"
-              className="text-muted-foreground hover:text-accent font-bold uppercase tracking-wider flex items-center gap-1 transition-colors pb-4 border-b border-foreground/5"
+              className="text-foreground hover:text-accent font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors pb-4 border-b border-border"
             >
-              <ChevronLeft className="h-4 w-4" /> back to logs
+              <ChevronLeft className="h-4 w-4" /> Back to Articles
             </Link>
             
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Author</span>
-              <p className="font-bold text-foreground">
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <User size={12} className="opacity-70" /> Author
+              </span>
+              <p className="font-sans font-bold text-foreground text-sm">
                 {post.isGuest ? (
                   post.authorBio ? (
                     <a 
                       href={post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-accent hover:underline break-words"
+                      className="text-accent hover:underline"
                     >
                       {post.authorName || 'Guest Author'}
                     </a>
@@ -210,44 +227,52 @@ export default async function PostPage({ params }: Props) {
               </p>
             </div>
 
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Published</span>
-              <p className="font-bold text-foreground"><FormattedDate date={post.createdAt} /></p>
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Calendar size={12} className="opacity-70" /> Published
+              </span>
+              <p className="font-mono font-bold text-foreground text-xs"><FormattedDate date={post.createdAt} /></p>
             </div>
             
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Reading Time</span>
-              <p className="font-bold text-foreground">{post.readTime} min read</p>
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Clock size={12} className="opacity-70" /> Read Time
+              </span>
+              <p className="font-mono font-bold text-foreground text-xs">{post.readTime} min read</p>
             </div>
 
             {isUpdated && (
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Updated</span>
-                <p className="font-bold text-foreground/60"><FormattedDate date={post.updatedAt} /></p>
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Clock size={12} className="opacity-70" /> Updated
+                </span>
+                <p className="font-mono font-semibold text-muted-foreground text-xs"><FormattedDate date={post.updatedAt} /></p>
               </div>
             )}
 
-            <div className="space-y-3 pt-4 border-t border-foreground/5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 block">Share</span>
+            <div className="space-y-3 pt-4 border-t border-border">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
+                Share Article
+              </span>
               <SocialShare title={post.title} slug={slug} />
             </div>
 
             {(nav.prev || nav.next) && (
-              <div className="space-y-4 pt-4 border-t border-foreground/5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 block">Navigation</span>
-                <div className="space-y-4">
+              <div className="space-y-3 pt-4 border-t border-border">
+                <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">Navigation</span>
+                <div className="space-y-3">
                   {nav.prev && (
                     <Link href={`/post/${nav.prev}`} className="group block space-y-1">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 block">← Previous</span>
-                      <span className="font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block normal-case">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70 block">← Previous</span>
+                      <span className="font-sans font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block text-xs">
                         {nav.prev.replace(/-/g, ' ')}
                       </span>
                     </Link>
                   )}
                   {nav.next && (
                     <Link href={`/post/${nav.next}`} className="group block space-y-1">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 block">Next →</span>
-                      <span className="font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block normal-case">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70 block">Next →</span>
+                      <span className="font-sans font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block text-xs">
                         {nav.next.replace(/-/g, ' ')}
                       </span>
                     </Link>
@@ -260,13 +285,14 @@ export default async function PostPage({ params }: Props) {
           {/* Center Column: The Main Article */}
           <article className="flex-1 max-w-2xl w-full">
             <TableOfContents content={post.content} />
-            <header className="mb-12">
-              <div className="flex justify-between items-center mb-8 lg:hidden">
+            <header className="mb-10">
+              {/* Mobile Back Link & Social Share Header */}
+              <div className="flex justify-between items-center mb-6 lg:hidden">
                 <Link
                   href="/"
-                  className="text-muted-foreground hover:text-accent text-sm font-medium flex items-center gap-1 transition-colors"
+                  className="text-muted-foreground hover:text-accent text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
                 >
-                  <ChevronLeft className="h-4 w-4" /> posts
+                  <ChevronLeft className="h-4 w-4" /> Articles
                 </Link>
                 <SocialShare title={post.title} slug={slug} />
               </div>
@@ -275,20 +301,60 @@ export default async function PostPage({ params }: Props) {
                 {post.title}
               </h1>
 
-              <GooglePreferredSourceButton className="mb-6" />
-              
-              <div className="flex flex-wrap items-center gap-3 text-xs font-mono font-medium text-muted-foreground lg:hidden mb-8 pb-6 border-b border-border">
-                <span>By {post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro'}</span>
-                <span className="h-1 w-1 rounded-full bg-accent/30" />
-                <FormattedDate date={post.createdAt} />
-                <span className="h-1 w-1 rounded-full bg-accent/30" />
-                <span>{post.readTime} min read</span>
-                {isUpdated && (
-                  <>
-                    <span className="h-1 w-1 rounded-full bg-accent/30" />
-                    <span className="italic">Updated <FormattedDate date={post.updatedAt} /></span>
-                  </>
-                )}
+              {/* Clean Article Header Metadata Card */}
+              <div className="border border-border bg-card/70 backdrop-blur-xs p-4 md:p-5 rounded-2xl shadow-2xs mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-accent/15 text-accent flex items-center justify-center font-mono font-extrabold text-sm border border-accent/20 shrink-0">
+                    {post.isGuest ? (post.authorName ? post.authorName.charAt(0).toUpperCase() : 'G') : 'GO'}
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-sans font-bold text-foreground leading-tight">
+                      {post.isGuest ? (
+                        post.authorBio ? (
+                          <a 
+                            href={post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-accent hover:underline"
+                          >
+                            {post.authorName || 'Guest Author'}
+                          </a>
+                        ) : (
+                          post.authorName || 'Guest Author'
+                        )
+                      ) : (
+                        'George Ongoro'
+                      )}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={11} className="opacity-70" />
+                        <FormattedDate date={post.createdAt} />
+                      </span>
+                      <span className="h-1 w-1 rounded-full bg-accent/40" />
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} className="opacity-70" />
+                        {post.readTime} min read
+                      </span>
+                      {isUpdated && (
+                        <>
+                          <span className="h-1 w-1 rounded-full bg-accent/40" />
+                          <span className="italic text-[11px]">Updated <FormattedDate date={post.updatedAt} /></span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center gap-2">
+                  {post.series && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/15 text-accent font-mono text-xs font-semibold uppercase tracking-wider">
+                      <BookOpen size={12} />
+                      <span>{post.series}</span>
+                    </span>
+                  )}
+                  <GooglePreferredSourceButton />
+                </div>
               </div>
             </header>
 

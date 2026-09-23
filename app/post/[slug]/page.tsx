@@ -105,6 +105,10 @@ export async function generateMetadata({ params }: Props) {
   }
 
   const baseUrl = getBaseUrl()
+  const coverUrl = post.coverImage
+    ? (post.coverImage.startsWith('http') ? post.coverImage : `${baseUrl}${post.coverImage}`)
+    : null
+  const ogImageUrl = coverUrl || `${baseUrl}/post/${slug}/opengraph-image`
 
   return {
     title: post.title,
@@ -118,7 +122,7 @@ export async function generateMetadata({ params }: Props) {
       tags: post.tags,
       images: [
         {
-          url: post.coverImage || `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -129,7 +133,7 @@ export async function generateMetadata({ params }: Props) {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: [post.coverImage || `${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`],
+      images: [ogImageUrl],
     },
   }
 }
@@ -146,6 +150,10 @@ export default async function PostPage({ params }: Props) {
   const relatedPosts = await getRelatedPosts(slug, post.tags || [])
   const nav = await getPrevNextPosts(post.createdAt)
   const baseUrl = getBaseUrl()
+  const coverUrl = post.coverImage
+    ? (post.coverImage.startsWith('http') ? post.coverImage : `${baseUrl}${post.coverImage}`)
+    : null
+  const ogImageUrl = coverUrl || `${baseUrl}/post/${slug}/opengraph-image`
 
   const isUpdated = post.updatedAt && new Date(post.updatedAt).getTime() - new Date(post.createdAt).getTime() > 86400000
 
@@ -158,7 +166,7 @@ export default async function PostPage({ params }: Props) {
     },
     headline: post.title,
     description: post.excerpt,
-    image: post.coverImage ? [post.coverImage] : [`${baseUrl}/api/og?title=${encodeURIComponent(post.title)}`],
+    image: [ogImageUrl],
     datePublished: new Date(post.createdAt).toISOString(),
     dateModified: new Date(post.updatedAt || post.createdAt).toISOString(),
     author: {

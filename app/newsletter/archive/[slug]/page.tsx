@@ -8,6 +8,7 @@ import NewsletterIssue from '@/models/NewsletterIssue'
 import { FormattedDate } from '@/components/FormattedDate'
 import { SocialShare } from '@/components/SocialShare'
 import { Mail, ArrowLeft, Calendar, User, ChevronLeft } from 'lucide-react'
+import { getBaseUrl } from '@/lib/utils'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -38,17 +39,27 @@ async function getIssue(slug: string) {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const issue = await getIssue(slug)
+  const baseUrl = getBaseUrl()
   
   if (!issue) return { title: 'Issue Not Found' }
   
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(issue.subject)}`
+  const ogImageUrl = `${baseUrl}/newsletter/archive/${slug}/opengraph-image`
   
   return {
     title: issue.subject,
     description: `A newsletter issue from George Ongoro's underground dev circle.`,
     openGraph: {
       title: issue.subject,
-      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+      description: `A newsletter issue from George Ongoro's underground dev circle.`,
+      type: 'article',
+      url: `${baseUrl}/newsletter/archive/${slug}`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: issue.subject }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: issue.subject,
+      description: `A newsletter issue from George Ongoro's underground dev circle.`,
+      images: [ogImageUrl],
     },
   }
 }

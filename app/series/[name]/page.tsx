@@ -6,7 +6,7 @@ import Post from '@/models/Post'
 import { notFound } from 'next/navigation'
 import { Layers, ChevronLeft, Info, Terminal, Activity } from 'lucide-react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import { cn, getBaseUrl } from '@/lib/utils'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -40,6 +40,31 @@ async function getSeriesPosts(seriesName: string) {
   } catch (error) {
     console.error('Error fetching series posts:', error)
     return []
+  }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { name } = await params
+  const decodedName = decodeURIComponent(name)
+  const baseUrl = getBaseUrl()
+  const ogImageUrl = `${baseUrl}/series/${encodeURIComponent(name)}/opengraph-image`
+
+  return {
+    title: `${decodedName} Series | George Ongoro`,
+    description: `All articles in the ${decodedName} series.`,
+    openGraph: {
+      title: `${decodedName} Series | George Ongoro`,
+      description: `All articles in the ${decodedName} series.`,
+      type: 'website',
+      url: `${baseUrl}/series/${encodeURIComponent(name)}`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${decodedName} Series` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${decodedName} Series | George Ongoro`,
+      description: `All articles in the ${decodedName} series.`,
+      images: [ogImageUrl],
+    },
   }
 }
 

@@ -1,11 +1,11 @@
 import { ImageResponse } from 'next/og'
 import dbConnect from '@/lib/mongodb'
-import Post from '@/models/Post'
+import NewsletterIssue from '@/models/NewsletterIssue'
 import { OgCard } from '@/components/OgCard'
 
 export const runtime = 'nodejs'
 
-export const alt = 'Ongoro Blog'
+export const alt = 'Newsletter Issue'
 export const size = {
   width: 1200,
   height: 630,
@@ -18,15 +18,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   try {
     await dbConnect()
-    const post = await Post.findOne({ slug, published: true }).select('title tags readTime isGuest authorName').lean()
+    const issue = await NewsletterIssue.findOne({ slug, published: true }).select('subject').lean()
 
-    const title = post?.title || 'Ongoro Blog'
-    const tags = (post?.tags as string[]) || []
-    const readTime = post?.readTime
-    const authorName = post?.isGuest ? (post?.authorName || 'Guest Author') : 'George Ongoro'
+    const title = issue?.subject || 'Newsletter Dispatch'
 
     return new ImageResponse(
-      <OgCard title={title} tags={tags} readTime={readTime} authorName={authorName} />,
+      <OgCard title={title} tags={['newsletter', 'dispatch']} authorName="George Ongoro" />,
       {
         ...size,
         headers: {
@@ -36,7 +33,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     )
   } catch (e: any) {
     return new ImageResponse(
-      <OgCard title="Ongoro Blog" />,
+      <OgCard title="Newsletter Dispatch" tags={['newsletter']} />,
       {
         ...size,
         headers: {

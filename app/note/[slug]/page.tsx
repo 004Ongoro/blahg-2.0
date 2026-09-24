@@ -113,6 +113,9 @@ export default async function NotePage({ params }: Props) {
     headline: note.title,
     description: note.excerpt,
     image: [ogImageUrl],
+    inLanguage: 'en-US',
+    keywords: note.tags?.join(', '),
+    wordCount: note.content ? note.content.split(/\s+/).length : undefined,
     datePublished: new Date(note.createdAt).toISOString(),
     dateModified: new Date(note.updatedAt || note.createdAt).toISOString(),
     author: {

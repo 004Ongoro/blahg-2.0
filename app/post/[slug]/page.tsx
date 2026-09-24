@@ -175,6 +175,9 @@ export default async function PostPage({ params }: Props) {
     headline: post.title,
     description: post.excerpt,
     image: [ogImageUrl],
+    inLanguage: 'en-US',
+    keywords: post.tags?.join(', '),
+    wordCount: post.content ? post.content.split(/\s+/).length : undefined,
     datePublished: new Date(post.createdAt).toISOString(),
     dateModified: new Date(post.updatedAt || post.createdAt).toISOString(),
     author: {

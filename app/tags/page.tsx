@@ -12,7 +12,7 @@ async function getAllPosts() {
     await dbConnect()
     const posts = await Post.find({ published: true })
       .sort({ createdAt: -1 })
-      .select('title slug excerpt createdAt readTime tags')
+      .select('title slug excerpt createdAt readTime tags type')
       .lean()
 
     return JSON.parse(JSON.stringify(posts))

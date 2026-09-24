@@ -14,6 +14,7 @@ interface Post {
   excerpt: string
   published: boolean
   isDraft?: boolean
+  type?: 'post' | 'note'
   createdAt: string
   updatedAt?: string
   readTime: number
@@ -74,6 +75,11 @@ export function PostList({ posts }: PostListProps) {
               )}>
                 {post.published ? 'LIVE' : (post.isDraft ? 'AUTO-SAVED DRAFT' : 'DRAFT')}
               </div>
+              {post.type === 'note' && (
+                <div className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-accent/20 text-accent border border-accent/30">
+                  NOTE
+                </div>
+              )}
               <h3 className="text-base font-black uppercase tracking-tight truncate leading-none group-hover:text-accent transition-colors">
                 {post.title || 'Untitled Post'}
               </h3>
@@ -87,7 +93,7 @@ export function PostList({ posts }: PostListProps) {
               
               <span className="flex items-center gap-1.5">
                 <Hash size={12} className="opacity-40" />
-                {post.readTime} MIN
+                {post.type === 'note' ? '< 30S' : `${post.readTime} MIN`}
               </span>
 
               {post.series && (
@@ -102,7 +108,7 @@ export function PostList({ posts }: PostListProps) {
           <div className="flex items-center gap-2">
             {post.published && (
               <Link
-                href={`/post/${post.slug}`}
+                href={post.type === 'note' ? `/note/${post.slug}` : `/post/${post.slug}`}
                 target="_blank"
                 className="h-10 w-10 flex items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground hover:text-background transition-all"
                 title="View Live"

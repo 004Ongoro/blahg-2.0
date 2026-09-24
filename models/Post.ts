@@ -18,6 +18,7 @@ export interface IPost extends Document {
   authorEmail?: string
   isGuest?: boolean
   isDraft?: boolean
+  type?: 'post' | 'note'
   createdAt: Date
   updatedAt: Date
 }
@@ -50,12 +51,18 @@ const PostSchema: Schema = new Schema(
     authorName: { type: String, trim: true },
     authorBio: { type: String, trim: true },
     authorEmail: { type: String, trim: true },
-    isGuest: { type: Boolean, default: false }
+    isGuest: { type: Boolean, default: false },
+    type: {
+      type: String,
+      enum: ['post', 'note'],
+      default: 'post',
+    },
   },
   { timestamps: true }
 )
 
 PostSchema.index({ slug: 1 })
+PostSchema.index({ type: 1, published: 1, createdAt: -1 })
 
 const Post: Model<IPost> = mongoose.models.Post || mongoose.model<IPost>('Post', PostSchema)
 export default Post

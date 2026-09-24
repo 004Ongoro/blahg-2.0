@@ -46,11 +46,23 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   alternates: {
+    canonical: baseUrl,
     types: {
       'application/rss+xml': `${baseUrl}/rss.xml`,
     },
+  },
+  verification: {
+    google: 'google552c40fff26b610e',
   },
   other: {
     'opensearch-description': `${baseUrl}/opensearch.xml`,

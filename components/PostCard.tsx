@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { FormattedDate } from './FormattedDate'
-import { ArrowUpRight, BookOpen, Clock, Tag, User } from 'lucide-react'
+import { ArrowUpRight, BookOpen, Clock, Tag, User, Zap } from 'lucide-react'
 
 interface PostCardProps {
   title: string
@@ -11,6 +11,7 @@ interface PostCardProps {
   createdAt: Date
   readTime: number
   tags: string[]
+  type?: 'post' | 'note'
   series?: string
   authorName?: string
   isGuest?: boolean
@@ -24,11 +25,15 @@ export function PostCard({
   createdAt,
   readTime,
   tags,
+  type = 'post',
   series,
   authorName,
   isGuest,
   coverImage,
 }: PostCardProps) {
+  const isNote = type === 'note'
+  const itemUrl = isNote ? `/note/${slug}` : `/post/${slug}`
+
   return (
     <article className="group relative overflow-hidden border border-border bg-card/70 backdrop-blur-xs p-6 md:p-8 rounded-2xl shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 mb-6">
       {/* Ambient Top Hover Accent Bar */}
@@ -38,7 +43,7 @@ export function PostCard({
         
         {/* Optional Cover Image Thumbnail */}
         {coverImage && (
-          <Link href={`/post/${slug}`} className="shrink-0 w-full md:w-44 aspect-video md:aspect-4/3 rounded-xl overflow-hidden border border-border bg-muted/30 group/img">
+          <Link href={itemUrl} className="shrink-0 w-full md:w-44 aspect-video md:aspect-4/3 rounded-xl overflow-hidden border border-border bg-muted/30 group/img">
             <img
               src={coverImage}
               alt={title}
@@ -51,6 +56,13 @@ export function PostCard({
         <div className="flex-1 space-y-3.5">
           {/* Metadata Badges Bar */}
           <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
+            {isNote && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent/20 text-accent text-[11px] font-bold">
+                <Zap size={11} />
+                <span>Note</span>
+              </span>
+            )}
+
             {series && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/15 text-accent text-[11px]">
                 <BookOpen size={12} />
@@ -70,14 +82,14 @@ export function PostCard({
               <span className="h-1 w-1 rounded-full bg-accent/40" />
               <span className="flex items-center gap-1">
                 <Clock size={12} className="opacity-70" />
-                <span>{readTime} min read</span>
+                <span>{isNote ? '< 30s read' : `${readTime} min read`}</span>
               </span>
             </div>
           </div>
 
-          {/* Article Title */}
+          {/* Article / Note Title */}
           <Link
-            href={`/post/${slug}`}
+            href={itemUrl}
             className="block group-hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
           >
             <h2 className="text-xl md:text-2xl font-sans font-extrabold text-foreground tracking-tight leading-snug">
@@ -85,7 +97,7 @@ export function PostCard({
             </h2>
           </Link>
 
-          {/* Article Excerpt */}
+          {/* Article / Note Excerpt */}
           <p className="line-clamp-2 text-sm md:text-[15px] leading-relaxed text-muted-foreground font-sans font-normal">
             {excerpt}
           </p>
@@ -107,11 +119,11 @@ export function PostCard({
           )}
         </div>
 
-        {/* Read Article Action Button */}
+        {/* Read Action Button */}
         <Link
-          href={`/post/${slug}`}
+          href={itemUrl}
           className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background transition-all duration-300 group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent md:mt-1 shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={`Read article: ${title}`}
+          aria-label={isNote ? `Read note: ${title}` : `Read article: ${title}`}
         >
           <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </Link>

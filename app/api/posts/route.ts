@@ -24,7 +24,7 @@ export async function GET() {
     await dbConnect()
     const posts = await Post.find({ published: true, isDraft: { $ne: true } })
       .sort({ createdAt: -1 })
-      .select('title slug tags excerpt views')
+      .select('title slug tags excerpt views type readTime createdAt')
       .lean()
     
     return NextResponse.json(posts)
@@ -43,10 +43,10 @@ export async function POST(req: Request) {
 
     await dbConnect()
     const body = await req.json()
-    const { title, content, excerpt, coverImage, tags, published, series, seriesOrder, isDraft, draftSlug } = body
+    const { title, content, excerpt, coverImage, tags, published, series, seriesOrder, isDraft, draftSlug, type } = body
 
     if (isDraft) {
-      const draftTitle = title || 'Untitled Post Draft'
+      const draftTitle = title || 'Untitled Draft'
       const draftContent = content || ''
       const slug = draftSlug || body.slug || `${generateSlug(draftTitle)}-${Date.now()}`
 
@@ -62,6 +62,7 @@ export async function POST(req: Request) {
             tags: tags || [],
             published: false,
             isDraft: true,
+            type: type || 'post',
             series,
             seriesOrder: seriesOrder || 0,
             updatedAt: new Date(),
@@ -79,6 +80,7 @@ export async function POST(req: Request) {
           tags: tags || [],
           published: false,
           isDraft: true,
+          type: type || 'post',
           readTime,
           series,
           seriesOrder: seriesOrder || 0,
@@ -126,18 +128,23 @@ export async function POST(req: Request) {
       tags: tags || [],
       published: published ?? true,
       isDraft: false,
+      type: type || 'post',
       readTime,
       series,
       seriesOrder: seriesOrder || 0,
     })
 
     revalidatePath('/admin')
-    // If the post is published, clear the cache for the homepage and tags
+    // If the post is published, clear the cache for the homepage, notes, and tags
     if (post.published) {
-      // revalidate
       revalidatePath('/')
       revalidatePath('/archive')
       revalidatePath('/tags')
+      if (post.type === 'note') {
+        revalidatePath(`/note/${post.slug}`)
+      } else {
+        revalidatePath(`/post/${post.slug}`)
+      }
       tags?.forEach((tag: string) => revalidatePath(`/tags/${tag}`))
       if (series) {
         revalidatePath('/series')

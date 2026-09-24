@@ -20,7 +20,7 @@ interface ArchiveItem {
   title: string
   slug: string
   date: Date
-  type: 'post' | 'newsletter'
+  type: 'post' | 'note' | 'newsletter'
 }
 
 async function getArchiveData() {
@@ -28,7 +28,7 @@ async function getArchiveData() {
     await dbConnect()
     
     const [posts, issues] = await Promise.all([
-      Post.find({ published: true }).sort({ createdAt: -1 }).select('title slug createdAt').lean(),
+      Post.find({ published: true }).sort({ createdAt: -1 }).select('title slug createdAt type').lean(),
       NewsletterIssue.find({ published: true }).sort({ createdAt: -1 }).select('subject slug createdAt').lean()
     ])
 
@@ -37,7 +37,7 @@ async function getArchiveData() {
       title: p.title,
       slug: p.slug,
       date: p.createdAt,
-      type: 'post' as const
+      type: (p.type === 'note' ? 'note' : 'post') as 'note' | 'post'
     }))
 
     const formattedIssues = (issues as any[]).map(i => ({
@@ -101,10 +101,21 @@ export default async function ArchivePage() {
                         {format(new Date(item.date), 'MMM dd')}
                       </time>
                       <Link 
-                        href={item.type === 'post' ? `/post/${item.slug}` : `/newsletter/archive/${item.slug}`}
+                        href={
+                          item.type === 'note'
+                            ? `/note/${item.slug}`
+                            : item.type === 'post'
+                            ? `/post/${item.slug}`
+                            : `/newsletter/archive/${item.slug}`
+                        }
                         className="text-sm font-bold hover:text-accent transition-colors flex-1"
                       >
                         {item.title}
+                        {item.type === 'note' && (
+                          <span className="ml-2 text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded uppercase font-black">
+                            Note
+                          </span>
+                        )}
                         {item.type === 'newsletter' && (
                           <span className="ml-2 text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded uppercase font-black">
                             Issue

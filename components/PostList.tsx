@@ -10,6 +10,7 @@ interface Post {
   createdAt: string
   readTime: number
   tags: string[]
+  type?: 'post' | 'note'
   series?: string
   authorName?: string
   isGuest?: boolean
@@ -25,7 +26,7 @@ export function PostList({ posts }: PostListProps) {
     return (
       <div className="border border-dashed border-border p-12 text-center rounded-2xl bg-card/40">
         <p className="text-muted-foreground font-mono font-semibold uppercase tracking-wider text-xs">
-          No articles published yet.
+          No entries published yet.
         </p>
       </div>
     )
@@ -42,6 +43,7 @@ export function PostList({ posts }: PostListProps) {
           createdAt={new Date(post.createdAt)}
           readTime={post.readTime}
           tags={post.tags}
+          type={post.type}
           series={post.series}
           authorName={post.authorName}
           isGuest={post.isGuest}

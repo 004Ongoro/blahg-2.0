@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -26,7 +26,7 @@ export const revalidate = false
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const posts = await Post.find({ published: true }).select('slug').lean()
+    const posts = await Post.find({ published: true, type: { $ne: 'note' } }).select('slug').lean()
     return posts.map((post: any) => ({
       slug: post.slug,
     }))
@@ -113,6 +113,9 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: `${baseUrl}/post/${slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -145,6 +148,11 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) {
     notFound()
+  }
+
+  // If a note was requested on /post/, redirect to /note/
+  if (post.type === 'note') {
+    redirect(`/note/${slug}`)
   }
 
   const relatedPosts = await getRelatedPosts(slug, post.tags || [])

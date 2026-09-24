@@ -26,6 +26,7 @@ export async function GET() {
 
   const items = await Promise.all(
     posts.map(async (post: any) => {
+      const itemUrl = post.type === 'note' ? `${baseUrl}/note/${post.slug}` : `${baseUrl}/post/${post.slug}`
       const htmlContent = await unified()
         .use(remarkParse)
         .use(remarkRehype)
@@ -35,8 +36,8 @@ export async function GET() {
       return `
         <item>
           <title><![CDATA[${post.title}]]></title>
-          <link>${baseUrl}/post/${post.slug}</link>
-          <guid isPermaLink="true">${baseUrl}/post/${post.slug}</guid>
+          <link>${itemUrl}</link>
+          <guid isPermaLink="true">${itemUrl}</guid>
           <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
           <description><![CDATA[${post.excerpt}]]></description>
           <content:encoded><![CDATA[${String(htmlContent)}]]></content:encoded>

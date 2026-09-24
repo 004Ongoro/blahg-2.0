@@ -39,6 +39,7 @@ interface Post {
   authorBio?: string
   authorEmail?: string
   isGuest?: boolean
+  type?: 'post' | 'note'
 }
 
 interface PostEditorProps {
@@ -49,6 +50,7 @@ export function PostEditor({ post }: PostEditorProps) {
   const router = useRouter()
   const isEditing = !!post
 
+  const [type, setType] = useState<'post' | 'note'>(post?.type || 'post')
   const [title, setTitle] = useState(post?.title || '')
   const [slug, setSlug] = useState(post?.slug || '')
   const [content, setContent] = useState(post?.content || '')
@@ -82,6 +84,7 @@ export function PostEditor({ post }: PostEditorProps) {
       authorBio,
       authorEmail,
       isGuest,
+      type,
     }),
     [
       title,
@@ -96,6 +99,7 @@ export function PostEditor({ post }: PostEditorProps) {
       authorBio,
       authorEmail,
       isGuest,
+      type,
     ]
   )
 
@@ -112,6 +116,7 @@ export function PostEditor({ post }: PostEditorProps) {
     if (restored.authorBio !== undefined) setAuthorBio(restored.authorBio)
     if (restored.authorEmail !== undefined) setAuthorEmail(restored.authorEmail)
     if (restored.isGuest !== undefined) setIsGuest(restored.isGuest)
+    if (restored.type !== undefined) setType(restored.type)
   }, [])
 
   const handleSyncToDb = useCallback(
@@ -133,6 +138,7 @@ export function PostEditor({ post }: PostEditorProps) {
         tags,
         published: false,
         isDraft: true,
+        type: data.type || 'post',
         series: data.series.trim() || undefined,
         seriesOrder: parseInt(data.seriesOrder) || 0,
         authorName: data.authorName.trim() || undefined,
@@ -183,9 +189,19 @@ export function PostEditor({ post }: PostEditorProps) {
   // Auto-generate slug from title
   useEffect(() => {
     if (!isEditing && title) {
-      setSlug(slugify(title))
+      const baseSlug = slugify(title)
+      if (type === 'note') {
+        setSlug((prev) => {
+          if (prev && prev.startsWith(baseSlug) && prev.length > baseSlug.length) {
+            return prev
+          }
+          return `${baseSlug}-${Date.now().toString().slice(-6)}`
+        })
+      } else {
+        setSlug(baseSlug)
+      }
     }
-  }, [title, isEditing])
+  }, [title, isEditing, type])
 
   // Fetch all series for the dropdown
   useEffect(() => {
@@ -235,11 +251,12 @@ export function PostEditor({ post }: PostEditorProps) {
       title,
       slug,
       content,
-      excerpt,
+      excerpt: excerpt || content.substring(0, 150),
       tags,
       published,
       isDraft: false,
       draftSlug: activeDraftSlug || slug,
+      type,
       series: series.trim() || undefined,
       seriesOrder: parseInt(seriesOrder) || 0,
       authorName: authorName.trim() || undefined,
@@ -280,8 +297,45 @@ export function PostEditor({ post }: PostEditorProps) {
         {/* Editor Side */}
         <div className="space-y-12">
           <div className="space-y-8">
-            <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
-              <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">1. Metadata</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-foreground/5 pb-3 gap-3">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">1. Metadata</h2>
+                <div className="flex items-center gap-1 p-1 bg-foreground/5 rounded-xl border border-foreground/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setType('post')
+                      if (!isEditing && title) setSlug(slugify(title))
+                    }}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                      type === 'post'
+                        ? "bg-foreground text-background shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Article
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setType('note')
+                      if (!isEditing && title) {
+                        const base = slugify(title)
+                        setSlug(`${base}-${Date.now().toString().slice(-6)}`)
+                      }
+                    }}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                      type === 'note'
+                        ? "bg-accent text-accent-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Note (&lt; 30s)
+                  </button>
+                </div>
+              </div>
               <DraftSyncBadge status={syncStatus} lastSyncedTime={lastSyncedTime} onManualSync={triggerSync} />
             </div>
 
@@ -511,7 +565,9 @@ export function PostEditor({ post }: PostEditorProps) {
               ) : (
                 <>
                   <Send size={12} />
-                  {isEditing ? 'Update_Log' : 'Create_Log'}
+                  {isEditing 
+                    ? (type === 'note' ? 'Update_Note' : 'Update_Log') 
+                    : (type === 'note' ? 'Publish_Note' : 'Create_Log')}
                 </>
               )}
             </button>

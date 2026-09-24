@@ -13,6 +13,7 @@ interface Post {
   createdAt: string
   readTime: number
   tags: string[]
+  type?: 'post' | 'note'
 }
 
 interface TagLibraryProps {
@@ -139,6 +140,7 @@ function TagLibraryContent({ posts }: TagLibraryProps) {
               createdAt={new Date(post.createdAt)}
               readTime={post.readTime}
               tags={post.tags}
+              type={post.type}
               series={(post as any).series}
               authorName={(post as any).authorName}
               isGuest={(post as any).isGuest}

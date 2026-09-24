@@ -53,7 +53,7 @@ export default async function EditPostPage({ params }: Props) {
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.3em] bg-accent/10 text-accent px-2 py-0.5 rounded mb-2 inline-block">Record_Modifier</span>
               <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
-                Edit <span className="text-accent italic">Post</span>
+                Edit <span className="text-accent italic">{post.type === 'note' ? 'Note' : 'Post'}</span>
               </h1>
             </div>
           </div>

@@ -11,17 +11,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let bookmarkUrls: MetadataRoute.Sitemap = []
 
   try {
-    // Fetch all published posts for the sitemap
+    // Fetch all published posts and notes for the sitemap
     await dbConnect()
     const posts = await Post.find({ published: true, isDraft: { $ne: true } })
-      .select('slug updatedAt createdAt')
+      .select('slug type updatedAt createdAt')
       .lean()
 
     postUrls = posts.map((post: any) => ({
-      url: `${baseUrl}/post/${post.slug}`,
+      url: post.type === 'note' ? `${baseUrl}/note/${post.slug}` : `${baseUrl}/post/${post.slug}`,
       lastModified: new Date(post.updatedAt || post.createdAt),
       changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      priority: post.type === 'note' ? 0.7 : 0.8,
     }))
   } catch (error) {
     console.error('Error fetching posts for sitemap:', error)

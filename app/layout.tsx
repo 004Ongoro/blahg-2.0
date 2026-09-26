@@ -78,6 +78,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <head>
         <link rel="search" type="application/opensearchdescription+xml" title="George Ongoro Blog" href="/opensearch.xml" />
+        <meta name="google-adsense-account" content="ca-pub-1908166869645479">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

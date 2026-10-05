@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Github, Twitter, Linkedin, Rss, MessageSquare, ArrowUpRight, Heart } from 'lucide-react'
 import { ContactDialog } from './ContactDialog'
-import { GooglePreferredSourceButton } from './GooglePreferredSourceButton'
 
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
@@ -114,8 +113,6 @@ export function Footer() {
                 <span>Sponsor</span>
                 <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
               </a>
-
-              <GooglePreferredSourceButton />
             </div>
 
             {/* Social Icons Row */}

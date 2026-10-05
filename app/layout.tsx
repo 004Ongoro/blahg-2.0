@@ -7,6 +7,7 @@ import { ContactDialog } from '@/components/ContactDialog'
 import { MessageSquare } from 'lucide-react'
 import { getBaseUrl } from '@/lib/utils'
 import { CookieBanner } from '@/components/CookieBanner'
+import { ExitIntentNewsletter } from '@/components/ExitIntentNewsletter'
 import './globals.css'
 
 const jetbrainsMono = {
@@ -118,12 +119,6 @@ export default function RootLayout({
         />
       </head>
       <body className={`${jetbrainsMono.variable} font-sans antialiased`}>
-        {/* Google Preferred Sources SDK */}
-        <Script
-          src="https://news.google.com/swg/js/v1/publisher.js"
-          strategy="afterInteractive"
-        />
-
         {/* Google Analytics */}
         {gaId && (
           <>
@@ -152,6 +147,7 @@ export default function RootLayout({
           <Toaster />
           <ScrollProgress />
           <CookieBanner />
+          <ExitIntentNewsletter />
           <ContactDialog trigger={
             <button
               className="fixed bottom-24 right-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-foreground/5 bg-background/70 backdrop-blur-md shadow-sm text-foreground hover:bg-foreground/5 hover:scale-105 active:scale-95 transition-all cursor-pointer"

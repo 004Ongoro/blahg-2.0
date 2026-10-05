@@ -12,7 +12,6 @@ import { ChevronLeft, Calendar, Clock, User, Zap, ArrowLeft } from 'lucide-react
 import { PostReactions } from '@/components/PostReactions'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
-import { GooglePreferredSourceButton } from '@/components/GooglePreferredSourceButton'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -159,7 +158,6 @@ export default async function NotePage({ params }: Props) {
           </Link>
           <div className="flex items-center gap-3">
             <SocialShare title={note.title} slug={`note/${slug}`} />
-            <GooglePreferredSourceButton />
           </div>
         </div>
 

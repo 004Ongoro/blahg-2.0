@@ -4,8 +4,8 @@ import dbConnect from '@/lib/mongodb'
 import NewsletterIssue from '@/models/NewsletterIssue'
 import { NewsletterArchive } from '@/components/NewsletterArchive'
 
-export const dynamic = 'force-static'
-export const revalidate = false
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 async function getIssues() {
   try {

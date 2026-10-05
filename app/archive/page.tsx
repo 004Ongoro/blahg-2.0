@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/accordion"
 import { format } from 'date-fns'
 
-export const dynamic = 'force-static'
-export const revalidate = false
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 interface ArchiveItem {
   id: string

@@ -23,6 +23,9 @@ export function Newsletter() {
 
       if (res.ok) {
         toast.success('Successfully subscribed!')
+        try {
+          localStorage.setItem('newsletter_subscribed', 'true')
+        } catch {}
         setEmail('')
       } else {
         toast.error(data.error || 'Something went wrong')

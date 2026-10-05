@@ -3,7 +3,6 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { PostList } from '@/components/PostList'
 import { Newsletter } from '@/components/Newsletter'
-import { GooglePreferredSourceButton } from '@/components/GooglePreferredSourceButton'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { cn } from '@/lib/utils'
@@ -101,9 +100,6 @@ export default async function HomePage({ searchParams }: Props) {
                 ? 'In-depth essays on software engineering, distributed systems, and clean architecture.'
                 : 'Writing on software engineering, distributed systems, clean architecture, and quick technical notes.'}
             </p>
-          </div>
-          <div className="pt-2">
-            <GooglePreferredSourceButton />
           </div>
         </section>
 

@@ -16,7 +16,6 @@ import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
-import { GooglePreferredSourceButton } from '@/components/GooglePreferredSourceButton'
 
 
 export const dynamic = 'force-static'
@@ -372,7 +371,6 @@ export default async function PostPage({ params }: Props) {
                       <span>{post.series}</span>
                     </span>
                   )}
-                  <GooglePreferredSourceButton />
                 </div>
               </div>
             </header>
@@ -408,8 +406,6 @@ export default async function PostPage({ params }: Props) {
                 </ul>
               </div>
             )}
-
-            <GooglePreferredSourceButton />
           </aside>
 
         </div>

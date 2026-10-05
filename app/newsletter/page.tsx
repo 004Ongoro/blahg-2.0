@@ -66,6 +66,13 @@ export default function NewsletterPage() {
             ? "Successfully subscribed. Check your inbox!" 
             : "Successfully unsubscribed. We'll miss you."
         })
+        try {
+          if (mode === 'subscribe') {
+            localStorage.setItem('newsletter_subscribed', 'true')
+          } else {
+            localStorage.removeItem('newsletter_subscribed')
+          }
+        } catch {}
         setEmail('')
       } else {
         setStatus({ type: 'error', msg: data.error || 'Something went wrong.' })

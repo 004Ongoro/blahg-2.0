@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og'
 import dbConnect from '@/lib/mongodb'
 import Bookmark from '@/models/Bookmark'
 import { OgCard } from '@/components/OgCard'
+import { getOgFonts } from '@/lib/og-fonts'
 
 export const runtime = 'nodejs'
 
@@ -15,18 +16,31 @@ export const contentType = 'image/png'
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const fonts = await getOgFonts()
 
   try {
     await dbConnect()
-    const bookmark = await Bookmark.findById(id).select('title category').lean()
+    const bookmark = await Bookmark.findById(id)
+      .select('title category description url createdAt')
+      .lean()
 
-    const title = bookmark?.title || 'Bookmarks'
+    const title = bookmark?.title || 'Curated Bookmark'
+    const excerpt = bookmark?.description || bookmark?.url || ''
     const tags = bookmark?.category ? [bookmark.category] : ['bookmark']
+    const date = bookmark?.createdAt
 
     return new ImageResponse(
-      <OgCard title={title} tags={tags} authorName="George Ongoro" />,
+      <OgCard
+        title={title}
+        excerpt={excerpt}
+        tags={tags}
+        date={date}
+        authorName="George Ongoro"
+        badgeText="BOOKMARK"
+      />,
       {
         ...size,
+        fonts,
         headers: {
           'Cache-Control': 'public, max-age=31536000, immutable',
         },
@@ -34,9 +48,10 @@ export default async function Image({ params }: { params: Promise<{ id: string }
     )
   } catch (e: any) {
     return new ImageResponse(
-      <OgCard title="Bookmarks" tags={['bookmarks']} />,
+      <OgCard title="Curated Bookmarks" tags={['bookmarks']} badgeText="BOOKMARK" />,
       {
         ...size,
+        fonts,
         headers: {
           'Cache-Control': 'public, max-age=60',
         },

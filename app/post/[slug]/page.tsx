@@ -18,8 +18,8 @@ import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
 
 
-export const dynamic = 'force-static'
-export const revalidate = false
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Static generation
 export async function generateStaticParams() {

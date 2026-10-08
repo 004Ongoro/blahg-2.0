@@ -33,6 +33,8 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
   // Local storage key for this poll
   const storageKey = `blahg_poll_voted_${slug}`
 
+  const optionsKey = JSON.stringify(initialOptions)
+
   useEffect(() => {
     setHasMounted(true)
 
@@ -41,6 +43,15 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
     if (savedVote) {
       setVotedOptionId(savedVote)
     }
+
+    // Sync with initial options
+    setOptions(
+      initialOptions.map((opt) => ({
+        id: opt.id,
+        text: opt.text,
+        votes: opt.votes || 0,
+      }))
+    )
 
     // Fetch live results from database
     const fetchPoll = async () => {
@@ -53,7 +64,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
         const res = await fetch(`/api/polls/${slug}?${queryParams.toString()}`)
         if (res.ok) {
           const data = await res.json()
-          if (data.poll) {
+          if (data.poll && Array.isArray(data.poll.options) && data.poll.options.length > 0) {
             setOptions(data.poll.options)
             setTotalVotes(data.poll.totalVotes || 0)
             setIsClosed(Boolean(data.poll.isClosed))
@@ -68,7 +79,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
     }
 
     fetchPoll()
-  }, [slug, question, initialOptions, storageKey])
+  }, [slug, question, optionsKey, storageKey])
 
   const handleVote = async (optionId: string) => {
     if (votedOptionId || isClosed || submittingOptionId) return

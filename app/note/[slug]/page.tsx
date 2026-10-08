@@ -13,8 +13,8 @@ import { PostReactions } from '@/components/PostReactions'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable ISR: Cache on Netlify Edge CDN, revalidating in background or on-demand via revalidatePath
+export const revalidate = 60
 
 export async function generateStaticParams() {
   try {

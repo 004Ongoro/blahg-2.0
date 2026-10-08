@@ -18,8 +18,8 @@ import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
 
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable ISR: Cache on Netlify Edge CDN, revalidating in background or on-demand via revalidatePath
+export const revalidate = 60
 
 // Static generation
 export async function generateStaticParams() {

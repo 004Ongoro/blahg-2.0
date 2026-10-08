@@ -54,20 +54,27 @@ export async function GET(
 
     const hasVoted = poll.voterHashes?.includes(voterHash) || false
 
-    return NextResponse.json({
-      poll: {
-        slug: poll.slug,
-        question: poll.question,
-        options: poll.options.map((opt) => ({
-          id: opt.id,
-          text: opt.text,
-          votes: opt.votes || 0,
-        })),
-        totalVotes: poll.totalVotes || 0,
-        isClosed: poll.isClosed || false,
+    return NextResponse.json(
+      {
+        poll: {
+          slug: poll.slug,
+          question: poll.question,
+          options: poll.options.map((opt) => ({
+            id: opt.id,
+            text: opt.text,
+            votes: opt.votes || 0,
+          })),
+          totalVotes: poll.totalVotes || 0,
+          isClosed: poll.isClosed || false,
+        },
+        hasVoted,
       },
-      hasVoted,
-    })
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        },
+      }
+    )
   } catch (error) {
     console.error('Error fetching poll:', error)
     return NextResponse.json({ error: 'Failed to fetch poll' }, { status: 500 })

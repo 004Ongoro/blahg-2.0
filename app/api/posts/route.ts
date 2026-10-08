@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
+import { syncPollsFromContent } from '@/lib/polls'
 
 function calculateReadTime(content: string): number {
   const wordsPerMinute = 200
@@ -133,6 +134,10 @@ export async function POST(req: Request) {
       series,
       seriesOrder: seriesOrder || 0,
     })
+
+    if (content) {
+      await syncPollsFromContent(content, post.slug)
+    }
 
     revalidatePath('/admin')
     // If the post is published, clear the cache for the homepage, notes, and tags

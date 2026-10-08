@@ -8,6 +8,8 @@ import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
 import { ImageGalleryModal } from './ImageGalleryModal'
 import { LinkPreview } from './LinkPreview'
+import { splitContentWithPolls } from '@/lib/polls'
+import { PollWidget } from './PollWidget'
 
 interface MarkdownContentProps {
   content: string
@@ -214,12 +216,14 @@ function applySideNotes(html: string): string {
   return processed.replace(closeRegex, '</div></div>')
 }
 
-export async function MarkdownContent({ content }: MarkdownContentProps) {
+async function renderMarkdownToHtml(rawMarkdown: string): Promise<string> {
+  if (!rawMarkdown || !rawMarkdown.trim()) return ''
+
   // Process custom syntax and YouTube embeds first
-  const withCustomSyntax = processCustomSyntax(content)
+  const withCustomSyntax = processCustomSyntax(rawMarkdown)
   const withSideNotes = injectSideNoteMarkers(withCustomSyntax)
   const processedContent = processYouTubeEmbeds(withSideNotes)
-  
+
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -236,15 +240,49 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
   finalHtml = processHeadings(finalHtml)
   finalHtml = processLinks(finalHtml)
 
+  return finalHtml
+}
+
+export async function MarkdownContent({ content }: MarkdownContentProps) {
+  const segments = splitContentWithPolls(content)
+
+  // Process all markdown segments concurrently
+  const processedSegments = await Promise.all(
+    segments.map(async (segment) => {
+      if (segment.type === 'poll') {
+        return segment
+      }
+      const html = await renderMarkdownToHtml(segment.content)
+      return { type: 'markdown' as const, html }
+    })
+  )
+
   return (
     <>
       <LinkTracker />
-      <div
-        className="prose-brutal"
-        dangerouslySetInnerHTML={{ __html: finalHtml }}
-      />
+      {processedSegments.map((segment, idx) => {
+        if (segment.type === 'poll') {
+          return (
+            <PollWidget
+              key={`poll-${segment.data.slug}-${idx}`}
+              slug={segment.data.slug}
+              question={segment.data.question}
+              options={segment.data.options}
+            />
+          )
+        }
+        if (!segment.html) return null
+        return (
+          <div
+            key={`md-seg-${idx}`}
+            className="prose-brutal"
+            dangerouslySetInnerHTML={{ __html: segment.html }}
+          />
+        )
+      })}
       <ImageGalleryModal />
       <LinkPreview />
     </>
   )
 }
+

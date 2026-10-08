@@ -4,6 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
 import { Resend } from 'resend'
+import { syncPollsFromContent } from '@/lib/polls'
 
 // GET single post by slug
 export async function GET(
@@ -58,6 +59,10 @@ export async function PUT(
 
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    }
+
+    if (body.content) {
+      await syncPollsFromContent(body.content, post.slug)
     }
 
     // If a guest post has been newly published, notify the author

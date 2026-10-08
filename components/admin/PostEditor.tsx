@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { slugify, calculateReadTime, cn } from '@/lib/utils'
@@ -23,7 +23,9 @@ import {
 } from 'lucide-react'
 import { useAutoSaveDraft } from '@/hooks/useAutoSaveDraft'
 import { DraftSyncBadge } from '@/components/admin/DraftSyncBadge'
-import { useCallback } from 'react'
+import { EditorToolbar } from '@/components/admin/EditorToolbar'
+import { PollWidget } from '@/components/PollWidget'
+import { splitContentWithPolls } from '@/lib/polls'
 
 interface Post {
   _id: string
@@ -67,6 +69,7 @@ export function PostEditor({ post }: PostEditorProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPreview, setShowPreview] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const draftKey = isEditing ? `draft_admin_post_${post._id}` : 'draft_admin_post_new'
 
@@ -221,17 +224,45 @@ export function PostEditor({ post }: PostEditorProps) {
 
   const readTime = calculateReadTime(content)
 
-  const previewHtml = useMemo(() => {
-    if (!content) return ''
+  const previewSegments = useMemo(() => {
+    if (!content) return []
     try {
-      const result = unified()
-        .use(remarkParse)
-        .use(remarkRehype)
-        .use(rehypeStringify)
-        .processSync(content)
-      return String(result)
+      const rawSegments = splitContentWithPolls(content)
+      return rawSegments.map((segment) => {
+        if (segment.type === 'poll') return segment
+
+        // Process callouts
+        const sideNoteRegex = /:::(note|warning|tip|info|sponsor)(?:\s+([^\n]*))?\n([\s\S]*?)\n:::/g
+        const withSideNotes = segment.content.replace(sideNoteRegex, (_, type, title, body) => {
+          return `\n\n:::CALLOUT_OPEN:${type}:${title || ''}:::\n\n${body}\n\n:::CALLOUT_CLOSE:::\n\n`
+        })
+
+        const result = unified()
+          .use(remarkParse)
+          .use(remarkRehype, { allowDangerousHtml: true })
+          .use(rehypeStringify, { allowDangerousHtml: true })
+          .processSync(withSideNotes)
+
+        const openRegex = /(?:<p>\s*)?:::CALLOUT_OPEN:(note|warning|tip|info|sponsor):(.*?)?:::(?:\s*<\/p>)?/g
+        const closeRegex = /(?:<p>\s*)?:::CALLOUT_CLOSE:::(?:\s*<\/p>)?/g
+        const icons: Record<string, string> = {
+          note: '📝',
+          warning: '⚠️',
+          tip: '💡',
+          info: 'ℹ️',
+          sponsor: '🤝',
+        }
+        let html = String(result)
+          .replace(openRegex, (_, type, title) => {
+            const displayTitle = (title || type.toUpperCase()).trim()
+            return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icons[type] || '📌'}</span><span class="callout-title">${displayTitle}</span></div><div class="callout-content">`
+          })
+          .replace(closeRegex, '</div></div>')
+
+        return { type: 'markdown' as const, html }
+      })
     } catch {
-      return '<p>Error rendering preview</p>'
+      return [{ type: 'markdown' as const, html: '<p>Error rendering preview</p>' }]
     }
   }, [content])
 
@@ -475,14 +506,22 @@ export function PostEditor({ post }: PostEditorProps) {
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-foreground/5 pb-2">
               <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">2. Payload</h2>
               <div className="text-[8px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded tracking-widest text-muted-foreground">
                 ESTIMATED_READ: {readTime} MIN
               </div>
             </div>
+
+            <EditorToolbar
+              textareaRef={textareaRef}
+              content={content}
+              onChange={setContent}
+            />
+
             <textarea
+              ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="w-full bg-background border border-foreground/5 rounded-2xl p-8 font-mono text-base focus:outline-none focus:ring-1 ring-accent transition-all resize-none min-h-[600px] leading-relaxed"
@@ -499,7 +538,7 @@ export function PostEditor({ post }: PostEditorProps) {
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="text-[10px] font-black uppercase tracking-widest text-accent hover:underline"
+                className="text-[10px] font-black uppercase tracking-widest text-accent hover:underline cursor-pointer"
               >
                 {showPreview ? 'hide_preview' : 'show_preview'}
               </button>
@@ -508,10 +547,27 @@ export function PostEditor({ post }: PostEditorProps) {
             {showPreview && (
               <div className="border border-foreground/5 rounded-2xl p-8 bg-foreground/[0.01] animate-in fade-in slide-in-from-top-2">
                 {content ? (
-                  <div
-                    className="prose-brutal"
-                    dangerouslySetInnerHTML={{ __html: previewHtml }}
-                  />
+                  <div className="prose-brutal space-y-4">
+                    {previewSegments.map((seg, idx) => {
+                      if (seg.type === 'poll') {
+                        return (
+                          <PollWidget
+                            key={`preview-poll-${seg.data.slug}-${idx}`}
+                            slug={seg.data.slug}
+                            question={seg.data.question}
+                            options={seg.data.options}
+                          />
+                        )
+                      }
+                      if (!seg.html) return null
+                      return (
+                        <div
+                          key={`preview-md-${idx}`}
+                          dangerouslySetInnerHTML={{ __html: seg.html }}
+                        />
+                      )
+                    })}
+                  </div>
                 ) : (
                   <p className="text-center py-20 text-[10px] font-black uppercase tracking-widest opacity-20">no data to render</p>
                 )}

@@ -1,0 +1,239 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { BarChart2, Check, Loader2, Users } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+interface PollOption {
+  id: string
+  text: string
+  votes?: number
+}
+
+interface PollWidgetProps {
+  slug: string
+  question: string
+  options: PollOption[]
+}
+
+export function PollWidget({ slug, question, options: initialOptions }: PollWidgetProps) {
+  const [options, setOptions] = useState<Array<{ id: string; text: string; votes: number }>>(() =>
+    initialOptions.map((opt) => ({
+      id: opt.id,
+      text: opt.text,
+      votes: opt.votes || 0,
+    }))
+  )
+  const [totalVotes, setTotalVotes] = useState<number>(0)
+  const [votedOptionId, setVotedOptionId] = useState<string | null>(null)
+  const [submittingOptionId, setSubmittingOptionId] = useState<string | null>(null)
+  const [isClosed, setIsClosed] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
+
+  // Local storage key for this poll
+  const storageKey = `blahg_poll_voted_${slug}`
+
+  useEffect(() => {
+    setHasMounted(true)
+
+    // Check localStorage
+    const savedVote = localStorage.getItem(storageKey)
+    if (savedVote) {
+      setVotedOptionId(savedVote)
+    }
+
+    // Fetch live results from database
+    const fetchPoll = async () => {
+      try {
+        const queryParams = new URLSearchParams({
+          question,
+          options: JSON.stringify(initialOptions.map((o) => ({ id: o.id, text: o.text }))),
+        })
+
+        const res = await fetch(`/api/polls/${slug}?${queryParams.toString()}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.poll) {
+            setOptions(data.poll.options)
+            setTotalVotes(data.poll.totalVotes || 0)
+            setIsClosed(Boolean(data.poll.isClosed))
+          }
+          if (data.hasVoted && !savedVote) {
+            setVotedOptionId('recorded')
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load poll results:', err)
+      }
+    }
+
+    fetchPoll()
+  }, [slug, question, initialOptions, storageKey])
+
+  const handleVote = async (optionId: string) => {
+    if (votedOptionId || isClosed || submittingOptionId) return
+
+    setSubmittingOptionId(optionId)
+
+    // Optimistic UI update
+    setVotedOptionId(optionId)
+    localStorage.setItem(storageKey, optionId)
+    setTotalVotes((prev) => prev + 1)
+    setOptions((prev) =>
+      prev.map((opt) => (opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt))
+    )
+
+    try {
+      const res = await fetch(`/api/polls/${slug}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          optionId,
+          question,
+          options: initialOptions.map((o) => ({ id: o.id, text: o.text })),
+        }),
+      })
+
+      const data = await res.json()
+      if (res.ok && data.poll) {
+        setOptions(data.poll.options)
+        setTotalVotes(data.poll.totalVotes || 0)
+      } else if (res.status === 409 && data.poll) {
+        // Already voted on server
+        setOptions(data.poll.options)
+        setTotalVotes(data.poll.totalVotes || 0)
+      }
+    } catch (err) {
+      console.error('Failed to submit vote:', err)
+    } finally {
+      setSubmittingOptionId(null)
+    }
+  }
+
+  const isVoted = Boolean(votedOptionId)
+
+  return (
+    <div className="my-10 rounded-2xl border border-foreground/15 dark:border-white/10 bg-card/70 backdrop-blur-xs p-6 md:p-8 shadow-xs not-prose transition-all">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-accent/15 text-accent font-mono text-[10px] font-extrabold uppercase tracking-widest border border-accent/20">
+          <BarChart2 className="w-3 h-3" /> Reader Poll
+        </span>
+
+        {isClosed && (
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded">
+            Closed
+          </span>
+        )}
+      </div>
+
+      {/* Question */}
+      <h3 className="text-lg md:text-xl font-sans font-black tracking-tight text-foreground leading-snug mb-6">
+        {question}
+      </h3>
+
+      {/* Options List */}
+      <div className="space-y-3">
+        {options.map((option) => {
+          const isUserChoice = votedOptionId === option.id
+          const voteCount = option.votes || 0
+          const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0
+          const isPending = submittingOptionId === option.id
+
+          if (!hasMounted || !isVoted) {
+            // Unvoted Interactive Button State
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => handleVote(option.id)}
+                disabled={Boolean(submittingOptionId) || isClosed}
+                className={cn(
+                  'w-full text-left p-4 rounded-xl border font-sans text-sm font-semibold transition-all flex items-center justify-between group cursor-pointer',
+                  'border-foreground/10 hover:border-accent hover:bg-accent/5 active:scale-[0.99]',
+                  isPending && 'opacity-70 pointer-events-none'
+                )}
+              >
+                <span className="flex items-center gap-3">
+                  <span className="w-4 h-4 rounded-full border border-foreground/30 group-hover:border-accent flex items-center justify-center transition-colors shrink-0">
+                    <span className="w-2 h-2 rounded-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </span>
+                  <span className="text-foreground group-hover:text-accent transition-colors font-medium">
+                    {option.text}
+                  </span>
+                </span>
+
+                {isPending && <Loader2 className="w-4 h-4 animate-spin text-accent shrink-0" />}
+              </button>
+            )
+          }
+
+          // Voted Progress Bar State
+          return (
+            <div
+              key={option.id}
+              className={cn(
+                'relative overflow-hidden rounded-xl border p-4 transition-all',
+                isUserChoice
+                  ? 'border-accent bg-accent/5 ring-1 ring-accent/30'
+                  : 'border-foreground/10 bg-background/50'
+              )}
+            >
+              {/* Animated Background Percentage Fill */}
+              <div
+                className={cn(
+                  'absolute inset-y-0 left-0 transition-all duration-700 ease-out',
+                  isUserChoice ? 'bg-accent/25' : 'bg-foreground/5 dark:bg-white/5'
+                )}
+                style={{ width: `${percentage}%` }}
+              />
+
+              {/* Option Content Overlay */}
+              <div className="relative z-10 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={cn(
+                      'text-sm font-bold truncate',
+                      isUserChoice ? 'text-foreground' : 'text-foreground/90'
+                    )}
+                  >
+                    {option.text}
+                  </span>
+                  {isUserChoice && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold uppercase tracking-wider text-accent bg-accent/15 px-2 py-0.5 rounded-full shrink-0 border border-accent/20">
+                      <Check className="w-3 h-3" /> Your Vote
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 font-mono text-xs shrink-0">
+                  <span className="font-extrabold text-foreground tabular-nums text-sm">
+                    {percentage}%
+                  </span>
+                  <span className="text-muted-foreground/70 text-[11px] tabular-nums">
+                    ({voteCount})
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Footer Info */}
+      <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs font-mono text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <Users className="w-3.5 h-3.5 opacity-70" />
+          <span className="font-semibold text-foreground">{totalVotes}</span>{' '}
+          {totalVotes === 1 ? 'vote' : 'votes'}
+        </span>
+
+        {isVoted && (
+          <span className="text-[11px] font-semibold text-accent uppercase tracking-wider flex items-center gap-1">
+            <Check className="w-3 h-3" /> Response Recorded
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}

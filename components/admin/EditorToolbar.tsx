@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   Bold,
   Italic,
@@ -15,21 +15,15 @@ import {
   ListOrdered,
   CheckSquare,
   Link as LinkIcon,
-  Image as ImageIcon,
   Table as TableIcon,
   Minus,
   Sparkles,
   BarChart2,
   Video,
-  Info,
   Lightbulb,
-  AlertTriangle,
-  FileText,
-  DollarSign,
   Plus,
   Trash2,
   X,
-  Check,
 } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 
@@ -41,6 +35,13 @@ interface EditorToolbarProps {
 
 type CalloutType = 'note' | 'tip' | 'warning' | 'info' | 'sponsor'
 
+interface SavedRange {
+  start: number
+  end: number
+  windowScrollY: number
+  textareaScrollTop: number
+}
+
 export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarProps) {
   // Modal states
   const [showPollModal, setShowPollModal] = useState(false)
@@ -48,6 +49,14 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
   const [showYouTubeModal, setShowYouTubeModal] = useState(false)
   const [showLinkModal, setShowLinkModal] = useState(false)
   const [showCodeBlockModal, setShowCodeBlockModal] = useState(false)
+
+  // Track cursor and scroll state
+  const savedModalRangeRef = useRef<SavedRange>({
+    start: 0,
+    end: 0,
+    windowScrollY: 0,
+    textareaScrollTop: 0,
+  })
 
   // Poll Builder state
   const [pollQuestion, setPollQuestion] = useState('')
@@ -74,41 +83,127 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
   // Code Block state
   const [codeLang, setCodeLang] = useState('typescript')
 
-  // Helper: insert text at current selection in textarea
+  // Capture current selection and scroll positions
+  const captureCurrentRange = (): SavedRange => {
+    const textarea = textareaRef.current
+    if (!textarea) {
+      return {
+        start: content.length,
+        end: content.length,
+        windowScrollY: typeof window !== 'undefined' ? window.scrollY : 0,
+        textareaScrollTop: 0,
+      }
+    }
+
+    const start = typeof textarea.selectionStart === 'number' ? textarea.selectionStart : content.length
+    const end = typeof textarea.selectionEnd === 'number' ? textarea.selectionEnd : start
+
+    return {
+      start,
+      end,
+      windowScrollY: window.scrollY,
+      textareaScrollTop: textarea.scrollTop,
+    }
+  }
+
+  // Update saved range whenever textarea cursor changes
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const updateRange = () => {
+      savedModalRangeRef.current = {
+        start: textarea.selectionStart ?? 0,
+        end: textarea.selectionEnd ?? 0,
+        windowScrollY: window.scrollY,
+        textareaScrollTop: textarea.scrollTop,
+      }
+    }
+
+    textarea.addEventListener('select', updateRange)
+    textarea.addEventListener('keyup', updateRange)
+    textarea.addEventListener('click', updateRange)
+
+    return () => {
+      textarea.removeEventListener('select', updateRange)
+      textarea.removeEventListener('keyup', updateRange)
+      textarea.removeEventListener('click', updateRange)
+    }
+  }, [textareaRef])
+
+  // Helper: insert text at current selection in textarea without scrolling
   const insertText = (
     before: string,
     after: string = '',
     defaultSelection: string = '',
-    cursorOffsetInside?: number
+    cursorOffsetInside?: number,
+    explicitRange?: SavedRange
   ) => {
     const textarea = textareaRef.current
     if (!textarea) return
 
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const selected = content.substring(start, end)
+    // Preserve scroll positions
+    const targetScrollY = explicitRange ? explicitRange.windowScrollY : window.scrollY
+    const targetScrollTop = explicitRange ? explicitRange.textareaScrollTop : textarea.scrollTop
+
+    const start = explicitRange
+      ? explicitRange.start
+      : typeof textarea.selectionStart === 'number'
+      ? textarea.selectionStart
+      : savedModalRangeRef.current.start
+    const end = explicitRange
+      ? explicitRange.end
+      : typeof textarea.selectionEnd === 'number'
+      ? textarea.selectionEnd
+      : savedModalRangeRef.current.end
+
+    const safeStart = Math.min(Math.max(0, start), content.length)
+    const safeEnd = Math.min(Math.max(safeStart, end), content.length)
+
+    const selected = content.substring(safeStart, safeEnd)
     const textToInsert = selected || defaultSelection
 
     const newContent =
-      content.substring(0, start) + before + textToInsert + after + content.substring(end)
+      content.substring(0, safeStart) + before + textToInsert + after + content.substring(safeEnd)
 
     onChange(newContent)
 
-    // Set cursor back properly on next frame
-    setTimeout(() => {
-      textarea.focus()
-      if (cursorOffsetInside !== undefined) {
-        textarea.setSelectionRange(
-          start + before.length + cursorOffsetInside,
-          start + before.length + cursorOffsetInside
-        )
-      } else if (selected) {
-        textarea.setSelectionRange(start + before.length, start + before.length + textToInsert.length)
-      } else {
-        const newCursor = start + before.length + textToInsert.length
-        textarea.setSelectionRange(newCursor, newCursor)
+    const targetCursorStart = safeStart + before.length
+    const targetCursorEnd = selected
+      ? safeStart + before.length + textToInsert.length
+      : cursorOffsetInside !== undefined
+      ? safeStart + before.length + cursorOffsetInside
+      : safeStart + before.length + textToInsert.length
+
+    // Update saved ref for future operations
+    savedModalRangeRef.current = {
+      start: targetCursorStart,
+      end: targetCursorEnd,
+      windowScrollY: targetScrollY,
+      textareaScrollTop: targetScrollTop,
+    }
+
+    // Function to lock and restore scroll positions without browser jumping
+    const lockScrollAndFocus = () => {
+      try {
+        textarea.focus({ preventScroll: true })
+        textarea.setSelectionRange(targetCursorStart, targetCursorEnd)
+        textarea.scrollTop = targetScrollTop
+        window.scrollTo({
+          top: targetScrollY,
+          left: window.scrollX,
+          behavior: 'instant' as ScrollBehavior,
+        })
+      } catch {
+        // Fallback
       }
-    }, 0)
+    }
+
+    // Run synchronously, then in next frames to prevent layout-shift scroll
+    lockScrollAndFocus()
+    requestAnimationFrame(lockScrollAndFocus)
+    setTimeout(lockScrollAndFocus, 10)
+    setTimeout(lockScrollAndFocus, 50)
   }
 
   // --- Handlers for formatting tools ---
@@ -134,11 +229,11 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
 
   // Open Link Modal with pre-filled selection if any
   const openLinkModal = () => {
-    const textarea = textareaRef.current
-    if (textarea) {
-      const selected = content.substring(textarea.selectionStart, textarea.selectionEnd)
-      setLinkText(selected || '')
-    }
+    const current = captureCurrentRange()
+    savedModalRangeRef.current = current
+
+    const selected = content.substring(current.start, current.end)
+    setLinkText(selected || '')
     setLinkUrl('')
     setShowLinkModal(true)
   }
@@ -147,19 +242,25 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
     e.preventDefault()
     if (!linkUrl) return
     const text = linkText.trim() || 'Link'
-    insertText(`[${text}](${linkUrl.trim()})`)
+    insertText(`[${text}](${linkUrl.trim()})`, '', '', undefined, savedModalRangeRef.current)
     setShowLinkModal(false)
   }
 
   // Open Code Block Modal
-  const handleInsertCodeBlock = () => {
-    const template = `\n\`\`\`${codeLang}\n// Write ${codeLang} code here\n\`\`\`\n`
-    insertText(template)
+  const openCodeBlockModal = () => {
+    savedModalRangeRef.current = captureCurrentRange()
+    setShowCodeBlockModal(true)
+  }
+
+  const handleInsertCodeBlock = (lang: string) => {
+    const template = `\n\`\`\`${lang}\n// Write ${lang} code here\n\`\`\`\n`
+    insertText(template, '', '', undefined, savedModalRangeRef.current)
     setShowCodeBlockModal(false)
   }
 
   // Poll Builder Handlers
   const openPollModal = () => {
+    savedModalRangeRef.current = captureCurrentRange()
     setPollQuestion('')
     setPollSlug('')
     setAutoSlug(true)
@@ -214,19 +315,17 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
       .join('\n')
 
     const pollMarkdown = `\n\n:::poll:${cleanSlug} "${pollQuestion.trim()}"\n${optionLines}\n:::\n\n`
-    insertText(pollMarkdown)
+    insertText(pollMarkdown, '', '', undefined, savedModalRangeRef.current)
     setShowPollModal(false)
   }
 
   // Callout Builder Handlers
   const openCalloutModal = () => {
-    const textarea = textareaRef.current
-    if (textarea) {
-      const selected = content.substring(textarea.selectionStart, textarea.selectionEnd)
-      setCalloutBody(selected || '')
-    } else {
-      setCalloutBody('')
-    }
+    const current = captureCurrentRange()
+    savedModalRangeRef.current = current
+
+    const selected = content.substring(current.start, current.end)
+    setCalloutBody(selected || '')
     setCalloutTitle('')
     setShowCalloutModal(true)
   }
@@ -236,21 +335,27 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
     const titlePart = calloutTitle.trim() ? ` ${calloutTitle.trim()}` : ''
     const bodyPart = calloutBody.trim() || 'Your callout content goes here...'
     const calloutMarkdown = `\n\n:::${calloutType}${titlePart}\n${bodyPart}\n:::\n\n`
-    insertText(calloutMarkdown)
+    insertText(calloutMarkdown, '', '', undefined, savedModalRangeRef.current)
     setShowCalloutModal(false)
   }
 
   // YouTube Inserter Handlers
+  const openYouTubeModal = () => {
+    savedModalRangeRef.current = captureCurrentRange()
+    setYoutubeUrl('')
+    setShowYouTubeModal(true)
+  }
+
   const handleInsertYouTube = (e: React.FormEvent) => {
     e.preventDefault()
     if (!youtubeUrl.trim()) return
-    insertText(`\n\n${youtubeUrl.trim()}\n\n`)
+    insertText(`\n\n${youtubeUrl.trim()}\n\n`, '', '', undefined, savedModalRangeRef.current)
     setShowYouTubeModal(false)
     setYoutubeUrl('')
   }
 
   return (
-    <div className="border border-foreground/10 rounded-2xl bg-card/60 backdrop-blur-md p-2 space-y-2 mb-3 shadow-2xs">
+    <div className="border border-foreground/10 rounded-2xl bg-card/80 backdrop-blur-md p-2 space-y-2 mb-3 shadow-2xs">
       {/* Top Row: Special Component Inserters */}
       <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-foreground/5">
         <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60 px-2 flex items-center gap-1 shrink-0">
@@ -282,7 +387,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         {/* 3. YouTube Embed Button */}
         <button
           type="button"
-          onClick={() => setShowYouTubeModal(true)}
+          onClick={openYouTubeModal}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground font-mono text-xs font-bold transition-all cursor-pointer border border-foreground/10"
           title="Insert YouTube Video Facade Card"
         >
@@ -293,6 +398,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         {/* 4. Definition Highlight */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={handleHighlight}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground font-mono text-xs font-bold transition-all cursor-pointer border border-foreground/10"
           title="Highlight definition syntax (!!text!!)"
@@ -304,6 +410,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         {/* 5. Reference Badge */}
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={handleReference}
           className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-foreground/5 hover:bg-foreground/10 text-foreground font-mono text-xs font-bold transition-all cursor-pointer border border-foreground/10"
           title="Insert reference citation tag ([1])"
@@ -318,24 +425,27 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         <div className="flex items-center border-r border-foreground/10 pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleH2}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Heading 2 (## )"
           >
             <Heading2 className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleH3}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Heading 3 (### )"
           >
             <Heading3 className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleH4}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Heading 4 (#### )"
           >
             <Heading4 className="w-4 h-4" />
@@ -346,32 +456,36 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         <div className="flex items-center border-r border-foreground/10 pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleBold}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Bold (**text**)"
           >
             <Bold className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleItalic}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Italic (*text*)"
           >
             <Italic className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleStrikethrough}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Strikethrough (~~text~~)"
           >
             <Strikethrough className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleInlineCode}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Inline Code (`code`)"
           >
             <Code className="w-4 h-4" />
@@ -382,16 +496,17 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         <div className="flex items-center border-r border-foreground/10 pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
-            onClick={() => setShowCodeBlockModal(true)}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            onClick={openCodeBlockModal}
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Code Block with syntax highlighting"
           >
             <FileCode className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleQuote}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Blockquote (> )"
           >
             <Quote className="w-4 h-4" />
@@ -402,24 +517,27 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
         <div className="flex items-center border-r border-foreground/10 pr-1.5 mr-1 gap-0.5">
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleBulletList}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Bullet List (- )"
           >
             <List className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleNumberList}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Numbered List (1. )"
           >
             <ListOrdered className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleTaskList}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Task List (- [ ] )"
           >
             <CheckSquare className="w-4 h-4" />
@@ -431,23 +549,25 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
           <button
             type="button"
             onClick={openLinkModal}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Insert Link"
           >
             <LinkIcon className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleTable}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Insert Table"
           >
             <TableIcon className="w-4 h-4" />
           </button>
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleDivider}
-            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             title="Divider (---)"
           >
             <Minus className="w-4 h-4" />
@@ -471,7 +591,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
               <button
                 type="button"
                 onClick={() => setShowPollModal(false)}
-                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -531,7 +651,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                   <button
                     type="button"
                     onClick={addPollOption}
-                    className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-accent hover:underline uppercase"
+                    className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-accent hover:underline uppercase cursor-pointer"
                   >
                     <Plus className="w-3 h-3" /> Add Option
                   </button>
@@ -562,7 +682,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                         <button
                           type="button"
                           onClick={() => removePollOption(idx)}
-                          className="p-1 text-muted-foreground hover:text-red-500 transition-colors"
+                          className="p-1 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
                           title="Remove option"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -578,7 +698,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                 <button
                   type="button"
                   onClick={() => setShowPollModal(false)}
-                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors"
+                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -611,7 +731,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
               <button
                 type="button"
                 onClick={() => setShowCalloutModal(false)}
-                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -637,7 +757,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                       key={item.id}
                       type="button"
                       onClick={() => setCalloutType(item.id)}
-                      className={`p-2 rounded-xl border text-xs font-bold transition-all text-left ${
+                      className={`p-2 rounded-xl border text-xs font-bold transition-all text-left cursor-pointer ${
                         calloutType === item.id
                           ? 'border-accent bg-accent/15 text-accent font-black'
                           : 'border-foreground/10 hover:border-foreground/20'
@@ -682,7 +802,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                 <button
                   type="button"
                   onClick={() => setShowCalloutModal(false)}
-                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors"
+                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -714,7 +834,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
               <button
                 type="button"
                 onClick={() => setShowYouTubeModal(false)}
-                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -742,7 +862,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                 <button
                   type="button"
                   onClick={() => setShowYouTubeModal(false)}
-                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors"
+                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -775,7 +895,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
               <button
                 type="button"
                 onClick={() => setShowLinkModal(false)}
-                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -813,7 +933,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                 <button
                   type="button"
                   onClick={() => setShowLinkModal(false)}
-                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors"
+                  className="px-4 py-2 rounded-xl border border-foreground/10 text-xs font-bold hover:bg-foreground/5 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -846,7 +966,7 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
               <button
                 type="button"
                 onClick={() => setShowCodeBlockModal(false)}
-                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors"
+                className="p-1 rounded-full hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -871,11 +991,9 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
                     type="button"
                     onClick={() => {
                       setCodeLang(lang)
-                      const template = `\n\`\`\`${lang}\n// Write ${lang} code here\n\`\`\`\n`
-                      insertText(template)
-                      setShowCodeBlockModal(false)
+                      handleInsertCodeBlock(lang)
                     }}
-                    className={`p-2 rounded-xl border text-xs font-mono font-bold transition-all text-left ${
+                    className={`p-2 rounded-xl border text-xs font-mono font-bold transition-all text-left cursor-pointer ${
                       codeLang === lang
                         ? 'border-accent bg-accent/15 text-accent'
                         : 'border-foreground/10 hover:border-foreground/20'

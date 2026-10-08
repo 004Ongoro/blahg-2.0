@@ -514,11 +514,13 @@ export function PostEditor({ post }: PostEditorProps) {
               </div>
             </div>
 
-            <EditorToolbar
-              textareaRef={textareaRef}
-              content={content}
-              onChange={setContent}
-            />
+            <div className="sticky top-16 z-20 bg-background/95 backdrop-blur-md pb-1">
+              <EditorToolbar
+                textareaRef={textareaRef}
+                content={content}
+                onChange={setContent}
+              />
+            </div>
 
             <textarea
               ref={textareaRef}

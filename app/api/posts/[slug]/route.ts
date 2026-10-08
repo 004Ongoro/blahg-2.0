@@ -4,7 +4,7 @@ import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
 import { Resend } from 'resend'
-import { syncPollsFromContent } from '@/lib/polls'
+import { syncPollsFromContent } from '@/lib/polls-server'
 
 // GET single post by slug
 export async function GET(

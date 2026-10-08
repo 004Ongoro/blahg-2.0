@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
 import { getSession } from '@/lib/auth'
-import { syncPollsFromContent } from '@/lib/polls'
+import { syncPollsFromContent } from '@/lib/polls-server'
 
 function calculateReadTime(content: string): number {
   const wordsPerMinute = 200

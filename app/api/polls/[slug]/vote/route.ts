@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Poll from '@/models/Poll'
-import { generateVoterHash } from '@/lib/polls'
+import { generateVoterHash } from '@/lib/polls-server'
 
 export async function POST(
   request: NextRequest,

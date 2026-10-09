@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
+import crypto from 'crypto'
 import dbConnect from '@/lib/mongodb'
 import Poll from '@/models/Poll'
-import { generateVoterHash } from '@/lib/polls-server'
+import { getVoterIdentityHashes, hasAlreadyVoted } from '@/lib/polls-server'
 
 export async function POST(
   request: NextRequest,
@@ -14,7 +15,7 @@ export async function POST(
     const cleanSlug = slug.toLowerCase().trim()
 
     const body = await request.json()
-    const { optionId, question, options } = body
+    const { optionId, question, options, fingerprint, voterToken: clientToken } = body
 
     if (!optionId || typeof optionId !== 'string') {
       return NextResponse.json({ error: 'Option ID is required' }, { status: 400 })
@@ -24,7 +25,22 @@ export async function POST(
     const forwarded = request.headers.get('x-forwarded-for')
     const clientIpHeader = request.headers.get('client-ip') || request.headers.get('x-nf-client-connection-ip')
     const ip = forwarded ? forwarded.split(',')[0].trim() : (clientIpHeader?.trim() || '127.0.0.1')
-    const voterHash = generateVoterHash(ip, cleanSlug)
+
+    // Extract or generate persistent voter token
+    const cookieToken =
+      request.cookies.get('blahg_poll_vid')?.value ||
+      request.cookies.get('blahg_poll_voter_token')?.value
+    const voterToken =
+      cookieToken ||
+      clientToken ||
+      `vtr_${Date.now().toString(36)}_${crypto.randomBytes(8).toString('hex')}`
+
+    const identity = getVoterIdentityHashes({
+      ip,
+      fingerprint,
+      voterToken,
+      pollSlug: cleanSlug,
+    })
 
     let poll = await Poll.findOne({ slug: cleanSlug })
 
@@ -51,12 +67,13 @@ export async function POST(
       return NextResponse.json({ error: 'This poll is closed' }, { status: 400 })
     }
 
-    // Check if voter hash already recorded
-    if (poll.voterHashes.includes(voterHash)) {
+    // Check if voter has already voted via hardware fingerprint, cookie, or IP
+    if (hasAlreadyVoted(poll.voterHashes, identity)) {
       return NextResponse.json(
         {
           error: 'You have already voted in this poll',
           alreadyVoted: true,
+          voterToken,
           poll: {
             slug: poll.slug,
             question: poll.question,
@@ -79,16 +96,16 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid option selected' }, { status: 400 })
     }
 
-    // Atomic increment
+    // Atomic increment and multi-hash recording
     const updated = await Poll.findOneAndUpdate(
       {
         slug: cleanSlug,
         'options.id': optionId,
-        voterHashes: { $ne: voterHash },
+        voterHashes: { $nin: identity.allActiveHashes },
       },
       {
         $inc: { 'options.$.votes': 1, totalVotes: 1 },
-        $push: { voterHashes: voterHash },
+        $addToSet: { voterHashes: { $each: identity.allActiveHashes } },
       },
       { new: true }
     )
@@ -116,10 +133,11 @@ export async function POST(
       }
     }
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         votedOptionId: optionId,
+        voterToken,
         poll: {
           slug: updated.slug,
           question: updated.question,
@@ -138,6 +156,17 @@ export async function POST(
         },
       }
     )
+
+    // Set 1-year persistent cookie for voter redundancy
+    response.cookies.set('blahg_poll_vid', voterToken, {
+      path: '/',
+      maxAge: 31536000,
+      sameSite: 'lax',
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+    })
+
+    return response
   } catch (error) {
     console.error('Error submitting vote:', error)
     return NextResponse.json({ error: 'Failed to record vote' }, { status: 500 })

@@ -71,6 +71,7 @@ const PollSchema = new Schema<IPoll>(
 
 PollSchema.index({ slug: 1 })
 PollSchema.index({ postSlug: 1 })
+PollSchema.index({ slug: 1, voterHashes: 1 })
 
 const Poll: Model<IPoll> = mongoose.models.Poll || mongoose.model<IPoll>('Poll', PollSchema)
 

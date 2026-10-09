@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { BarChart2, Check, Loader2, Users, Eye, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getBrowserFingerprint, getOrCreateVoterToken } from '@/lib/fingerprint'
 
 export interface PollOption {
   id: string
@@ -47,6 +48,8 @@ export function PollWidget({
   // Local storage key for this poll
   const storageKey = `blahg_poll_voted_${slug}`
   const optionsKey = JSON.stringify(initialOptions)
+  const fingerprintRef = useRef<string>('')
+  const voterTokenRef = useRef<string>('')
 
   useEffect(() => {
     setHasMounted(true)
@@ -70,12 +73,24 @@ export function PollWidget({
       setTotalVotes(initialTotalVotes)
     }
 
-    // Fetch live results from database (always bypass cache to get accurate tallies)
+    // Fetch live results from database using hardware fingerprint + persistent token
     const fetchPoll = async () => {
       try {
+        let fp = fingerprintRef.current
+        let vt = voterTokenRef.current
+
+        if (!fp) {
+          fp = await getBrowserFingerprint()
+          vt = getOrCreateVoterToken()
+          fingerprintRef.current = fp
+          voterTokenRef.current = vt
+        }
+
         const queryParams = new URLSearchParams({
           question,
           options: JSON.stringify(initialOptions.map((o) => ({ id: o.id, text: o.text }))),
+          fp,
+          vt,
           t: Date.now().toString(),
         })
 
@@ -84,6 +99,7 @@ export function PollWidget({
           headers: {
             Pragma: 'no-cache',
             'Cache-Control': 'no-cache',
+            'x-client-fingerprint': fp,
           },
         })
 
@@ -96,6 +112,7 @@ export function PollWidget({
           }
           if (data.hasVoted && !savedVote) {
             setVotedOptionId('recorded')
+            localStorage.setItem(storageKey, 'recorded')
           }
         }
       } catch (err) {
@@ -120,6 +137,16 @@ export function PollWidget({
     )
 
     try {
+      let fp = fingerprintRef.current
+      let vt = voterTokenRef.current
+
+      if (!fp) {
+        fp = await getBrowserFingerprint()
+        vt = getOrCreateVoterToken()
+        fingerprintRef.current = fp
+        voterTokenRef.current = vt
+      }
+
       const res = await fetch(`/api/polls/${slug}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -127,10 +154,20 @@ export function PollWidget({
           optionId,
           question,
           options: initialOptions.map((o) => ({ id: o.id, text: o.text })),
+          fingerprint: fp,
+          voterToken: vt,
         }),
       })
 
       const data = await res.json()
+
+      if (data.voterToken) {
+        voterTokenRef.current = data.voterToken
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('blahg_poll_voter_token', data.voterToken)
+        }
+      }
+
       if (res.ok && data.poll) {
         setOptions(data.poll.options)
         setTotalVotes(data.poll.totalVotes || 0)
@@ -142,14 +179,15 @@ export function PollWidget({
           )
         }
       } else if (res.status === 409 && data.poll) {
-        // Already voted on server (e.g. from same IP)
+        // Already voted on server (device fingerprint / cookie / IP match)
         setOptions(data.poll.options)
         setTotalVotes(data.poll.totalVotes || 0)
         setVotedOptionId('recorded')
+        localStorage.setItem(storageKey, 'recorded')
         if (typeof window !== 'undefined') {
           window.dispatchEvent(
             new CustomEvent('toast', {
-              detail: { message: 'A response was already recorded from this device/network', type: 'info' },
+              detail: { message: 'A vote has already been recorded from this device', type: 'info' },
             })
           )
         }

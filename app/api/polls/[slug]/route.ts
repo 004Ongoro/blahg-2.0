@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Poll from '@/models/Poll'
-import { generateVoterHash } from '@/lib/polls-server'
+import { getVoterIdentityHashes, hasAlreadyVoted } from '@/lib/polls-server'
 
 export async function GET(
   request: NextRequest,
@@ -14,11 +14,24 @@ export async function GET(
 
     let poll = await Poll.findOne({ slug: cleanSlug }).lean()
 
-    // Extract client IP to check if this user has already voted
+    // Extract client IP and fingerprint parameters
     const forwarded = request.headers.get('x-forwarded-for')
     const clientIpHeader = request.headers.get('client-ip') || request.headers.get('x-nf-client-connection-ip')
     const ip = forwarded ? forwarded.split(',')[0].trim() : (clientIpHeader?.trim() || '127.0.0.1')
-    const voterHash = generateVoterHash(ip, cleanSlug)
+
+    const searchParams = request.nextUrl.searchParams
+    const fingerprint = searchParams.get('fp') || request.headers.get('x-client-fingerprint')
+    const voterToken =
+      searchParams.get('vt') ||
+      request.cookies.get('blahg_poll_vid')?.value ||
+      request.cookies.get('blahg_poll_voter_token')?.value
+
+    const identity = getVoterIdentityHashes({
+      ip,
+      fingerprint,
+      voterToken,
+      pollSlug: cleanSlug,
+    })
 
     if (!poll) {
       // Check if client provided fallback question/options for just-in-time initialization
@@ -53,7 +66,7 @@ export async function GET(
       }
     }
 
-    const hasVoted = poll.voterHashes?.includes(voterHash) || false
+    const hasVoted = hasAlreadyVoted(poll.voterHashes, identity)
 
     return NextResponse.json(
       {

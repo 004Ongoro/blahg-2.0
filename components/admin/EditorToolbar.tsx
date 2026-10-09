@@ -310,6 +310,10 @@ export function EditorToolbar({ textareaRef, content, onChange }: EditorToolbarP
     const optionLines = validOptions
       .map((opt) => {
         const optId = opt.id.trim() ? slugify(opt.id) : slugify(opt.text)
+        const textSlug = slugify(opt.text)
+        if (optId === textSlug) {
+          return `- ${opt.text.trim()}`
+        }
         return `- ${optId}: ${opt.text.trim()}`
       })
       .join('\n')

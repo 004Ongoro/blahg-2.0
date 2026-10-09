@@ -16,7 +16,8 @@ export async function GET(
 
     // Extract client IP to check if this user has already voted
     const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1'
+    const clientIpHeader = request.headers.get('client-ip') || request.headers.get('x-nf-client-connection-ip')
+    const ip = forwarded ? forwarded.split(',')[0].trim() : (clientIpHeader?.trim() || '127.0.0.1')
     const voterHash = generateVoterHash(ip, cleanSlug)
 
     if (!poll) {
@@ -71,7 +72,9 @@ export async function GET(
       },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       }
     )

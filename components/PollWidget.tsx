@@ -1,22 +1,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BarChart2, Check, Loader2, Users } from 'lucide-react'
+import { BarChart2, Check, Loader2, Users, Eye, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface PollOption {
+export interface PollOption {
   id: string
   text: string
   votes?: number
 }
 
-interface PollWidgetProps {
+export interface PollWidgetProps {
   slug: string
   question: string
   options: PollOption[]
+  initialTotalVotes?: number
+  initialIsClosed?: boolean
 }
 
-export function PollWidget({ slug, question, options: initialOptions }: PollWidgetProps) {
+export function PollWidget({
+  slug,
+  question,
+  options: initialOptions,
+  initialTotalVotes,
+  initialIsClosed,
+}: PollWidgetProps) {
   const [options, setOptions] = useState<Array<{ id: string; text: string; votes: number }>>(() =>
     initialOptions.map((opt) => ({
       id: opt.id,
@@ -24,15 +32,20 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
       votes: opt.votes || 0,
     }))
   )
-  const [totalVotes, setTotalVotes] = useState<number>(0)
+  const [totalVotes, setTotalVotes] = useState<number>(() => {
+    if (typeof initialTotalVotes === 'number' && initialTotalVotes >= 0) {
+      return initialTotalVotes
+    }
+    return initialOptions.reduce((acc, curr) => acc + (curr.votes || 0), 0)
+  })
   const [votedOptionId, setVotedOptionId] = useState<string | null>(null)
   const [submittingOptionId, setSubmittingOptionId] = useState<string | null>(null)
-  const [isClosed, setIsClosed] = useState(false)
-  const [hasMounted, setHasMounted] = useState(false)
+  const [isClosed, setIsClosed] = useState<boolean>(initialIsClosed ?? false)
+  const [showResultsMode, setShowResultsMode] = useState<boolean>(false)
+  const [hasMounted, setHasMounted] = useState<boolean>(false)
 
   // Local storage key for this poll
   const storageKey = `blahg_poll_voted_${slug}`
-
   const optionsKey = JSON.stringify(initialOptions)
 
   useEffect(() => {
@@ -53,15 +66,27 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
       }))
     )
 
-    // Fetch live results from database
+    if (typeof initialTotalVotes === 'number' && initialTotalVotes >= 0) {
+      setTotalVotes(initialTotalVotes)
+    }
+
+    // Fetch live results from database (always bypass cache to get accurate tallies)
     const fetchPoll = async () => {
       try {
         const queryParams = new URLSearchParams({
           question,
           options: JSON.stringify(initialOptions.map((o) => ({ id: o.id, text: o.text }))),
+          t: Date.now().toString(),
         })
 
-        const res = await fetch(`/api/polls/${slug}?${queryParams.toString()}`)
+        const res = await fetch(`/api/polls/${slug}?${queryParams.toString()}`, {
+          cache: 'no-store',
+          headers: {
+            Pragma: 'no-cache',
+            'Cache-Control': 'no-cache',
+          },
+        })
+
         if (res.ok) {
           const data = await res.json()
           if (data.poll && Array.isArray(data.poll.options) && data.poll.options.length > 0) {
@@ -79,7 +104,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
     }
 
     fetchPoll()
-  }, [slug, question, optionsKey, storageKey])
+  }, [slug, question, optionsKey, storageKey, initialTotalVotes])
 
   const handleVote = async (optionId: string) => {
     if (votedOptionId || isClosed || submittingOptionId) return
@@ -91,7 +116,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
     localStorage.setItem(storageKey, optionId)
     setTotalVotes((prev) => prev + 1)
     setOptions((prev) =>
-      prev.map((opt) => (opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt))
+      prev.map((opt) => (opt.id === optionId ? { ...opt, votes: (opt.votes || 0) + 1 } : opt))
     )
 
     try {
@@ -109,19 +134,57 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
       if (res.ok && data.poll) {
         setOptions(data.poll.options)
         setTotalVotes(data.poll.totalVotes || 0)
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('toast', {
+              detail: { message: 'Vote recorded!', type: 'success' },
+            })
+          )
+        }
       } else if (res.status === 409 && data.poll) {
-        // Already voted on server
+        // Already voted on server (e.g. from same IP)
         setOptions(data.poll.options)
         setTotalVotes(data.poll.totalVotes || 0)
+        setVotedOptionId('recorded')
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('toast', {
+              detail: { message: 'A response was already recorded from this device/network', type: 'info' },
+            })
+          )
+        }
+      } else {
+        // Server rejected vote - rollback optimistic state
+        localStorage.removeItem(storageKey)
+        setVotedOptionId(null)
+        setTotalVotes((prev) => Math.max(0, prev - 1))
+        setOptions((prev) =>
+          prev.map((opt) => (opt.id === optionId ? { ...opt, votes: Math.max(0, (opt.votes || 0) - 1) } : opt))
+        )
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('toast', {
+              detail: { message: data.error || 'Failed to submit vote. Please try again.', type: 'error' },
+            })
+          )
+        }
       }
     } catch (err) {
       console.error('Failed to submit vote:', err)
+      // Rollback optimistic state
+      localStorage.removeItem(storageKey)
+      setVotedOptionId(null)
+      setTotalVotes((prev) => Math.max(0, prev - 1))
+      setOptions((prev) =>
+        prev.map((opt) => (opt.id === optionId ? { ...opt, votes: Math.max(0, (opt.votes || 0) - 1) } : opt))
+      )
     } finally {
       setSubmittingOptionId(null)
     }
   }
 
   const isVoted = Boolean(votedOptionId)
+  const isViewingResults = isVoted || showResultsMode
 
   return (
     <div className="my-10 rounded-2xl border border-foreground/15 dark:border-white/10 bg-card/70 backdrop-blur-xs p-6 md:p-8 shadow-xs not-prose transition-all">
@@ -131,11 +194,31 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
           <BarChart2 className="w-3 h-3" /> Reader Poll
         </span>
 
-        {isClosed && (
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded">
-            Closed
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {isClosed && (
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded">
+              Closed
+            </span>
+          )}
+
+          {!isVoted && !isClosed && (
+            <button
+              type="button"
+              onClick={() => setShowResultsMode(!showResultsMode)}
+              className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-0.5 rounded hover:bg-foreground/5"
+            >
+              {showResultsMode ? (
+                <>
+                  <ArrowLeft className="w-3 h-3" /> Vote
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3 h-3" /> Results
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Question */}
@@ -151,7 +234,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
           const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0
           const isPending = submittingOptionId === option.id
 
-          if (!hasMounted || !isVoted) {
+          if (!hasMounted || !isViewingResults) {
             // Unvoted Interactive Button State
             return (
               <button
@@ -179,7 +262,7 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
             )
           }
 
-          // Voted Progress Bar State
+          // Voted / Results Progress Bar State
           return (
             <div
               key={option.id}
@@ -239,10 +322,20 @@ export function PollWidget({ slug, question, options: initialOptions }: PollWidg
           {totalVotes === 1 ? 'vote' : 'votes'}
         </span>
 
-        {isVoted && (
+        {isVoted ? (
           <span className="text-[11px] font-semibold text-accent uppercase tracking-wider flex items-center gap-1">
             <Check className="w-3 h-3" /> Response Recorded
           </span>
+        ) : (
+          !isClosed && (
+            <button
+              type="button"
+              onClick={() => setShowResultsMode(!showResultsMode)}
+              className="text-[11px] font-semibold text-muted-foreground hover:text-accent uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              {showResultsMode ? '← Back to Vote' : 'View Results →'}
+            </button>
+          )
         )}
       </div>
     </div>

@@ -8,8 +8,10 @@ import rehypeSlug from 'rehype-slug'
 import { LinkTracker } from './LinkTracker'
 import { ImageGalleryModal } from './ImageGalleryModal'
 import { LinkPreview } from './LinkPreview'
-import { splitContentWithPolls } from '@/lib/polls'
+import { splitContentWithPolls, ParsedPoll } from '@/lib/polls'
 import { PollWidget } from './PollWidget'
+import dbConnect from '@/lib/mongodb'
+import Poll from '@/models/Poll'
 
 interface MarkdownContentProps {
   content: string
@@ -246,11 +248,75 @@ async function renderMarkdownToHtml(rawMarkdown: string): Promise<string> {
 export async function MarkdownContent({ content }: MarkdownContentProps) {
   const segments = splitContentWithPolls(content)
 
+  // Pre-load poll data from MongoDB if polls exist in this content
+  const pollSegments = segments.filter(
+    (s): s is { type: 'poll'; data: ParsedPoll } => s.type === 'poll'
+  )
+  const pollDataMap = new Map<
+    string,
+    {
+      options: Array<{ id: string; text: string; votes: number }>
+      totalVotes: number
+      isClosed: boolean
+    }
+  >()
+
+  if (pollSegments.length > 0) {
+    try {
+      await dbConnect()
+      const slugs = pollSegments.map((s) => s.data.slug)
+      const foundPolls = await Poll.find({ slug: { $in: slugs } }).lean()
+      for (const p of foundPolls) {
+        pollDataMap.set(p.slug, {
+          options: p.options.map((opt) => ({
+            id: opt.id,
+            text: opt.text,
+            votes: opt.votes || 0,
+          })),
+          totalVotes: p.totalVotes || 0,
+          isClosed: Boolean(p.isClosed),
+        })
+      }
+    } catch (err) {
+      console.error('Failed to pre-fetch polls in MarkdownContent:', err)
+    }
+  }
+
   // Process all markdown segments concurrently
   const processedSegments = await Promise.all(
     segments.map(async (segment) => {
       if (segment.type === 'poll') {
-        return segment
+        const dbData = pollDataMap.get(segment.data.slug)
+        if (dbData) {
+          const dbVotesMap = new Map(dbData.options.map((o) => [o.id, o.votes]))
+          const mergedOptions = segment.data.options.map((opt) => ({
+            id: opt.id,
+            text: opt.text,
+            votes: dbVotesMap.get(opt.id) || 0,
+          }))
+          return {
+            type: 'poll' as const,
+            data: {
+              ...segment.data,
+              options: mergedOptions,
+            },
+            totalVotes: dbData.totalVotes,
+            isClosed: dbData.isClosed,
+          }
+        }
+        return {
+          type: 'poll' as const,
+          data: {
+            ...segment.data,
+            options: segment.data.options.map((opt) => ({
+              id: opt.id,
+              text: opt.text,
+              votes: 0,
+            })),
+          },
+          totalVotes: 0,
+          isClosed: false,
+        }
       }
       const html = await renderMarkdownToHtml(segment.content)
       return { type: 'markdown' as const, html }
@@ -268,6 +334,8 @@ export async function MarkdownContent({ content }: MarkdownContentProps) {
               slug={segment.data.slug}
               question={segment.data.question}
               options={segment.data.options}
+              initialTotalVotes={segment.totalVotes}
+              initialIsClosed={segment.isClosed}
             />
           )
         }

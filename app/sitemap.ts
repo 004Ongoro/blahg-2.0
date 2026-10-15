@@ -30,7 +30,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Fetch all bookmarks for the sitemap
     await dbConnect()
-    const bookmarks = await Bookmark.find({ isDraft: { $ne: true } })
+    const bookmarks = await Bookmark.find({
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
+    })
       .select('_id updatedAt createdAt')
       .lean()
 

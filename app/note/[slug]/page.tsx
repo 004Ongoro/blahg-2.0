@@ -19,7 +19,7 @@ export const revalidate = 60
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const notes = await Post.find({ published: true, type: 'note' }).select('slug').lean()
+    const notes = await Post.find({ published: true, isDraft: { $ne: true }, type: 'note' }).select('slug').lean()
     return notes.map((note: any) => ({
       slug: note.slug,
     }))
@@ -36,7 +36,7 @@ interface Props {
 async function getNote(slug: string) {
   try {
     await dbConnect()
-    const post = await Post.findOne({ slug, published: true }).lean()
+    const post = await Post.findOne({ slug, published: true, isDraft: { $ne: true } }).lean()
     return post ? JSON.parse(JSON.stringify(post)) : null
   } catch (error) {
     console.error('Error fetching note:', error)

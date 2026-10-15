@@ -50,8 +50,12 @@ export function BookmarksView({ initialBookmarks }: BookmarksViewProps) {
   }
 
   // Filter bookmarks in memory based on search query & category tab
+  const validBookmarks = useMemo(() => {
+    return initialBookmarks.filter((item) => !item.url?.toLowerCase().includes('draft.local'))
+  }, [initialBookmarks])
+
   const filteredBookmarks = useMemo(() => {
-    return initialBookmarks.filter((item) => {
+    return validBookmarks.filter((item) => {
       const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory
       
       const searchLower = searchQuery.toLowerCase()
@@ -63,16 +67,16 @@ export function BookmarksView({ initialBookmarks }: BookmarksViewProps) {
 
       return matchesCategory && matchesSearch
     })
-  }, [initialBookmarks, selectedCategory, searchQuery])
+  }, [validBookmarks, selectedCategory, searchQuery])
 
   // Count bookmarks in each category
   const categoryCounts = useMemo(() => {
-    const counts: { [key: string]: number } = { all: initialBookmarks.length }
-    initialBookmarks.forEach((item) => {
+    const counts: { [key: string]: number } = { all: validBookmarks.length }
+    validBookmarks.forEach((item) => {
       counts[item.category] = (counts[item.category] || 0) + 1
     })
     return counts
-  }, [initialBookmarks])
+  }, [validBookmarks])
 
   return (
     <div className="space-y-10">

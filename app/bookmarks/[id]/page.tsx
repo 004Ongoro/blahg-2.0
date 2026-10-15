@@ -16,7 +16,10 @@ export const revalidate = 60 // Revalidate page cache every 60 seconds
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const bookmarks = await Bookmark.find({}).select('_id').lean()
+    const bookmarks = await Bookmark.find({
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
+    }).select('_id').lean()
     return bookmarks.map((b: any) => ({
       id: b._id.toString(),
     }))
@@ -37,7 +40,11 @@ async function getBookmark(id: string) {
   }
   try {
     await dbConnect()
-    const bookmark = await Bookmark.findById(id).lean()
+    const bookmark = await Bookmark.findOne({
+      _id: id,
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
+    }).lean()
     return bookmark ? JSON.parse(JSON.stringify(bookmark)) : null
   } catch (error) {
     console.error('Error fetching bookmark:', error)
@@ -50,7 +57,9 @@ async function getRelatedBookmarks(category: string, currentId: string) {
     await dbConnect()
     const bookmarks = await Bookmark.find({
       category,
-      _id: { $ne: currentId }
+      _id: { $ne: currentId },
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
     })
     .limit(3)
     .lean()

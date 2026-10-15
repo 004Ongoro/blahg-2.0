@@ -25,7 +25,7 @@ export const revalidate = 60
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const posts = await Post.find({ published: true, type: { $ne: 'note' } }).select('slug').lean()
+    const posts = await Post.find({ published: true, isDraft: { $ne: true }, type: { $ne: 'note' } }).select('slug').lean()
     return posts.map((post: any) => ({
       slug: post.slug,
     }))
@@ -43,7 +43,7 @@ interface Props {
 async function getPost(slug: string) {
   try {
     await dbConnect()
-    const post = await Post.findOne({ slug, published: true }).lean()
+    const post = await Post.findOne({ slug, published: true, isDraft: { $ne: true } }).lean()
     return post ? JSON.parse(JSON.stringify(post)) : null
   } catch (error) {
     console.error('Error fetching post:', error)
@@ -56,6 +56,7 @@ async function getRelatedPosts(currentSlug: string, tags: string[]) {
     await dbConnect()
     const posts = await Post.find({
       published: true,
+      isDraft: { $ne: true },
       slug: { $ne: currentSlug },
       tags: { $in: tags }
     })
@@ -74,11 +75,11 @@ async function getPrevNextPosts(createdAt: Date) {
   try {
     await dbConnect()
     const [prevPost, nextPost] = await Promise.all([
-      Post.findOne({ published: true, createdAt: { $lt: createdAt } })
+      Post.findOne({ published: true, isDraft: { $ne: true }, createdAt: { $lt: createdAt } })
         .sort({ createdAt: -1 })
         .select('slug title')
         .lean(),
-      Post.findOne({ published: true, createdAt: { $gt: createdAt } })
+      Post.findOne({ published: true, isDraft: { $ne: true }, createdAt: { $gt: createdAt } })
         .sort({ createdAt: 1 })
         .select('slug title')
         .lean()

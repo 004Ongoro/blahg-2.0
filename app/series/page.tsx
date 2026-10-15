@@ -13,7 +13,7 @@ async function getSeries() {
   try {
     await dbConnect()
     const result = await Post.aggregate([
-      { $match: { published: true, series: { $ne: null, $exists: true } } },
+      { $match: { published: true, isDraft: { $ne: true }, series: { $ne: null, $exists: true } } },
       {
         $group: {
           _id: '$series',

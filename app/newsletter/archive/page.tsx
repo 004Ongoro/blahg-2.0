@@ -10,7 +10,7 @@ export const revalidate = 0
 async function getIssues() {
   try {
     await dbConnect()
-    const issues = await NewsletterIssue.find({ published: true })
+    const issues = await NewsletterIssue.find({ published: true, isDraft: { $ne: true } })
       .sort({ createdAt: -1 })
       .lean()
     return JSON.parse(JSON.stringify(issues))

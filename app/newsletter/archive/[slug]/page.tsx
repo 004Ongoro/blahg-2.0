@@ -16,7 +16,7 @@ export const revalidate = false
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const issues = await NewsletterIssue.find({ published: true }).select('slug').lean()
+    const issues = await NewsletterIssue.find({ published: true, isDraft: { $ne: true } }).select('slug').lean()
     return issues.map((issue: any) => ({
       slug: issue.slug,
     }))
@@ -32,7 +32,7 @@ interface Props {
 
 async function getIssue(slug: string) {
   await dbConnect()
-  const issue = await NewsletterIssue.findOne({ slug, published: true }).lean()
+  const issue = await NewsletterIssue.findOne({ slug, published: true, isDraft: { $ne: true } }).lean()
   return issue ? JSON.parse(JSON.stringify(issue)) : null
 }
 

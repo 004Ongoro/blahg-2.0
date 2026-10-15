@@ -28,8 +28,8 @@ async function getArchiveData() {
     await dbConnect()
     
     const [posts, issues] = await Promise.all([
-      Post.find({ published: true }).sort({ createdAt: -1 }).select('title slug createdAt type').lean(),
-      NewsletterIssue.find({ published: true }).sort({ createdAt: -1 }).select('subject slug createdAt').lean()
+      Post.find({ published: true, isDraft: { $ne: true } }).sort({ createdAt: -1 }).select('title slug createdAt type').lean(),
+      NewsletterIssue.find({ published: true, isDraft: { $ne: true } }).sort({ createdAt: -1 }).select('subject slug createdAt').lean()
     ])
 
     const formattedPosts = (posts as any[]).map(p => ({

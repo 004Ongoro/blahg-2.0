@@ -14,7 +14,7 @@ export const revalidate = false
 export async function generateStaticParams() {
   try {
     await dbConnect()
-    const series = await Post.distinct('series', { published: true, series: { $ne: null } })
+    const series = await Post.distinct('series', { published: true, isDraft: { $ne: true }, series: { $ne: null } })
     return series.map((name: string) => ({
       name: encodeURIComponent(name),
     }))
@@ -33,7 +33,8 @@ async function getSeriesPosts(seriesName: string) {
     await dbConnect()
     const posts = await Post.find({ 
       series: seriesName, 
-      published: true 
+      published: true,
+      isDraft: { $ne: true }
     }).sort({ seriesOrder: 1, createdAt: 1 }).lean()
     
     return JSON.parse(JSON.stringify(posts))

@@ -93,6 +93,31 @@ export default function AdminBookmarksPage() {
     fetchBookmarks()
   }, [])
 
+  const [cleaningDrafts, setCleaningDrafts] = useState(false)
+
+  const handleCleanupDrafts = async () => {
+    if (!confirm('Are you sure you want to purge all draft bookmarks (including draft.local entries) from the database?')) return
+    setCleaningDrafts(true)
+    setError('')
+    setSuccess('')
+    try {
+      const res = await fetch('/api/bookmarks?cleanupDrafts=true', {
+        method: 'DELETE',
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setSuccess(`Cleaned up ${data.deletedCount ?? 0} draft bookmark(s).`)
+        fetchBookmarks()
+      } else {
+        setError(data.error || 'Failed to clean up drafts')
+      }
+    } catch (err) {
+      setError('Network communication failure during draft cleanup.')
+    } finally {
+      setCleaningDrafts(false)
+    }
+  }
+
   const fetchBookmarks = async () => {
     setLoading(true)
     try {
@@ -318,9 +343,21 @@ export default function AdminBookmarksPage() {
                 <Bookmark size={14} className="text-accent" />
                 Indexed Bookmarks
               </h2>
-              <span className="text-[9px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded">
-                {bookmarks.length} RECORDS
-              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleCleanupDrafts}
+                  disabled={cleaningDrafts}
+                  className="text-[9px] font-black uppercase tracking-wider text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  title="Purge all draft.local and draft bookmark entries from database"
+                >
+                  <Trash2 size={10} />
+                  {cleaningDrafts ? 'Purging...' : 'Clean Up Drafts'}
+                </button>
+                <span className="text-[9px] font-black uppercase bg-foreground/5 px-2 py-0.5 rounded">
+                  {bookmarks.length} RECORDS
+                </span>
+              </div>
             </div>
 
             {loading ? (

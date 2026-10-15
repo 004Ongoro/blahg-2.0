@@ -20,7 +20,11 @@ export default async function Image({ params }: { params: Promise<{ id: string }
 
   try {
     await dbConnect()
-    const bookmark = await Bookmark.findById(id)
+    const bookmark = await Bookmark.findOne({
+      _id: id,
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
+    })
       .select('title category description url createdAt')
       .lean()
 

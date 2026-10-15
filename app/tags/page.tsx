@@ -10,7 +10,7 @@ export const revalidate = false
 async function getAllPosts() {
   try {
     await dbConnect()
-    const posts = await Post.find({ published: true })
+    const posts = await Post.find({ published: true, isDraft: { $ne: true } })
       .sort({ createdAt: -1 })
       .select('title slug excerpt createdAt readTime tags type')
       .lean()

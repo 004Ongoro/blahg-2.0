@@ -16,19 +16,24 @@ export default async function BookmarksPage() {
 
   try {
     await dbConnect()
-    const bookmarks = await Bookmark.find({})
+    const bookmarks = await Bookmark.find({
+      isDraft: { $ne: true },
+      url: { $not: /draft\.local/i },
+    })
       .sort({ createdAt: -1 })
       .lean()
 
-    plainBookmarks = bookmarks.map((doc: any) => ({
-      _id: doc._id.toString(),
-      title: doc.title,
-      url: doc.url,
-      description: doc.description,
-      category: doc.category,
-      tags: doc.tags || [],
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : new Date().toISOString(),
-    }))
+    plainBookmarks = bookmarks
+      .filter((doc: any) => !doc.isDraft && !doc.url?.toLowerCase().includes('draft.local'))
+      .map((doc: any) => ({
+        _id: doc._id.toString(),
+        title: doc.title,
+        url: doc.url,
+        description: doc.description,
+        category: doc.category,
+        tags: doc.tags || [],
+        createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : new Date().toISOString(),
+      }))
   } catch (error) {
     console.error('Failed to load bookmarks on server:', error)
   }

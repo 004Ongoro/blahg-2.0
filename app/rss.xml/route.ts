@@ -16,7 +16,7 @@ export async function GET() {
 
   try {
     await dbConnect()
-    posts = await Post.find({ published: true })
+    posts = await Post.find({ published: true, isDraft: { $ne: true } })
       .sort({ createdAt: -1 })
       .limit(20)
       .lean()

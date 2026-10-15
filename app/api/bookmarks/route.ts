@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const query: any = {}
     if (!includeDrafts) {
       query.isDraft = { $ne: true }
+      query.url = { $not: /draft\.local/i }
     }
     if (category && category !== 'all') {
       query.category = category
@@ -169,12 +170,28 @@ export async function DELETE(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
+    const cleanupDrafts = searchParams.get('cleanupDrafts') === 'true'
+
+    await dbConnect()
+
+    if (cleanupDrafts) {
+      const result = await Bookmark.deleteMany({
+        $or: [
+          { isDraft: true },
+          { url: { $regex: 'draft\\.local', $options: 'i' } },
+        ],
+      })
+      revalidatePath('/bookmarks')
+      return NextResponse.json({
+        message: 'Draft bookmarks cleaned up successfully',
+        deletedCount: result.deletedCount,
+      })
+    }
 
     if (!id) {
       return NextResponse.json({ error: 'Bookmark ID is required' }, { status: 400 })
     }
 
-    await dbConnect()
     const deleted = await Bookmark.findByIdAndDelete(id)
 
     if (!deleted) {

@@ -168,10 +168,10 @@ export function ExitIntentNewsletter() {
         {/* Content Body */}
         <div className="relative z-10 space-y-1.5">
           <h4 className="text-base font-extrabold text-foreground tracking-tight font-sans">
-            Stay ahead in tech & architecture
+            Practical code & tinkering dispatches
           </h4>
           <p className="text-xs text-muted-foreground font-sans leading-relaxed">
-            Get high-signal weekly dispatches on full-stack systems, clean code, and edge engineering. No spam.
+            Get high-signal dispatches on full-stack development, side projects, and hands-on coding. No spam.
           </p>
         </div>
 
@@ -185,14 +185,22 @@ export function ExitIntentNewsletter() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="relative">
+                <label htmlFor="exit-newsletter-email" className="sr-only">
+                  Email address
+                </label>
                 <input
+                  id="exit-newsletter-email"
+                  name="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your.email@domain.com"
+                  autoComplete="email"
+                  inputMode="email"
                   required
+                  aria-required="true"
                   disabled={loading}
-                  className="w-full bg-background text-foreground px-3.5 py-2.5 text-xs font-sans rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all placeholder:text-muted-foreground/50"
+                  className="w-full bg-background text-foreground px-3.5 py-2.5 text-xs font-sans rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-accent transition-all placeholder:text-muted-foreground/50 disabled:opacity-60"
                 />
               </div>
 

@@ -5,14 +5,14 @@ import { getBaseUrl } from '@/lib/utils'
 const baseUrl = getBaseUrl()
 
 export const metadata: Metadata = {
-  title: 'Engineering Newsletter & Dispatches',
-  description: 'Subscribe to George Ongoro\'s newsletter for weekly insights on software engineering, performance, distributed systems, and modern architecture.',
+  title: 'Developer Newsletter & Dispatches',
+  description: 'Subscribe to George Ongoro\'s newsletter for practical insights on full-stack development, side projects, and hands-on programming.',
   alternates: {
     canonical: `${baseUrl}/newsletter`,
   },
   openGraph: {
-    title: 'Engineering Newsletter & Dispatches',
-    description: 'Subscribe to George Ongoro\'s newsletter for weekly insights on software engineering, performance, distributed systems, and modern architecture.',
+    title: 'Developer Newsletter & Dispatches',
+    description: 'Subscribe to George Ongoro\'s newsletter for practical insights on full-stack development, side projects, and hands-on programming.',
     url: `${baseUrl}/newsletter`,
     type: 'website',
   },

@@ -1,6 +1,6 @@
 # Blahg 2.0
 
-Blahg 2.0 is a production-grade, open-source blog platform built with **Next.js 15+**, **TypeScript**, and **MongoDB**. It is designed for developers who want a modern, high-performance site featuring a modular architecture, clean UI components (powered by Radix UI), and integrated newsletter capabilities.
+Blahg 2.0 is a production-grade, open-source blog platform built with **Next.js 15+**, **TypeScript**, and **MongoDB**. It is designed for developers who want a modern, high-performance site featuring a modular design, clean UI components (powered by Radix UI), and integrated newsletter capabilities.
 
 ## Features
 

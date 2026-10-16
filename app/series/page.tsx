@@ -13,13 +13,13 @@ const baseUrl = getBaseUrl()
 
 export const metadata: Metadata = {
   title: 'Technical Series & Guides',
-  description: 'Curated technical series and deep dives into software engineering, distributed systems, and modern architecture.',
+  description: 'Curated technical series, multi-part guides, and deep dives into practical programming and full-stack development.',
   alternates: {
     canonical: `${baseUrl}/series`,
   },
   openGraph: {
     title: 'Technical Series & Guides',
-    description: 'Curated technical series and deep dives into software engineering, distributed systems, and modern architecture.',
+    description: 'Curated technical series, multi-part guides, and deep dives into practical programming and full-stack development.',
     url: `${baseUrl}/series`,
     type: 'website',
   },

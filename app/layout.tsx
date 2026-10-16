@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     default: 'Blog by George Ongoro - Tech and Coding',
     template: '%s | George Ongoro',
   },
-  description: 'Technical insights on web development, clean architecture, and modern coding practices.',
+  description: 'Technical notes, hands-on programming guides, and developer experiments by George Ongoro.',
   keywords: ['George Ongoro', 'developer', 'blog', 'programming', 'Next.js', 'MongoDB', 'TypeScript'],
   authors: [{ name: 'George Ongoro', url: `${baseUrl}/about` }],
   openGraph: {
@@ -91,7 +91,7 @@ export default function RootLayout({
                   '@id': `${baseUrl}/#website`,
                   url: baseUrl,
                   name: 'George Ongoro Blog',
-                  description: 'Technical insights on web development, clean architecture, and modern coding practices.',
+                  description: 'Technical notes, hands-on programming guides, and developer experiments by George Ongoro.',
                   publisher: {
                     '@id': `${baseUrl}/#person`,
                   },
@@ -121,7 +121,8 @@ export default function RootLayout({
                     'Next.js',
                     'Node.js',
                     'MongoDB',
-                    'Software Architecture',
+                    'Full-Stack Development',
+                    'DevOps & Tooling',
                     'Go',
                     'Java'
                   ]

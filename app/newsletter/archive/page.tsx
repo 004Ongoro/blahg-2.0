@@ -11,13 +11,13 @@ const baseUrl = getBaseUrl()
 
 export const metadata: Metadata = {
   title: 'Dispatches & Newsletter Archive',
-  description: 'Past engineering newsletter issues covering software performance, architecture, and technology principles by George Ongoro.',
+  description: 'Past newsletter dispatches, development breakdowns, and field notes by George Ongoro.',
   alternates: {
     canonical: `${baseUrl}/newsletter/archive`,
   },
   openGraph: {
     title: 'Dispatches & Newsletter Archive',
-    description: 'Past engineering newsletter issues covering software performance, architecture, and technology principles by George Ongoro.',
+    description: 'Past newsletter dispatches, development breakdowns, and field notes by George Ongoro.',
     url: `${baseUrl}/newsletter/archive`,
     type: 'website',
   },
@@ -51,7 +51,7 @@ export default async function NewsletterArchivePage() {
             Dispatches
           </h1>
           <p className="text-muted-foreground font-medium">
-            Past insights on performance, architecture, and the business of software.
+            Past dispatches on real-world coding, tinkering, and building things.
           </p>
         </header>
         

@@ -130,13 +130,22 @@ export function NewsletterView() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              <label htmlFor="newsletter-view-email" className="sr-only">
+                Email address
+              </label>
               <input
+                id="newsletter-view-email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@example.com"
+                autoComplete="email"
+                inputMode="email"
                 required
-                className="w-full bg-background border border-foreground/10 rounded-xl px-4 py-4 text-base font-medium focus:outline-none focus:ring-1 ring-accent transition-all"
+                aria-required="true"
+                disabled={loading}
+                className="w-full bg-background border border-foreground/10 rounded-xl px-4 py-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-accent transition-all disabled:opacity-60"
               />
 
               <button
@@ -214,7 +223,7 @@ export function NewsletterView() {
             </div>
             <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Browse Archive</h3>
             <p className="text-sm font-medium text-muted-foreground">
-              Explore past issues on code, architecture, and design.
+              Explore past issues on code, side projects, and building things.
             </p>
           </Link>
         </div>

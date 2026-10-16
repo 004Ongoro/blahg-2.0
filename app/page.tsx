@@ -19,7 +19,7 @@ import {
 
 type FilterType = 'all' | 'articles' | 'notes'
 
-async function getPosts(page: number = 1, limit: number = 10, filter: FilterType = 'all') {
+async function getPosts(page: number = 1, limit: number = 20, filter: FilterType = 'all') {
   try {
     await dbConnect()
     const skip = (page - 1) * limit
@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: Props) {
   const page = typeof params.page === 'string' ? parseInt(params.page) : 1
   const rawFilter = typeof params.filter === 'string' ? params.filter.toLowerCase() : 'all'
   const filter: FilterType = rawFilter === 'articles' || rawFilter === 'notes' ? rawFilter : 'all'
-  const limit = 10
+  const limit = 20
 
   const { posts, totalPages, currentPage, counts } = await getPosts(page, limit, filter)
 
@@ -97,8 +97,8 @@ export default async function HomePage({ searchParams }: Props) {
               {filter === 'notes'
                 ? 'Quick insights, micro-learnings, and field observations under 30 seconds.'
                 : filter === 'articles'
-                ? 'In-depth essays on software engineering, distributed systems, and clean architecture.'
-                : 'Writing on software engineering, distributed systems, clean architecture, and quick technical notes.'}
+                ? 'In-depth guides, code breakdowns, and lessons from building software.'
+                : 'Practical guides, full-stack development notes, and engineering experiments.'}
             </p>
           </div>
         </section>

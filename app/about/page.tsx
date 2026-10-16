@@ -11,13 +11,13 @@ const baseUrl = getBaseUrl()
 
 export const metadata: Metadata = {
   title: 'About Me',
-  description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi specializing in React, Next.js, Go, TypeScript, and software architecture.',
+  description: 'Full-stack developer, open source contributor, and tech volunteer based in Nairobi specializing in React, Next.js, Go, TypeScript, and practical tooling.',
   alternates: {
     canonical: `${baseUrl}/about`,
   },
   openGraph: {
     title: 'About George Ongoro',
-    description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi specializing in React, Next.js, Go, TypeScript, and software architecture.',
+    description: 'Full-stack developer, open source contributor, and tech volunteer based in Nairobi specializing in React, Next.js, Go, TypeScript, and practical tooling.',
     url: `${baseUrl}/about`,
     type: 'profile',
   },

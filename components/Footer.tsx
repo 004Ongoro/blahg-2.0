@@ -89,7 +89,7 @@ export function Footer() {
                 George Ongoro <span className="text-accent">Blog</span>
               </Link>
               <p className="text-sm font-sans leading-relaxed text-muted-foreground max-w-sm">
-                Technical writings on web architecture, software engineering, and modern systems. 
+                Notes, practical guides, and hands-on writings on web development, tools, and tinkering. 
                 Independent & open source.
               </p>
             </div>

@@ -1,16 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, CheckCircle2 } from 'lucide-react'
+import { Mail, CheckCircle2, AlertCircle, ArrowRight, Loader2, ShieldCheck, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 
 export function Newsletter() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!email || loading) return
+
     setLoading(true)
+    setStatus(null)
 
     try {
       const res = await fetch('/api/subscribe', {
@@ -22,64 +26,173 @@ export function Newsletter() {
       const data = await res.json()
 
       if (res.ok) {
-        toast.success('Successfully subscribed!')
+        setStatus({
+          type: 'success',
+          message: 'You’re subscribed! Check your inbox for confirmation.',
+        })
+        toast.success('Successfully subscribed to dispatches!')
         try {
           localStorage.setItem('newsletter_subscribed', 'true')
         } catch {}
         setEmail('')
       } else {
-        toast.error(data.error || 'Something went wrong')
+        const errorMsg = data.error || 'Something went wrong. Please check your email and try again.'
+        setStatus({ type: 'error', message: errorMsg })
+        toast.error(errorMsg)
       }
-    } catch (error) {
-      toast.error('Failed to subscribe. Please try again.')
+    } catch {
+      const errorMsg = 'Failed to connect. Please check your internet connection and try again.'
+      setStatus({ type: 'error', message: errorMsg })
+      toast.error(errorMsg)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 md:p-10 shadow-sm">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-accent/10 -mr-20 -mt-20 rounded-full blur-3xl pointer-events-none" />
+    <section
+      aria-labelledby="newsletter-heading"
+      className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 md:p-10 shadow-xs"
+    >
+      {/* Decorative ambient background blur */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 right-0 w-64 h-64 bg-accent/10 -mr-24 -mt-24 rounded-full blur-3xl pointer-events-none"
+      />
 
       <div className="relative z-10 max-w-xl space-y-4">
+        {/* Category Pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-mono font-bold uppercase tracking-wider">
-          <Mail className="h-3.5 w-3.5" />
+          <Mail className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Newsletter</span>
         </div>
 
-        <h3 className="text-2xl md:text-3xl font-sans font-extrabold tracking-tight text-foreground">
-          Join the <span className="text-accent">Weekly Dispatches</span>
-        </h3>
+        {/* Title */}
+        <h2
+          id="newsletter-heading"
+          className="text-2xl md:text-3xl font-sans font-extrabold tracking-tight text-foreground"
+        >
+          Get the <span className="text-accent">Developer Dispatches</span>
+        </h2>
 
-        <p className="text-sm md:text-base leading-relaxed text-muted-foreground font-sans">
-          Deep dives on software engineering, web architecture, and building modern systems. Direct to your inbox, no spam.
+        {/* Description & Value Proposition */}
+        <p
+          id="newsletter-description"
+          className="text-sm md:text-base leading-relaxed text-muted-foreground font-sans"
+        >
+          Practical guides, side project breakdowns, and hands-on coding lessons.
+          Delivered straight to your inbox—no corporate fluff, zero spam.
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 pt-2">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="enter your email..."
-            required
-            className="flex-1 bg-background text-foreground px-4 py-3 text-sm font-sans rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-accent text-accent-foreground px-6 py-3 font-mono font-bold uppercase tracking-wider text-xs hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        {/* Success Feedback View */}
+        {status?.type === 'success' ? (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-4 p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-foreground space-y-2 animate-in fade-in duration-200"
           >
-            {loading ? (
-              'Subscribing...'
-            ) : (
-              <>
-                <span>Subscribe</span>
-                <CheckCircle2 size={16} />
-              </>
+            <div className="flex items-center gap-2.5 text-green-600 dark:text-green-400 font-bold text-sm">
+              <CheckCircle2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span>{status.message}</span>
+            </div>
+            <p className="text-xs text-muted-foreground pl-7">
+              Keep an eye out for upcoming dispatches on full-stack development and open source projects.
+            </p>
+            <div className="pl-7 pt-1">
+              <button
+                type="button"
+                onClick={() => setStatus(null)}
+                className="text-xs text-accent hover:underline font-mono uppercase tracking-wider font-bold"
+              >
+                Subscribe another email →
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Accessible, High-Converting Form */
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            aria-describedby="newsletter-description"
+            className="space-y-3 pt-1"
+          >
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <label htmlFor="newsletter-email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="newsletter-email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    if (status?.type === 'error') setStatus(null)
+                  }}
+                  placeholder="you@domain.com"
+                  autoComplete="email"
+                  inputMode="email"
+                  spellCheck={false}
+                  required
+                  aria-required="true"
+                  aria-invalid={status?.type === 'error' ? true : undefined}
+                  aria-errormessage={status?.type === 'error' ? 'newsletter-error-message' : undefined}
+                  disabled={loading}
+                  className="w-full bg-background text-foreground px-4 py-3 text-sm font-sans rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all placeholder:text-muted-foreground/60 disabled:opacity-60"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !email.trim()}
+                aria-busy={loading}
+                className="bg-accent text-accent-foreground px-6 py-3 font-mono font-bold uppercase tracking-wider text-xs hover:opacity-95 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 rounded-xl shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 cursor-pointer"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <span>Subscribing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Join Free</span>
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Inline Accessible Error Message */}
+            {status?.type === 'error' && (
+              <div
+                id="newsletter-error-message"
+                role="alert"
+                aria-live="assertive"
+                className="flex items-center gap-2 text-xs font-semibold text-destructive pt-1"
+              >
+                <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>{status.message}</span>
+              </div>
             )}
-          </button>
-        </form>
+          </form>
+        )}
+
+        {/* Friction Reducers & Trust Signals */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 text-[11px] font-mono text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <Zap className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            <span>High signal, ~1-2/month</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            <span>No spam ever</span>
+          </span>
+          <span className="text-muted-foreground/80">
+            Unsubscribe anytime with 1 click
+          </span>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }

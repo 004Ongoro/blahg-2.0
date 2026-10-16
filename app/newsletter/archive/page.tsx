@@ -4,6 +4,25 @@ import dbConnect from '@/lib/mongodb'
 import NewsletterIssue from '@/models/NewsletterIssue'
 import { NewsletterArchive } from '@/components/NewsletterArchive'
 
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'Dispatches & Newsletter Archive',
+  description: 'Past engineering newsletter issues covering software performance, architecture, and technology principles by George Ongoro.',
+  alternates: {
+    canonical: `${baseUrl}/newsletter/archive`,
+  },
+  openGraph: {
+    title: 'Dispatches & Newsletter Archive',
+    description: 'Past engineering newsletter issues covering software performance, architecture, and technology principles by George Ongoro.',
+    url: `${baseUrl}/newsletter/archive`,
+    type: 'website',
+  },
+}
+
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 

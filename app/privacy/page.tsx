@@ -4,9 +4,16 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { ShieldCheck, Lock, Eye, Mail, Database, Cookie, ArrowLeft } from 'lucide-react'
 
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
 export const metadata: Metadata = {
-  title: 'Privacy Policy | George Ongoro Blog',
+  title: 'Privacy Policy',
   description: 'Privacy Policy and Data Protection declaration for George Ongoro Blog regarding email collection, cookies, and Google Analytics.',
+  alternates: {
+    canonical: `${baseUrl}/privacy`,
+  },
 }
 
 export default function PrivacyPage() {

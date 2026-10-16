@@ -4,9 +4,28 @@ import { CommunityCallout } from '@/components/CommunityCallout'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
-export const metadata = {
-  title: 'About | George Ongoro',
-  description: 'Full-stack developer, open source contributor, and tech volunteer based in Nairobi.',
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'About Me',
+  description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi specializing in React, Next.js, Go, TypeScript, and software architecture.',
+  alternates: {
+    canonical: `${baseUrl}/about`,
+  },
+  openGraph: {
+    title: 'About George Ongoro',
+    description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi specializing in React, Next.js, Go, TypeScript, and software architecture.',
+    url: `${baseUrl}/about`,
+    type: 'profile',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About George Ongoro',
+    description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi.',
+  },
 }
 
 export default function AboutPage() {

@@ -44,6 +44,41 @@ async function getNote(slug: string) {
   }
 }
 
+async function getRelatedNotes(currentSlug: string, tags: string[]) {
+  try {
+    await dbConnect()
+    let posts = await Post.find({
+      published: true,
+      isDraft: { $ne: true },
+      slug: { $ne: currentSlug },
+      tags: { $in: tags }
+    })
+    .select('title slug excerpt createdAt readTime tags type')
+    .limit(3)
+    .lean()
+    
+    if (posts.length < 3) {
+      const existingSlugs = [currentSlug, ...posts.map((p: any) => p.slug)]
+      const fallback = await Post.find({
+        published: true,
+        isDraft: { $ne: true },
+        slug: { $nin: existingSlugs }
+      })
+      .sort({ createdAt: -1 })
+      .select('title slug excerpt createdAt readTime tags type')
+      .limit(3 - posts.length)
+      .lean()
+
+      posts = [...posts, ...fallback]
+    }
+
+    return JSON.parse(JSON.stringify(posts))
+  } catch (error) {
+    console.error('Error fetching related notes:', error)
+    return []
+  }
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
   const note = await getNote(slug)
@@ -99,43 +134,76 @@ export default async function NotePage({ params }: Props) {
     redirect(`/post/${slug}`)
   }
 
+  const relatedNotes = await getRelatedNotes(slug, note.tags || [])
   const baseUrl = getBaseUrl()
   const ogImageUrl = `${baseUrl}/note/${slug}/opengraph-image`
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${baseUrl}/note/${slug}`,
-    },
-    headline: note.title,
-    description: note.excerpt,
-    image: [ogImageUrl],
-    inLanguage: 'en-US',
-    keywords: note.tags?.join(', '),
-    wordCount: note.content ? note.content.split(/\s+/).length : undefined,
-    datePublished: new Date(note.createdAt).toISOString(),
-    dateModified: new Date(note.updatedAt || note.createdAt).toISOString(),
-    author: {
-      '@type': 'Person',
-      name: note.isGuest ? (note.authorName || 'Guest Author') : 'George Ongoro',
-      url: note.isGuest && note.authorBio ? (note.authorBio.startsWith('http') ? note.authorBio : `https://${note.authorBio}`) : `${baseUrl}/about`,
-      sameAs: note.isGuest ? undefined : [
-        'https://x.com/ongorogeorg_e',
-        'https://github.com/004Ongoro',
-        'https://linkedin.com/in/georgeongoro2',
-      ],
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'George Ongoro Blog',
-      url: baseUrl,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${baseUrl}/api/og?title=George+Ongoro`,
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${baseUrl}/note/${slug}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Notes',
+            item: `${baseUrl}/?filter=notes`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: note.title,
+            item: `${baseUrl}/note/${slug}`,
+          },
+        ],
       },
-    },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${baseUrl}/note/${slug}#article`,
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': `${baseUrl}/#website`,
+          name: 'George Ongoro Blog',
+          url: baseUrl,
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `${baseUrl}/note/${slug}`,
+        },
+        headline: note.title,
+        description: note.excerpt,
+        image: [ogImageUrl],
+        inLanguage: 'en-US',
+        keywords: note.tags?.join(', '),
+        wordCount: note.content ? note.content.split(/\s+/).length : undefined,
+        datePublished: new Date(note.createdAt).toISOString(),
+        dateModified: new Date(note.updatedAt || note.createdAt).toISOString(),
+        author: {
+          '@type': 'Person',
+          name: note.isGuest ? (note.authorName || 'Guest Author') : 'George Ongoro',
+          url: note.isGuest && note.authorBio ? (note.authorBio.startsWith('http') ? note.authorBio : `https://${note.authorBio}`) : `${baseUrl}/about`,
+          sameAs: note.isGuest ? undefined : [
+            'https://x.com/ongorogeorg_e',
+            'https://github.com/004Ongoro',
+            'https://linkedin.com/in/georgeongoro2',
+          ],
+        },
+        publisher: {
+          '@type': 'Person',
+          '@id': `${baseUrl}/#person`,
+          name: 'George Ongoro',
+          url: `${baseUrl}/about`,
+        },
+      },
+    ],
   }
 
   return (
@@ -220,6 +288,31 @@ export default async function NotePage({ params }: Props) {
             </div>
           )}
         </article>
+
+        {/* Related Notes and Articles */}
+        {relatedNotes && relatedNotes.length > 0 && (
+          <div className="space-y-4 pt-4 border-t border-border/40">
+            <h2 className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60">
+              Related Writings &amp; Notes
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {relatedNotes.map((item: any) => (
+                <Link
+                  key={item.slug}
+                  href={item.type === 'note' ? `/note/${item.slug}` : `/post/${item.slug}`}
+                  className="p-4 border border-border/60 bg-card/50 hover:bg-card hover:border-accent/30 transition-all rounded-xl flex flex-col justify-between group"
+                >
+                  <span className="text-[10px] font-mono text-accent uppercase font-bold mb-1">
+                    {item.type === 'note' ? 'Note' : 'Article'}
+                  </span>
+                  <h3 className="text-xs font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-snug">
+                    {item.title}
+                  </h3>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Engagement: Reactions & Comments */}
         <div className="space-y-10 pt-4">

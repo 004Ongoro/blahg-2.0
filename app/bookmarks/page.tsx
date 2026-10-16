@@ -4,9 +4,28 @@ import { BookmarksView } from '@/components/BookmarksView'
 import dbConnect from '@/lib/mongodb'
 import Bookmark from '@/models/Bookmark'
 
-export const metadata = {
-  title: 'Bookmarks | George Ongoro',
-  description: 'A curated list of developer tools, NPM libraries, design resources, and useful articles.',
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'Curated Developer Bookmarks',
+  description: 'A curated collection of developer tools, NPM libraries, design resources, and useful technical references.',
+  alternates: {
+    canonical: `${baseUrl}/bookmarks`,
+  },
+  openGraph: {
+    title: 'Curated Developer Bookmarks',
+    description: 'A curated collection of developer tools, NPM libraries, design resources, and useful technical references.',
+    url: `${baseUrl}/bookmarks`,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Curated Developer Bookmarks',
+    description: 'A curated collection of developer tools, NPM libraries, design resources, and useful technical references.',
+  },
 }
 
 export const revalidate = 60 // Revalidate page cache every 60 seconds

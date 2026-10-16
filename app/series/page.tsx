@@ -6,6 +6,25 @@ import Link from 'next/link'
 import { Layers, ChevronRight, Activity, Clock, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'Technical Series & Guides',
+  description: 'Curated technical series and deep dives into software engineering, distributed systems, and modern architecture.',
+  alternates: {
+    canonical: `${baseUrl}/series`,
+  },
+  openGraph: {
+    title: 'Technical Series & Guides',
+    description: 'Curated technical series and deep dives into software engineering, distributed systems, and modern architecture.',
+    url: `${baseUrl}/series`,
+    type: 'website',
+  },
+}
+
 export const dynamic = 'force-static'
 export const revalidate = false
 

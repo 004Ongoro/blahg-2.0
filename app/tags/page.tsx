@@ -22,9 +22,23 @@ async function getAllPosts() {
   }
 }
 
-export const metadata = {
-  title: 'Library | George Ongoro',
-  description: 'A categorized index of all posts and topics.',
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'Topic & Tag Library',
+  description: 'A comprehensive categorized index of all software engineering topics, articles, and technical notes by George Ongoro.',
+  alternates: {
+    canonical: `${baseUrl}/tags`,
+  },
+  openGraph: {
+    title: 'Topic & Tag Library',
+    description: 'A comprehensive categorized index of all software engineering topics, articles, and technical notes by George Ongoro.',
+    url: `${baseUrl}/tags`,
+    type: 'website',
+  },
 }
 
 export default async function TagsPage() {

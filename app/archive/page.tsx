@@ -12,6 +12,25 @@ import {
 } from "@/components/ui/accordion"
 import { format } from 'date-fns'
 
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'Writings & Dispatches Archive',
+  description: 'Complete chronological archive of all engineering articles, notes, and newsletter dispatches by George Ongoro.',
+  alternates: {
+    canonical: `${baseUrl}/archive`,
+  },
+  openGraph: {
+    title: 'Writings & Dispatches Archive',
+    description: 'Complete chronological archive of all engineering articles, notes, and newsletter dispatches by George Ongoro.',
+    url: `${baseUrl}/archive`,
+    type: 'website',
+  },
+}
+
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -84,7 +103,7 @@ export default async function ArchivePage() {
           </p>
         </header>
 
-        <Accordion type="multiple" defaultValue={[years[0]]} className="w-full">
+        <Accordion type="multiple" defaultValue={years} className="w-full">
           {years.map((year) => (
             <AccordionItem key={year} value={year} className="border-foreground/10">
               <AccordionTrigger className="text-2xl font-black uppercase tracking-tighter hover:no-underline hover:text-accent">

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   description: 'Technical insights on web development, clean architecture, and modern coding practices.',
   keywords: ['George Ongoro', 'developer', 'blog', 'programming', 'Next.js', 'MongoDB', 'TypeScript'],
-  authors: [{ name: 'George Ongoro' }],
+  authors: [{ name: 'George Ongoro', url: `${baseUrl}/about` }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: './',
+    canonical: baseUrl,
     types: {
       'application/rss+xml': `${baseUrl}/rss.xml`,
     },
@@ -93,25 +93,38 @@ export default function RootLayout({
                   name: 'George Ongoro Blog',
                   description: 'Technical insights on web development, clean architecture, and modern coding practices.',
                   publisher: {
-                    '@id': `${baseUrl}/#organization`,
+                    '@id': `${baseUrl}/#person`,
                   },
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: `https://www.google.com/search?q=site%3Acode.geohack.top+{search_term_string}`,
+                    target: `${baseUrl}/archive?q={search_term_string}`,
                     'query-input': 'required name=search_term_string',
                   },
                 },
                 {
-                  '@type': 'NewsMediaOrganization',
-                  '@id': `${baseUrl}/#organization`,
-                  name: 'George Ongoro Blog',
-                  url: baseUrl,
-                  logo: `${baseUrl}/api/og?title=George+Ongoro`,
+                  '@type': 'Person',
+                  '@id': `${baseUrl}/#person`,
+                  name: 'George Ongoro',
+                  url: `${baseUrl}/about`,
+                  jobTitle: 'Full-Stack Software Engineer',
+                  description: 'Full-stack developer, open source contributor, and tech writer based in Nairobi.',
+                  image: `${baseUrl}/api/og?title=George+Ongoro`,
                   sameAs: [
                     'https://x.com/ongorogeorg_e',
                     'https://github.com/004Ongoro',
-                    'https://news.google.com/search?q=site%3Acode.geohack.top',
+                    'https://linkedin.com/in/georgeongoro2',
                   ],
+                  knowsAbout: [
+                    'Web Development',
+                    'TypeScript',
+                    'JavaScript',
+                    'Next.js',
+                    'Node.js',
+                    'MongoDB',
+                    'Software Architecture',
+                    'Go',
+                    'Java'
+                  ]
                 },
               ],
             }),

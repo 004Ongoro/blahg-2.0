@@ -85,10 +85,17 @@ export async function generateMetadata({ params }: Props) {
   const ogImageUrl = `${baseUrl}/bookmarks/${id}/opengraph-image`
 
   return {
-    title: `${bookmark.title} | Bookmarks | George Ongoro`,
+    title: `${bookmark.title} - Bookmarks`,
     description: bookmark.description,
+    robots: {
+      index: false,
+      follow: true,
+    },
+    alternates: {
+      canonical: `${baseUrl}/bookmarks/${id}`,
+    },
     openGraph: {
-      title: `${bookmark.title} | George Ongoro's Bookmarks`,
+      title: `${bookmark.title} - Bookmarks`,
       description: bookmark.description,
       type: 'website',
       url: `${baseUrl}/bookmarks/${id}`,
@@ -96,7 +103,7 @@ export async function generateMetadata({ params }: Props) {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${bookmark.title} | George Ongoro's Bookmarks`,
+      title: `${bookmark.title} - Bookmarks`,
       description: bookmark.description,
       images: [ogImageUrl],
     },

@@ -48,6 +48,9 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: issue.subject,
     description: `A newsletter issue from George Ongoro's underground dev circle.`,
+    alternates: {
+      canonical: `${baseUrl}/newsletter/archive/${slug}`,
+    },
     openGraph: {
       title: issue.subject,
       description: `A newsletter issue from George Ongoro's underground dev circle.`,
@@ -67,11 +70,80 @@ export async function generateMetadata({ params }: Props) {
 export default async function NewsletterIssuePage({ params }: Props) {
   const { slug } = await params
   const issue = await getIssue(slug)
+  const baseUrl = getBaseUrl()
 
   if (!issue) notFound()
 
+  const ogImageUrl = `${baseUrl}/newsletter/archive/${slug}/opengraph-image`
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${baseUrl}/newsletter/archive/${slug}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Dispatches',
+            item: `${baseUrl}/newsletter/archive`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: issue.subject,
+            item: `${baseUrl}/newsletter/archive/${slug}`,
+          },
+        ],
+      },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${baseUrl}/newsletter/archive/${slug}#article`,
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': `${baseUrl}/#website`,
+          name: 'George Ongoro Blog',
+          url: baseUrl,
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `${baseUrl}/newsletter/archive/${slug}`,
+        },
+        headline: issue.subject,
+        description: `A newsletter issue from George Ongoro's underground dev circle.`,
+        image: [ogImageUrl],
+        inLanguage: 'en-US',
+        datePublished: new Date(issue.createdAt).toISOString(),
+        dateModified: new Date(issue.updatedAt || issue.createdAt).toISOString(),
+        author: {
+          '@type': 'Person',
+          '@id': `${baseUrl}/#person`,
+          name: 'George Ongoro',
+          url: `${baseUrl}/about`,
+        },
+        publisher: {
+          '@type': 'Person',
+          '@id': `${baseUrl}/#person`,
+          name: 'George Ongoro',
+          url: `${baseUrl}/about`,
+        },
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen flex flex-col relative reading-page-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       
       <main className="flex-1 max-w-2xl mx-auto px-4 py-12 md:py-24 w-full">

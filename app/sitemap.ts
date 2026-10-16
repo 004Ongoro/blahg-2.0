@@ -1,14 +1,15 @@
 import { MetadataRoute } from 'next'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import Bookmark from '@/models/Bookmark'
+import NewsletterIssue from '@/models/NewsletterIssue'
 import { getBaseUrl } from '@/lib/utils'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl()
 
   let postUrls: MetadataRoute.Sitemap = []
-  let bookmarkUrls: MetadataRoute.Sitemap = []
+  let seriesUrls: MetadataRoute.Sitemap = []
+  let newsletterUrls: MetadataRoute.Sitemap = []
 
   try {
     // Fetch all published posts and notes for the sitemap
@@ -21,30 +22,51 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: post.type === 'note' ? `${baseUrl}/note/${post.slug}` : `${baseUrl}/post/${post.slug}`,
       lastModified: new Date(post.updatedAt || post.createdAt),
       changeFrequency: 'weekly' as const,
-      priority: post.type === 'note' ? 0.7 : 0.8,
+      priority: post.type === 'note' ? 0.7 : 0.9,
     }))
   } catch (error) {
     console.error('Error fetching posts for sitemap:', error)
   }
 
   try {
-    // Fetch all bookmarks for the sitemap
+    // Fetch distinct series for the sitemap
     await dbConnect()
-    const bookmarks = await Bookmark.find({
-      isDraft: { $ne: true },
-      url: { $not: /draft\.local/i },
-    })
-      .select('_id updatedAt createdAt')
-      .lean()
+    const series = await Post.aggregate([
+      { $match: { published: true, isDraft: { $ne: true }, series: { $ne: null, $exists: true } } },
+      {
+        $group: {
+          _id: '$series',
+          latestUpdate: { $max: '$updatedAt' },
+          latestCreated: { $max: '$createdAt' }
+        }
+      }
+    ])
 
-    bookmarkUrls = bookmarks.map((bookmark: any) => ({
-      url: `${baseUrl}/bookmarks/${bookmark._id.toString()}`,
-      lastModified: new Date(bookmark.updatedAt || bookmark.createdAt),
+    seriesUrls = series.map((s: any) => ({
+      url: `${baseUrl}/series/${encodeURIComponent(s._id)}`,
+      lastModified: new Date(s.latestUpdate || s.latestCreated || new Date()),
       changeFrequency: 'weekly' as const,
-      priority: 0.5,
+      priority: 0.8,
     }))
   } catch (error) {
-    console.error('Error fetching bookmarks for sitemap:', error)
+    console.error('Error fetching series for sitemap:', error)
+  }
+
+  try {
+    // Fetch newsletter issues for the sitemap
+    await dbConnect()
+    const issues = await NewsletterIssue.find({ published: true, isDraft: { $ne: true } })
+      .select('slug updatedAt createdAt')
+      .lean()
+
+    newsletterUrls = issues.map((issue: any) => ({
+      url: `${baseUrl}/newsletter/archive/${issue.slug}`,
+      lastModified: new Date(issue.updatedAt || issue.createdAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
+  } catch (error) {
+    console.error('Error fetching newsletter issues for sitemap:', error)
   }
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -61,40 +83,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
       url: `${baseUrl}/now`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/archive`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
+      changeFrequency: 'daily',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/series`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tags`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/bookmarks`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.6,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/newsletter`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/newsletter/archive`,
+      lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.6,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/guestbook`,
@@ -103,18 +131,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/tags`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.4,
+      priority: 0.3,
     },
   ]
 
-  return [...staticRoutes, ...postUrls, ...bookmarkUrls]
+  return [...staticRoutes, ...postUrls, ...seriesUrls, ...newsletterUrls]
 }

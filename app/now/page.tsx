@@ -15,9 +15,23 @@ import {
   Sparkles
 } from 'lucide-react'
 
-export const metadata = {
-  title: 'Now | George Ongoro',
-  description: 'What I am working on, reading, learning, and focused on right now.',
+import { Metadata } from 'next'
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
+export const metadata: Metadata = {
+  title: 'What I Am Doing Now (/now)',
+  description: 'A public log of what George Ongoro is currently building, learning, reading, and focused on.',
+  alternates: {
+    canonical: `${baseUrl}/now`,
+  },
+  openGraph: {
+    title: 'What I Am Doing Now (/now)',
+    description: 'A public log of what George Ongoro is currently building, learning, reading, and focused on.',
+    url: `${baseUrl}/now`,
+    type: 'website',
+  },
 }
 
 // Statically generate the page; on-demand revalidation will update it when changes are made.

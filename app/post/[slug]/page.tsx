@@ -54,7 +54,7 @@ async function getPost(slug: string) {
 async function getRelatedPosts(currentSlug: string, tags: string[]) {
   try {
     await dbConnect()
-    const posts = await Post.find({
+    let posts = await Post.find({
       published: true,
       isDraft: { $ne: true },
       slug: { $ne: currentSlug },
@@ -64,6 +64,22 @@ async function getRelatedPosts(currentSlug: string, tags: string[]) {
     .limit(3)
     .lean()
     
+    // Backfill with latest posts if fewer than 3 match tags to eliminate orphan links
+    if (posts.length < 3) {
+      const existingSlugs = [currentSlug, ...posts.map((p: any) => p.slug)]
+      const fallback = await Post.find({
+        published: true,
+        isDraft: { $ne: true },
+        slug: { $nin: existingSlugs }
+      })
+      .sort({ createdAt: -1 })
+      .select('title slug excerpt createdAt readTime tags')
+      .limit(3 - posts.length)
+      .lean()
+
+      posts = [...posts, ...fallback]
+    }
+
     return JSON.parse(JSON.stringify(posts))
   } catch (error) {
     console.error('Error fetching related posts:', error)
@@ -167,38 +183,70 @@ export default async function PostPage({ params }: Props) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${baseUrl}/post/${slug}`,
-    },
-    headline: post.title,
-    description: post.excerpt,
-    image: [ogImageUrl],
-    inLanguage: 'en-US',
-    keywords: post.tags?.join(', '),
-    wordCount: post.content ? post.content.split(/\s+/).length : undefined,
-    datePublished: new Date(post.createdAt).toISOString(),
-    dateModified: new Date(post.updatedAt || post.createdAt).toISOString(),
-    author: {
-      '@type': 'Person',
-      name: post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro',
-      url: post.isGuest && post.authorBio ? (post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`) : `${baseUrl}/about`,
-      sameAs: post.isGuest ? undefined : [
-        'https://x.com/ongorogeorg_e',
-        'https://github.com/004Ongoro',
-        'https://linkedin.com/in/georgeongoro2',
-      ],
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'George Ongoro Blog',
-      url: baseUrl,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${baseUrl}/api/og?title=George+Ongoro`,
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${baseUrl}/post/${slug}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Articles',
+            item: `${baseUrl}/`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.title,
+            item: `${baseUrl}/post/${slug}`,
+          },
+        ],
       },
-    },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${baseUrl}/post/${slug}#article`,
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': `${baseUrl}/#website`,
+          name: 'George Ongoro Blog',
+          url: baseUrl,
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `${baseUrl}/post/${slug}`,
+        },
+        headline: post.title,
+        description: post.excerpt,
+        image: [ogImageUrl],
+        inLanguage: 'en-US',
+        keywords: post.tags?.join(', '),
+        wordCount: post.content ? post.content.split(/\s+/).length : undefined,
+        datePublished: new Date(post.createdAt).toISOString(),
+        dateModified: new Date(post.updatedAt || post.createdAt).toISOString(),
+        author: {
+          '@type': 'Person',
+          name: post.isGuest ? (post.authorName || 'Guest Author') : 'George Ongoro',
+          url: post.isGuest && post.authorBio ? (post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`) : `${baseUrl}/about`,
+          sameAs: post.isGuest ? undefined : [
+            'https://x.com/ongorogeorg_e',
+            'https://github.com/004Ongoro',
+            'https://linkedin.com/in/georgeongoro2',
+          ],
+        },
+        publisher: {
+          '@type': 'Person',
+          '@id': `${baseUrl}/#person`,
+          name: 'George Ongoro',
+          url: `${baseUrl}/about`,
+        },
+      },
+    ],
   }
 
   return (

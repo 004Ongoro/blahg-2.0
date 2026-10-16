@@ -51,19 +51,22 @@ export async function generateMetadata({ params }: Props) {
   const ogImageUrl = `${baseUrl}/series/${encodeURIComponent(name)}/opengraph-image`
 
   return {
-    title: `${decodedName} Series | George Ongoro`,
-    description: `All articles in the ${decodedName} series.`,
+    title: `${decodedName} Series`,
+    description: `All technical articles and deep dives in the ${decodedName} series by George Ongoro.`,
+    alternates: {
+      canonical: `${baseUrl}/series/${encodeURIComponent(name)}`,
+    },
     openGraph: {
-      title: `${decodedName} Series | George Ongoro`,
-      description: `All articles in the ${decodedName} series.`,
+      title: `${decodedName} Series`,
+      description: `All technical articles and deep dives in the ${decodedName} series by George Ongoro.`,
       type: 'website',
       url: `${baseUrl}/series/${encodeURIComponent(name)}`,
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${decodedName} Series` }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${decodedName} Series | George Ongoro`,
-      description: `All articles in the ${decodedName} series.`,
+      title: `${decodedName} Series`,
+      description: `All technical articles and deep dives in the ${decodedName} series by George Ongoro.`,
       images: [ogImageUrl],
     },
   }
@@ -78,8 +81,39 @@ export default async function SeriesDetailPage({ params }: Props) {
     notFound()
   }
 
+  const baseUrl = getBaseUrl()
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: baseUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Series',
+        item: `${baseUrl}/series`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: decodedName,
+        item: `${baseUrl}/series/${encodeURIComponent(name)}`,
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen flex flex-col font-mono">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="flex-1 max-w-3xl mx-auto px-4 py-12 md:py-20 w-full">
         {/* Navigation */}

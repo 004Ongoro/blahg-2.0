@@ -5,9 +5,22 @@ import { ContactForm } from '@/components/ContactForm'
 import { Mail, MapPin, MessageSquare, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
+import { getBaseUrl } from '@/lib/utils'
+
+const baseUrl = getBaseUrl()
+
 export const metadata: Metadata = {
-  title: 'Contact | George Ongoro',
-  description: 'Get in touch with George Ongoro for technical inquiries, collaboration, or feedback.',
+  title: 'Contact',
+  description: 'Get in touch with George Ongoro for technical inquiries, open source collaborations, or feedback.',
+  alternates: {
+    canonical: `${baseUrl}/contact`,
+  },
+  openGraph: {
+    title: 'Contact George Ongoro',
+    description: 'Get in touch with George Ongoro for technical inquiries, open source collaborations, or feedback.',
+    url: `${baseUrl}/contact`,
+    type: 'website',
+  },
 }
 
 export default function ContactPage() {

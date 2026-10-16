@@ -8,15 +8,12 @@ import GiscusComments from '@/components/GiscusComments'
 import { Newsletter } from '@/components/Newsletter'
 import dbConnect from '@/lib/mongodb'
 import Post from '@/models/Post'
-import { getBaseUrl } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Calendar, Clock, User, BookOpen } from 'lucide-react'
+import { getBaseUrl, cn } from '@/lib/utils'
+import { ChevronLeft, ChevronRight, Calendar, Clock, BookOpen, Sparkles, Layers } from 'lucide-react'
 import { PostReactions } from '@/components/PostReactions'
-import { MoreLikeThis } from '@/components/MoreLikeThis'
 import { SocialShare } from '@/components/SocialShare'
 import { FormattedDate } from '@/components/FormattedDate'
 import { CommunityCallout } from '@/components/CommunityCallout'
-
 
 // Enable ISR: Cache on Netlify Edge CDN, revalidating in background or on-demand via revalidatePath
 export const revalidate = 60
@@ -83,6 +80,26 @@ async function getRelatedPosts(currentSlug: string, tags: string[]) {
     return JSON.parse(JSON.stringify(posts))
   } catch (error) {
     console.error('Error fetching related posts:', error)
+    return []
+  }
+}
+
+async function getSeriesArticles(seriesName?: string) {
+  if (!seriesName) return []
+  try {
+    await dbConnect()
+    const posts = await Post.find({
+      series: seriesName,
+      published: true,
+      isDraft: { $ne: true }
+    })
+    .sort({ seriesOrder: 1, createdAt: 1 })
+    .select('title slug seriesOrder')
+    .lean()
+
+    return JSON.parse(JSON.stringify(posts))
+  } catch (error) {
+    console.error('Error fetching series articles:', error)
     return []
   }
 }
@@ -172,6 +189,7 @@ export default async function PostPage({ params }: Props) {
   }
 
   const relatedPosts = await getRelatedPosts(slug, post.tags || [])
+  const seriesArticles = await getSeriesArticles(post.series)
   const nav = await getPrevNextPosts(post.createdAt)
   const baseUrl = getBaseUrl()
   const coverUrl = post.coverImage
@@ -250,7 +268,7 @@ export default async function PostPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative reading-page-bg">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -258,124 +276,55 @@ export default async function PostPage({ params }: Props) {
       
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 py-12 md:py-24 w-full">
-        <div className="flex flex-col lg:flex-row gap-12 items-start justify-center relative">
+      <div className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-16 pb-24 w-full">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start justify-between relative">
           
-          {/* Left Column: Sticky Metadata & Socials */}
-          <aside className="hidden lg:flex flex-col gap-6 lg:sticky lg:top-24 self-start w-52 shrink-0 text-xs font-sans text-muted-foreground">
-            <Link
-              href="/"
-              className="text-foreground hover:text-accent font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors pb-4 border-b border-border"
-            >
-              <ChevronLeft className="h-4 w-4" /> Back to Articles
-            </Link>
-            
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <User size={12} className="opacity-70" /> Author
-              </span>
-              <p className="font-sans font-bold text-foreground text-sm">
-                {post.isGuest ? (
-                  post.authorBio ? (
-                    <a 
-                      href={post.authorBio.startsWith('http') ? post.authorBio : `https://${post.authorBio}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-accent hover:underline"
-                    >
-                      {post.authorName || 'Guest Author'}
-                    </a>
-                  ) : (
-                    post.authorName || 'Guest Author'
-                  )
-                ) : (
-                  'George Ongoro'
+          {/* Main Reading Column */}
+          <main className="flex-1 max-w-3xl w-full mx-auto lg:mx-0">
+            {/* Top Navigation & Context Bar */}
+            <nav aria-label="Breadcrumbs" className="flex items-center justify-between gap-4 mb-8 pb-4 border-b border-border/50 text-xs font-mono">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors group cursor-pointer font-bold uppercase tracking-wider"
+              >
+                <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                Back to Articles
+              </Link>
+              
+              <div className="flex items-center gap-3">
+                {post.series && (
+                  <Link
+                    href={`/series/${encodeURIComponent(post.series)}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 hover:bg-accent/20 text-accent font-bold uppercase tracking-wider transition-colors text-[11px]"
+                  >
+                    <BookOpen size={12} />
+                    <span>{post.series}</span>
+                  </Link>
                 )}
-              </p>
-            </div>
-
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <Calendar size={12} className="opacity-70" /> Published
-              </span>
-              <p className="font-mono font-bold text-foreground text-xs"><FormattedDate date={post.createdAt} /></p>
-            </div>
-            
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <Clock size={12} className="opacity-70" /> Read Time
-              </span>
-              <p className="font-mono font-bold text-foreground text-xs">{post.readTime} min read</p>
-            </div>
-
-            {isUpdated && (
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Clock size={12} className="opacity-70" /> Updated
-                </span>
-                <p className="font-mono font-semibold text-muted-foreground text-xs"><FormattedDate date={post.updatedAt} /></p>
-              </div>
-            )}
-
-            <div className="space-y-3 pt-4 border-t border-border">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
-                Share Article
-              </span>
-              <SocialShare title={post.title} slug={slug} />
-            </div>
-
-            {(nav.prev || nav.next) && (
-              <div className="space-y-3 pt-4 border-t border-border">
-                <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">Navigation</span>
-                <div className="space-y-3">
-                  {nav.prev && (
-                    <Link href={`/post/${nav.prev}`} className="group block space-y-1">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70 block">← Previous</span>
-                      <span className="font-sans font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block text-xs">
-                        {nav.prev.replace(/-/g, ' ')}
-                      </span>
-                    </Link>
-                  )}
-                  {nav.next && (
-                    <Link href={`/post/${nav.next}`} className="group block space-y-1">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground/70 block">Next →</span>
-                      <span className="font-sans font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-tight block text-xs">
-                        {nav.next.replace(/-/g, ' ')}
-                      </span>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-          </aside>
-
-          {/* Center Column: The Main Article */}
-          <article className="flex-1 max-w-2xl w-full">
-            <TableOfContents content={post.content} />
-            <header className="mb-10">
-              {/* Mobile Back Link & Social Share Header */}
-              <div className="flex justify-between items-center mb-6 lg:hidden">
-                <Link
-                  href="/"
-                  className="text-muted-foreground hover:text-accent text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
-                >
-                  <ChevronLeft className="h-4 w-4" /> Articles
-                </Link>
                 <SocialShare title={post.title} slug={slug} />
               </div>
-              
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-sans font-black tracking-tight mb-6 leading-[1.15] text-foreground">
+            </nav>
+
+            {/* Article Header */}
+            <header className="mb-10">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground leading-[1.18] mb-5 text-balance">
                 {post.title}
               </h1>
 
-              {/* Clean Article Header Metadata Card */}
-              <div className="border border-border bg-card/70 backdrop-blur-xs p-4 md:p-5 rounded-2xl shadow-2xs mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {post.excerpt && (
+                <p className="text-lg md:text-xl text-muted-foreground font-normal leading-relaxed mb-8">
+                  {post.excerpt}
+                </p>
+              )}
+
+              {/* Author & Publication Metadata Row */}
+              <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-border/60 text-xs font-mono">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-accent/15 text-accent flex items-center justify-center font-mono font-extrabold text-sm border border-accent/20 shrink-0">
+                  <div className="h-10 w-10 rounded-full bg-accent/15 text-accent flex items-center justify-center font-extrabold text-sm border border-accent/20 shrink-0">
                     {post.isGuest ? (post.authorName ? post.authorName.charAt(0).toUpperCase() : 'G') : 'GO'}
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-sm font-sans font-bold text-foreground leading-tight">
+                    <p className="font-sans font-bold text-foreground text-sm leading-tight">
                       {post.isGuest ? (
                         post.authorBio ? (
                           <a 
@@ -390,137 +339,216 @@ export default async function PostPage({ params }: Props) {
                           post.authorName || 'Guest Author'
                         )
                       ) : (
-                        'George Ongoro'
+                        <Link href="/about" className="hover:text-accent transition-colors">
+                          George Ongoro
+                        </Link>
                       )}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={11} className="opacity-70" />
-                        <FormattedDate date={post.createdAt} />
-                      </span>
-                      <span className="h-1 w-1 rounded-full bg-accent/40" />
-                      <span className="flex items-center gap-1">
-                        <Clock size={11} className="opacity-70" />
-                        {post.readTime} min read
-                      </span>
-                      {isUpdated && (
-                        <>
-                          <span className="h-1 w-1 rounded-full bg-accent/40" />
-                          <span className="italic text-[11px]">Updated <FormattedDate date={post.updatedAt} /></span>
-                        </>
-                      )}
-                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      {post.isGuest ? 'Guest Contributor' : 'Full-Stack Developer'}
+                    </p>
                   </div>
                 </div>
 
-                <div className="shrink-0 flex items-center gap-2">
-                  {post.series && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/15 text-accent font-mono text-xs font-semibold uppercase tracking-wider">
-                      <BookOpen size={12} />
-                      <span>{post.series}</span>
-                    </span>
+                <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar size={13} className="opacity-70 text-accent" />
+                    <FormattedDate date={post.createdAt} />
+                  </span>
+                  <span className="text-border">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={13} className="opacity-70 text-accent" />
+                    {post.readTime} min read
+                  </span>
+                  {isUpdated && (
+                    <>
+                      <span className="text-border hidden sm:inline">•</span>
+                      <span className="hidden sm:inline-flex text-[11px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground font-medium">
+                        Updated <FormattedDate date={post.updatedAt} />
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
+
+              {/* Mobile Table of Contents */}
+              <div className="lg:hidden">
+                <TableOfContents content={post.content} />
+              </div>
             </header>
 
-            <div className="prose-brutal">
+            {/* Markdown Body */}
+            <article className="prose-brutal max-w-none">
               <MarkdownContent content={post.content} />
-            </div>
-          </article>
+            </article>
 
-          {/* Right Column: Sticky Table of Contents & Related Posts */}
-          <aside className="hidden lg:block lg:sticky lg:top-24 self-start w-60 shrink-0 space-y-10">
-            <div className="space-y-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 border-b border-foreground/10 pb-2">Table of Contents</h3>
+            {/* Post-Article Engagement Section */}
+            <div className="mt-16 space-y-12">
+              {/* Reactions */}
+              <div className="pt-6 border-t border-border/50">
+                <PostReactions 
+                  slug={slug} 
+                  initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
+                />
+              </div>
+
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-2">
+                  <span className="text-xs font-mono uppercase font-bold text-muted-foreground/60 mr-2">Tags:</span>
+                  {post.tags.map((tag: string) => (
+                    <Link
+                      key={tag}
+                      href={`/tags?tag=${encodeURIComponent(tag)}`}
+                      className="text-xs font-mono font-medium px-3 py-1 rounded-lg bg-secondary/60 hover:bg-accent/15 hover:text-accent text-muted-foreground border border-border/50 transition-colors"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* Previous / Next Article Navigation Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-border/60">
+                {nav.prev ? (
+                  <Link
+                    href={`/post/${nav.prev}`}
+                    className="group p-5 rounded-2xl border border-border/60 bg-card/40 hover:bg-card hover:border-accent/40 transition-all flex flex-col justify-between"
+                  >
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 group-hover:text-accent transition-colors">
+                      <ChevronLeft size={13} className="group-hover:-translate-x-1 transition-transform" />
+                      Previous Article
+                    </span>
+                    <p className="font-sans font-bold text-foreground text-sm line-clamp-2 leading-snug mt-2 group-hover:text-accent transition-colors">
+                      {nav.prev.replace(/-/g, ' ')}
+                    </p>
+                  </Link>
+                ) : <div />}
+
+                {nav.next ? (
+                  <Link
+                    href={`/post/${nav.next}`}
+                    className="group p-5 rounded-2xl border border-border/60 bg-card/40 hover:bg-card hover:border-accent/40 transition-all flex flex-col justify-between sm:text-right"
+                  >
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground flex items-center sm:justify-end gap-1.5 group-hover:text-accent transition-colors">
+                      Next Article
+                      <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <p className="font-sans font-bold text-foreground text-sm line-clamp-2 leading-snug mt-2 group-hover:text-accent transition-colors">
+                      {nav.next.replace(/-/g, ' ')}
+                    </p>
+                  </Link>
+                ) : <div />}
+              </div>
+
+              {/* More Readings Grid */}
+              {relatedPosts && relatedPosts.length > 0 && (
+                <section className="space-y-4 pt-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                      <Sparkles size={14} className="text-accent" />
+                      More Readings
+                    </h2>
+                    <Link href="/" className="text-xs font-mono text-muted-foreground hover:text-accent transition-colors">
+                      View all →
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {relatedPosts.map((rPost: any) => (
+                      <Link
+                        key={rPost.slug}
+                        href={`/post/${rPost.slug}`}
+                        className="group p-4 rounded-xl border border-border/60 bg-card/30 hover:bg-card hover:border-accent/40 transition-all flex flex-col justify-between"
+                      >
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-mono text-accent font-bold uppercase tracking-wider block">
+                            {rPost.readTime ? `${rPost.readTime} min read` : 'Article'}
+                          </span>
+                          <h3 className="text-xs font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2 leading-snug">
+                            {rPost.title}
+                          </h3>
+                        </div>
+                        {rPost.excerpt && (
+                          <p className="text-[11px] text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
+                            {rPost.excerpt}
+                          </p>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Newsletter & Community Callout */}
+              <div className="space-y-8 pt-4">
+                <Newsletter />
+                <CommunityCallout />
+              </div>
+
+              {/* Comments Section */}
+              <div className="pt-6">
+                <GiscusComments />
+              </div>
+            </div>
+          </main>
+
+          {/* Sticky Right Sidebar (Desktop) */}
+          <aside className="hidden lg:block w-72 shrink-0 sticky top-24 self-start space-y-8 pl-6 border-l border-border/40 text-xs">
+            {/* Table of Contents */}
+            <div className="space-y-3">
+              <h3 className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/70 flex items-center gap-1.5">
+                <Layers size={12} className="text-accent" />
+                On this page
+              </h3>
               <TableOfContents content={post.content} isSidebar />
             </div>
 
-            {relatedPosts && relatedPosts.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 border-b border-foreground/10 pb-2">More Like This</h3>
-                <ul className="space-y-3">
-                  {relatedPosts.map((rPost: any) => (
-                    <li key={rPost.slug}>
-                      <Link 
-                        href={`/post/${rPost.slug}`}
-                        className="group block"
-                      >
-                        <span className="text-xs font-extrabold text-foreground group-hover:text-accent transition-colors leading-snug block">
-                          {rPost.title}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+            {/* Series Navigation (if article is in a series) */}
+            {seriesArticles.length > 1 && (
+              <div className="space-y-3 pt-6 border-t border-border/40">
+                <h3 className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/70 flex items-center gap-1.5">
+                  <BookOpen size={12} className="text-accent" />
+                  Series: {post.series}
+                </h3>
+                <ol className="space-y-1.5 font-mono">
+                  {seriesArticles.map((sPost: any, index: number) => {
+                    const isCurrent = sPost.slug === slug
+                    return (
+                      <li key={sPost.slug}>
+                        <Link
+                          href={`/post/${sPost.slug}`}
+                          className={cn(
+                            "flex items-start gap-2 p-2 rounded-lg transition-colors leading-tight",
+                            isCurrent
+                              ? "bg-accent/15 text-accent font-bold"
+                              : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                          )}
+                        >
+                          <span className="shrink-0 text-[10px] opacity-70">
+                            {index + 1}.
+                          </span>
+                          <span className="line-clamp-2 font-sans font-medium text-xs">
+                            {sPost.title}
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ol>
               </div>
             )}
+
+            {/* Quick Share Widget */}
+            <div className="space-y-3 pt-6 border-t border-border/40">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/70 block">
+                Share Article
+              </span>
+              <SocialShare title={post.title} slug={slug} />
+            </div>
           </aside>
 
         </div>
-
-        {/* Post-Article Engagement Section (Unsticky Sidebars Scroll Out Cleanly Here) */}
-        <div className="max-w-2xl mx-auto w-full mt-16 space-y-12">
-          {/* Post Reactions */}
-          <PostReactions 
-            slug={slug} 
-            initialReactions={post.reactions ? JSON.parse(JSON.stringify(post.reactions)) : {}} 
-          />
-
-          {/* Prev / Next Navigation */}
-          <div className="flex flex-col gap-8 py-8 border-y border-foreground/10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {nav.prev ? (
-                <Link href={`/post/${nav.prev}`} className="group space-y-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Previous Article</span>
-                  <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 leading-tight">
-                    <ChevronLeft className="h-4 w-4 shrink-0" /> {nav.prev.replace(/-/g, ' ')}
-                  </p>
-                </Link>
-              ) : <div />}
-
-              {nav.next ? (
-                <Link href={`/post/${nav.next}`} className="group space-y-1.5 md:text-right">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">Next Article</span>
-                  <p className="font-extrabold group-hover:text-accent transition-colors flex items-center gap-2 md:justify-end leading-tight">
-                    {nav.next.replace(/-/g, ' ')} <ChevronRight className="h-4 w-4 shrink-0" />
-                  </p>
-                </Link>
-              ) : <div />}
-            </div>
-          </div>
-
-          {/* Newsletter & Community Callout */}
-          <div className="space-y-8">
-            <Newsletter />
-            <CommunityCallout />
-          </div>
-
-          {/* Mobile Related Posts */}
-          <div className="lg:hidden">
-            <MoreLikeThis posts={relatedPosts} />
-          </div>
-
-          {/* Comments Section (Uncollapsed) */}
-          <GiscusComments />
-
-          {post.tags && post.tags.length > 0 && (
-            <div className="pt-8 border-t border-foreground/10">
-              <div className="flex flex-wrap gap-x-6 gap-y-2">
-                {post.tags.map((tag: string) => (
-                  <Link
-                    key={tag}
-                    href={`/tags?tag=${encodeURIComponent(tag)}`}
-                    className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
+      </div>
 
       <Footer />
     </div>

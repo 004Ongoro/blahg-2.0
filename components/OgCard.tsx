@@ -46,33 +46,33 @@ export function OgCard({
   readTime,
   date,
   authorName = 'George Ongoro',
-  badgeText = 'TECHNICAL ARTICLE',
+  badgeText = 'ARTICLE',
   siteName = 'CODE.GEOHACK.TOP',
 }: OgCardProps) {
   const rawTitle = (title || 'George Ongoro Blog').replace(/\s+/g, ' ').trim()
   const rawExcerpt = (excerpt || '').replace(/\s+/g, ' ').trim()
 
-  const isLongTitle = rawTitle.length > 80
-  const isMediumTitle = rawTitle.length > 45 && !isLongTitle
+  const isLongTitle = rawTitle.length > 70
+  const isMediumTitle = rawTitle.length > 40 && !isLongTitle
 
   let titleFontSize = 54
   let titleLineHeight = 1.16
-  let maxExcerptLength = 175
+  let maxExcerptLength = 160
 
   if (isLongTitle) {
-    titleFontSize = 38
+    titleFontSize = 40
     titleLineHeight = 1.22
-    maxExcerptLength = 130
+    maxExcerptLength = 120
   } else if (isMediumTitle) {
-    titleFontSize = 46
+    titleFontSize = 48
     titleLineHeight = 1.18
-    maxExcerptLength = 155
+    maxExcerptLength = 145
   } else if (!rawExcerpt) {
-    titleFontSize = 60
-    titleLineHeight = 1.15
+    titleFontSize = 62
+    titleLineHeight = 1.14
   }
 
-  const displayTitle = truncateAtWord(rawTitle, 115)
+  const displayTitle = truncateAtWord(rawTitle, 110)
   const displayExcerpt = truncateAtWord(rawExcerpt, maxExcerptLength)
   const formattedDate = formatDisplayDate(date)
   const formattedReadTime = readTime
@@ -81,7 +81,7 @@ export function OgCard({
       : String(readTime).toUpperCase()
     : ''
 
-  const displayTags = tags.filter(Boolean).slice(0, 2)
+  const displayTags = tags.filter(Boolean).slice(0, 3)
   const isDefaultAuthor = !authorName || authorName.toLowerCase().includes('george')
   const authorHandle = isDefaultAuthor ? '@004Ongoro' : 'Guest Contributor'
   const authorInitials = (authorName || 'GO')
@@ -99,14 +99,14 @@ export function OgCard({
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#090D16',
+        backgroundColor: '#FAFAF9',
         position: 'relative',
-        padding: '32px',
+        padding: '40px 48px',
         boxSizing: 'border-box',
         fontFamily: 'Space Grotesk, sans-serif',
       }}
     >
-      {/* Background SVG with subtle ambient lighting & non-interfering creative geometric pattern */}
+      {/* Delicate background ambient decoration (soft indigo/violet glow on pure light stone) */}
       <svg
         width="1200"
         height="630"
@@ -120,50 +120,26 @@ export function OgCard({
         }}
       >
         <defs>
-          {/* Ambient glow 1: warm amber accent */}
-          <radialGradient id="amber-glow" cx="85%" cy="15%" r="45%">
-            <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
+          <radialGradient id="soft-indigo" cx="92%" cy="8%" r="50%">
+            <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.10" />
+            <stop offset="100%" stopColor="#4F46E5" stopOpacity="0" />
           </radialGradient>
-
-          {/* Ambient glow 2: cool indigo/cyan accent */}
-          <radialGradient id="cyan-glow" cx="15%" cy="85%" r="40%">
-            <stop offset="0%" stopColor="#0EA5E9" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0" />
+          <radialGradient id="soft-sky" cx="8%" cy="92%" r="45%">
+            <stop offset="0%" stopColor="#0284C7" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#0284C7" stopOpacity="0" />
           </radialGradient>
-
-          {/* Creative, delicate dot-matrix and micro-cross pattern */}
-          <pattern id="grid-pattern" width="36" height="36" patternUnits="userSpaceOnUse">
-            <circle cx="18" cy="18" r="1.2" fill="#94A3B8" fillOpacity="0.32" />
-            <path
-              d="M 36 0 L 36 3 M 0 36 L 3 36"
-              stroke="#94A3B8"
-              strokeWidth="0.8"
-              strokeOpacity="0.18"
-            />
+          <pattern id="light-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="20" cy="20" r="1.2" fill="#0F172A" fillOpacity="0.05" />
           </pattern>
         </defs>
 
-        {/* Base dark canvas */}
-        <rect width="1200" height="630" fill="#090D16" />
-
-        {/* Geometric pattern texture */}
-        <rect width="1200" height="630" fill="url(#grid-pattern)" opacity="0.45" />
-
-        {/* Ambient radial lighting overlays */}
-        <rect width="1200" height="630" fill="url(#amber-glow)" />
-        <rect width="1200" height="630" fill="url(#cyan-glow)" />
-
-        {/* Subtle decorative canvas corner crosshairs */}
-        <g stroke="#F59E0B" strokeWidth="1" strokeOpacity="0.3">
-          <path d="M 16 16 L 24 16 M 20 12 L 20 20" />
-          <path d="M 1176 16 L 1184 16 M 1180 12 L 1180 20" />
-          <path d="M 16 614 L 24 614 M 20 610 L 20 618" />
-          <path d="M 1176 614 L 1184 614 M 1180 610 L 1180 618" />
-        </g>
+        <rect width="1200" height="630" fill="#FAFAF9" />
+        <rect width="1200" height="630" fill="url(#light-grid)" />
+        <rect width="1200" height="630" fill="url(#soft-indigo)" />
+        <rect width="1200" height="630" fill="url(#soft-sky)" />
       </svg>
 
-      {/* Main Glassmorphism Content Card */}
+      {/* Main Lightweight Card */}
       <div
         style={{
           display: 'flex',
@@ -171,28 +147,29 @@ export function OgCard({
           justifyContent: 'space-between',
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(15, 23, 42, 0.72)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E2E8F0',
           borderRadius: '24px',
           padding: '40px 48px',
           boxSizing: 'border-box',
           position: 'relative',
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03)',
         }}
       >
-        {/* Top vibrant gradient highlight bar */}
+        {/* Top vibrant indigo accent stripe */}
         <div
           style={{
             position: 'absolute',
             top: 0,
             left: '48px',
             right: '48px',
-            height: '3px',
-            background: 'linear-gradient(90deg, #F59E0B 0%, #EA580C 40%, rgba(234, 88, 12, 0) 100%)',
-            borderRadius: '3px 3px 0 0',
+            height: '4px',
+            background: 'linear-gradient(90deg, #4F46E5 0%, #3B82F6 50%, #06B6D4 100%)',
+            borderRadius: '4px 4px 0 0',
           }}
         />
 
-        {/* Header Bar: Brand Identity & Tags */}
+        {/* Header Bar */}
         <div
           style={{
             display: 'flex',
@@ -201,7 +178,7 @@ export function OgCard({
             alignItems: 'center',
           }}
         >
-          {/* Brand & Badge Type */}
+          {/* Site Branding & Badge */}
           <div
             style={{
               display: 'flex',
@@ -209,19 +186,18 @@ export function OgCard({
               gap: '12px',
             }}
           >
-            {/* Glowing amber status dot */}
+            {/* Indigo pulse dot */}
             <div
               style={{
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                backgroundColor: '#F59E0B',
-                boxShadow: '0 0 10px #F59E0B',
+                backgroundColor: '#4F46E5',
               }}
             />
             <span
               style={{
-                color: '#F1F5F9',
+                color: '#0F172A',
                 fontSize: '15px',
                 fontWeight: 700,
                 letterSpacing: '0.12em',
@@ -232,31 +208,42 @@ export function OgCard({
             </span>
             <span
               style={{
-                color: 'rgba(255, 255, 255, 0.25)',
+                color: '#CBD5E1',
                 fontSize: '16px',
                 fontWeight: 400,
               }}
             >
               /
             </span>
-            <span
+            <div
               style={{
-                color: '#94A3B8',
-                fontSize: '13px',
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '4px 12px',
+                backgroundColor: '#EEF2FF',
+                border: '1px solid #C7D2FE',
+                borderRadius: '100px',
               }}
             >
-              {badgeText}
-            </span>
+              <span
+                style={{
+                  color: '#4338CA',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {badgeText}
+              </span>
+            </div>
           </div>
 
-          {/* Tags Pills (Right) */}
+          {/* Tags Pills */}
           <div
             style={{
               display: 'flex',
-              gap: '10px',
+              gap: '8px',
               alignItems: 'center',
             }}
           >
@@ -266,18 +253,18 @@ export function OgCard({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '6px 14px',
-                  backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  padding: '5px 12px',
+                  backgroundColor: '#F1F5F9',
+                  border: '1px solid #E2E8F0',
                   borderRadius: '100px',
                 }}
               >
                 <span
                   style={{
-                    color: '#FBBF24',
-                    fontSize: '13px',
+                    color: '#475569',
+                    fontSize: '12px',
                     fontWeight: 700,
-                    letterSpacing: '0.04em',
+                    letterSpacing: '0.03em',
                     textTransform: 'uppercase',
                   }}
                 >
@@ -288,24 +275,23 @@ export function OgCard({
           </div>
         </div>
 
-        {/* Middle Section: Post Title & Excerpt */}
+        {/* Middle Section: Title & Excerpt */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             flexGrow: 1,
-            padding: '24px 0',
+            padding: '20px 0',
           }}
         >
-          {/* Post Title */}
           <h1
             style={{
-              color: '#FFFFFF',
+              color: '#0F172A',
               fontSize: `${titleFontSize}px`,
               fontWeight: 700,
               lineHeight: titleLineHeight,
-              letterSpacing: '-0.025em',
+              letterSpacing: '-0.03em',
               margin: 0,
               wordBreak: 'break-word',
             }}
@@ -313,15 +299,14 @@ export function OgCard({
             {displayTitle}
           </h1>
 
-          {/* Post Excerpt (if provided) */}
           {displayExcerpt ? (
             <p
               style={{
-                color: '#94A3B8',
+                color: '#475569',
                 fontSize: isLongTitle ? '19px' : '22px',
                 fontWeight: 500,
                 lineHeight: 1.45,
-                margin: '18px 0 0 0',
+                margin: '16px 0 0 0',
                 wordBreak: 'break-word',
               }}
             >
@@ -330,18 +315,18 @@ export function OgCard({
           ) : null}
         </div>
 
-        {/* Footer Bar: Metadata (Date/Read Time) & Author Profile */}
+        {/* Footer Bar */}
         <div
           style={{
             display: 'flex',
             width: '100%',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            borderTop: '1px solid #F1F5F9',
             paddingTop: '20px',
           }}
         >
-          {/* Metadata Section (Date & Read Time) */}
+          {/* Metadata: Date & Read Time */}
           <div
             style={{
               display: 'flex',
@@ -349,7 +334,6 @@ export function OgCard({
               gap: '16px',
             }}
           >
-            {/* Publication Date */}
             {formattedDate ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <svg
@@ -357,7 +341,7 @@ export function OgCard({
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#F59E0B"
+                  stroke="#4F46E5"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -369,7 +353,7 @@ export function OgCard({
                 </svg>
                 <span
                   style={{
-                    color: '#CBD5E1',
+                    color: '#64748B',
                     fontSize: '14px',
                     fontWeight: 600,
                     letterSpacing: '0.04em',
@@ -381,12 +365,10 @@ export function OgCard({
               </div>
             ) : null}
 
-            {/* Separator Bullet */}
             {formattedDate && formattedReadTime ? (
-              <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '14px' }}>•</span>
+              <span style={{ color: '#CBD5E1', fontSize: '14px' }}>•</span>
             ) : null}
 
-            {/* Read Time */}
             {formattedReadTime ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <svg
@@ -394,7 +376,7 @@ export function OgCard({
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#F59E0B"
+                  stroke="#4F46E5"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -404,7 +386,7 @@ export function OgCard({
                 </svg>
                 <span
                   style={{
-                    color: '#CBD5E1',
+                    color: '#64748B',
                     fontSize: '14px',
                     fontWeight: 600,
                     letterSpacing: '0.04em',
@@ -416,7 +398,7 @@ export function OgCard({
             ) : null}
           </div>
 
-          {/* Author Profile (Right) */}
+          {/* Author Badge */}
           <div
             style={{
               display: 'flex',
@@ -424,14 +406,13 @@ export function OgCard({
               gap: '12px',
             }}
           >
-            {/* Stylized Initial Badge */}
             <div
               style={{
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                border: '1.5px solid rgba(245, 158, 11, 0.5)',
+                backgroundColor: '#EEF2FF',
+                border: '1.5px solid #C7D2FE',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -439,7 +420,7 @@ export function OgCard({
             >
               <span
                 style={{
-                  color: '#FBBF24',
+                  color: '#4338CA',
                   fontSize: '14px',
                   fontWeight: 700,
                 }}
@@ -448,7 +429,6 @@ export function OgCard({
               </span>
             </div>
 
-            {/* Author Name and Handle */}
             <div
               style={{
                 display: 'flex',
@@ -457,7 +437,7 @@ export function OgCard({
             >
               <span
                 style={{
-                  color: '#F1F5F9',
+                  color: '#0F172A',
                   fontSize: '14px',
                   fontWeight: 700,
                 }}

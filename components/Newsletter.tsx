@@ -72,7 +72,7 @@ export function Newsletter() {
           id="newsletter-heading"
           className="text-2xl md:text-3xl font-sans font-extrabold tracking-tight text-foreground"
         >
-          Get the <span className="text-accent">Developer Dispatches</span>
+          Your Next Coding Idea <span className="text-accent">Starts Here.</span>
         </h2>
 
         {/* Description & Value Proposition */}
@@ -80,8 +80,7 @@ export function Newsletter() {
           id="newsletter-description"
           className="text-sm md:text-base leading-relaxed text-muted-foreground font-sans"
         >
-          Practical guides, side project breakdowns, and hands-on coding lessons.
-          Delivered straight to your inbox—no corporate fluff, zero spam.
+          From hands-on tutorials to open-source discoveries and side-project deep dives, get fresh ideas to learn, build, and experiment with.
         </p>
 
         {/* Success Feedback View */}

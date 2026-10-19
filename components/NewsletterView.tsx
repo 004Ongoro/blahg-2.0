@@ -91,11 +91,10 @@ export function NewsletterView() {
         {/* Header Section */}
         <header className="mb-16">
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-            The <span className="text-accent italic">Dispatch</span>
+            Your Next Coding Idea <span className="text-accent italic">Starts Here</span>
           </h1>
           <p className="text-muted-foreground font-medium max-w-2xl leading-relaxed">
-            Weekly thoughts on software, design, and building things. 
-            Delivered directly to your inbox.
+            From hands-on tutorials to open-source discoveries and side-project deep dives, get fresh ideas to learn, build, and experiment with.
           </p>
         </header>
 

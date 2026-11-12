@@ -72,7 +72,7 @@ export function Newsletter() {
           id="newsletter-heading"
           className="text-2xl md:text-3xl font-sans font-extrabold tracking-tight text-foreground"
         >
-          Your Next Coding Idea <span className="text-accent">Starts Here.</span>
+          Something for your <span className="text-accent">Inbox</span>
         </h2>
 
         {/* Description & Value Proposition */}
@@ -80,8 +80,9 @@ export function Newsletter() {
           id="newsletter-description"
           className="text-sm md:text-base leading-relaxed text-muted-foreground font-sans"
         >
-          From hands-on tutorials to open-source discoveries and side-project deep dives, get fresh ideas to learn, build, and experiment with.
-        </p>
+Interesting things I find, build, break, and learn along the way. From
+    coding experiments to open-source projects and random tech discoveries.
+    Just the good stuff, occasionally.        </p>
 
         {/* Success Feedback View */}
         {status?.type === 'success' ? (
@@ -95,7 +96,7 @@ export function Newsletter() {
               <span>{status.message}</span>
             </div>
             <p className="text-xs text-muted-foreground pl-7">
-              Keep an eye out for upcoming dispatches on full-stack development and open source projects.
+              Keep an eye out for upcoming issues on full-stack development and open source projects.
             </p>
             <div className="pl-7 pt-1">
               <button

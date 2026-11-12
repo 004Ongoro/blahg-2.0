@@ -166,14 +166,16 @@ export function ExitIntentNewsletter() {
         </div>
 
         {/* Content Body */}
-        <div className="relative z-10 space-y-1.5">
-          <h4 className="text-base font-extrabold text-foreground tracking-tight font-sans">
-            Your Next Coding Idea Starts Here.
-          </h4>
-          <p className="text-xs text-muted-foreground font-sans leading-relaxed">
-            From hands-on tutorials to open-source discoveries and side-project deep dives, get fresh ideas to learn, build, and experiment with.
-          </p>
-        </div>
+<div className="relative z-10 space-y-1.5">
+  <h4 className="text-base font-extrabold text-foreground tracking-tight font-sans">
+    A little tech in your inbox.
+  </h4>
+  <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+    Interesting things I find, build, break, and learn along the way. From
+    coding experiments to open-source projects and random tech discoveries.
+    Just the good stuff, occasionally.
+  </p>
+</div>
 
         {/* Form or Success State */}
         <div className="relative z-10 mt-4">
